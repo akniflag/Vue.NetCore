@@ -1,0 +1,83 @@
+# Build Folders
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/
+
+# Rider
+.idea/
+*.sln.iml
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# NuGet
+*.nupkg
+# The packages folder can be ignored because of Package Restore
+**/packages/*
+!**/packages/build/
+!**/packages/repositories.config
+
+# Windows image file caches
+Thumbs.db
+Desktop.ini
+
+# DotCover
+*.dotCover
+
+# Logs
+*.log
+
+# Publish
+publish/
+
+# Others
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# Backup & temp files
+*~
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# Test results
+TestResults/
+
+# Web
+wwwroot/node_modules/
+wwwroot/lib/
+
+# Entity Framework
+*.vssscc
+*.vspscc
+
+# Local history for Visual Studio
+.localhistory/
+
+# SQL Server files
+*.mdf
+*.ldf
+*.ndf
+
+# Azure
+.scm/
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# Visual Studio 2019
+.vs/
+
+# 忽略敏感配置文件
+VOL.WebApi/appsettings.json 
