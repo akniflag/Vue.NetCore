@@ -6,7 +6,6 @@ using VOL.Entity.DomainModels;
 
 namespace VOL.MES.IServices
 {
-    public partial interface IMES_EquipmentMaintenanceService : IService<MES_EquipmentMaintenance>
-    {
-    }
+    public partial interface IMES_EquipmentMaintenanceService
+        : IService<MES_EquipmentMaintenance> { }
 }

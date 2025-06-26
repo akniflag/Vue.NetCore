@@ -1,13 +1,10 @@
-﻿using VOL.Sys.IRepositories;
-using VOL.Core.BaseProvider;
-using VOL.Core.Extensions.AutofacManager;
+﻿using VOL.Core.BaseProvider;
 using VOL.Core.DbContext;
+using VOL.Core.Extensions.AutofacManager;
 using VOL.Entity.DomainModels;
+using VOL.Sys.IRepositories;
 
 namespace VOL.Sys.Repositories
 {
-    public partial class Sys_MenuRepository
-    {
-    }
+    public partial class Sys_MenuRepository { }
 }
-

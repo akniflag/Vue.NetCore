@@ -6,7 +6,6 @@ using VOL.Entity.DomainModels;
 
 namespace VOL.MES.IServices
 {
-    public partial interface IMES_QualityInspectionPlanDetailService : IService<MES_QualityInspectionPlanDetail>
-    {
-    }
+    public partial interface IMES_QualityInspectionPlanDetailService
+        : IService<MES_QualityInspectionPlanDetail> { }
 }

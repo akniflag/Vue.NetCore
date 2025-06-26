@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VOL.Core.DbContext;
-using Microsoft.AspNetCore.Authorization;
 
 namespace VOL.WebApi.Controllers
 {
@@ -13,9 +13,7 @@ namespace VOL.WebApi.Controllers
     {
         public IActionResult Index()
         {
-            
             return new RedirectResult("/swagger/");
         }
-
     }
 }

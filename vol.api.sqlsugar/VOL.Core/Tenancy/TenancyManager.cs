@@ -5,7 +5,8 @@ using VOL.Core.ManageUser;
 
 namespace VOL.Core.Tenancy
 {
-    public static class TenancyManager<T> where T : class
+    public static class TenancyManager<T>
+        where T : class
     {
         /// <summary>
         /// 数据库表名
@@ -23,7 +24,7 @@ namespace VOL.Core.Tenancy
             switch (tableName)
             {
                 //例如：指定用户表指定查询条件
-                //case "Sys_User": 
+                //case "Sys_User":
                 //    multiTenancyString += $" where UserId='{UserContext.Current.UserId}'";
                 //    break;
                 default:
@@ -35,7 +36,7 @@ namespace VOL.Core.Tenancy
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="tableName">数据库表名</param>
         /// <param name="ids">当前操作的所有id</param>
@@ -48,9 +49,10 @@ namespace VOL.Core.Tenancy
             switch (tableName)
             {
                 default:
-                    multiTenancyString = $"select count(*) FROM {tableName} " +
-                       $" where CreateID='{UserContext.Current.UserId}'" +
-                       $" and  { tableKey} in ({ids}) ";
+                    multiTenancyString =
+                        $"select count(*) FROM {tableName} "
+                        + $" where CreateID='{UserContext.Current.UserId}'"
+                        + $" and  {tableKey} in ({ids}) ";
                     break;
             }
             return multiTenancyString;

@@ -6,7 +6,5 @@ using VOL.Entity.DomainModels;
 
 namespace VOL.Sys.IServices
 {
-    public partial interface ISys_QuartzLogService : IService<Sys_QuartzLog>
-    {
-    }
+    public partial interface ISys_QuartzLogService : IService<Sys_QuartzLog> { }
 }

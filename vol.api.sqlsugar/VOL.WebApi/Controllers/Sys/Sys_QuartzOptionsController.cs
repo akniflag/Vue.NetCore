@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using VOL.Core.Controllers.Basic;
 using VOL.Entity.AttributeManager;
 using VOL.Sys.IServices;
+
 namespace VOL.Sys.Controllers
 {
     [Route("api/Sys_QuartzOptions")]
@@ -13,9 +14,6 @@ namespace VOL.Sys.Controllers
     public partial class Sys_QuartzOptionsController : ApiBaseController<ISys_QuartzOptionsService>
     {
         public Sys_QuartzOptionsController(ISys_QuartzOptionsService service)
-        : base(service)
-        {
-        }
+            : base(service) { }
     }
 }
-

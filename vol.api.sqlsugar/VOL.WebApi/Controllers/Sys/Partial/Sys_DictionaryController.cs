@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using VOL.Core.Controllers.Basic;
 using VOL.Core.Extensions;
 using VOL.Core.Filters;
@@ -17,6 +17,7 @@ namespace VOL.Sys.Controllers
         {
             return Content(Service.GetVueDictionary(dicNos).Serialize());
         }
+
         /// <summary>
         /// table加载数据后刷新当前table数据的字典项(适用字典数据量比较大的情况)
         /// </summary>
@@ -27,6 +28,7 @@ namespace VOL.Sys.Controllers
         {
             return Json(Service.GetTableDictionary(keyData));
         }
+
         /// <summary>
         /// 远程搜索
         /// </summary>
@@ -49,6 +51,7 @@ namespace VOL.Sys.Controllers
         {
             return Json(await Service.GetRemoteDefaultKeyValue(dicNo, key));
         }
+
         /// <summary>
         /// 代码生成器获取所有字典项(超级管理权限)
         /// </summary>
@@ -59,6 +62,5 @@ namespace VOL.Sys.Controllers
         {
             return Json(await Service.GetBuilderDictionary());
         }
-
     }
 }

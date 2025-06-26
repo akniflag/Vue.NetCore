@@ -4,7 +4,5 @@ using System.Text;
 
 namespace VOL.Entity.SystemModels
 {
-    public class BaseEntity
-    {
-    }
+    public class BaseEntity { }
 }

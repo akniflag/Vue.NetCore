@@ -1,9 +1,9 @@
-﻿using SqlSugar;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using SqlSugar;
 using VOL.Core.Enums;
 
 namespace VOL.Core.Extensions
@@ -18,10 +18,15 @@ namespace VOL.Core.Extensions
         /// <param name="page"></param>
         /// <param name="size"></param>
         /// <returns></returns>
-        public static ISugarQueryable<T> TakePage<T>(this ISugarQueryable<T> queryable, int page, int size = 15)
+        public static ISugarQueryable<T> TakePage<T>(
+            this ISugarQueryable<T> queryable,
+            int page,
+            int size = 15
+        )
         {
             return queryable.TakeOrderByPage<T>(page, size);
         }
+
         /// <summary>
         /// 分页查询
         /// </summary>
@@ -31,15 +36,21 @@ namespace VOL.Core.Extensions
         /// <param name="size"></param>
         /// <param name="orderBy"></param>
         /// <returns></returns>
-        public static ISugarQueryable<T> TakeOrderByPage<T>(this ISugarQueryable<T> queryable, int page, int size = 15, Expression<Func<T, Dictionary<object, QueryOrderBy>>> orderBy = null)
+        public static ISugarQueryable<T> TakeOrderByPage<T>(
+            this ISugarQueryable<T> queryable,
+            int page,
+            int size = 15,
+            Expression<Func<T, Dictionary<object, QueryOrderBy>>> orderBy = null
+        )
         {
             if (page <= 0)
             {
                 page = 1;
             }
-            return queryable.GetISugarQueryableOrderBy(orderBy.GetExpressionToDic())
-                  .Skip((page - 1) * size)
-                 .Take(size);
+            return queryable
+                .GetISugarQueryableOrderBy(orderBy.GetExpressionToDic())
+                .Skip((page - 1) * size)
+                .Take(size);
         }
 
         /// <summary>
@@ -59,15 +70,14 @@ namespace VOL.Core.Extensions
         /// <returns></returns>
         public static Expression<Func<T, bool>> False<T>()
         {
-
             return p => false;
         }
 
         public static ParameterExpression GetExpressionParameter(this Type type)
         {
-
             return Expression.Parameter(type, "p");
         }
+
         /// <summary>
         /// 创建lambda表达式：p=>p.propertyName
         /// </summary>
@@ -79,6 +89,7 @@ namespace VOL.Core.Extensions
         {
             return propertyName.GetExpression<T, TKey>(typeof(T).GetExpressionParameter());
         }
+
         /// <summary>
         /// 创建委托有返回值的表达式：p=>p.propertyName
         /// </summary>
@@ -88,7 +99,9 @@ namespace VOL.Core.Extensions
         /// <returns></returns>
         public static Func<T, TKey> GetFun<T, TKey>(this string propertyName)
         {
-            return propertyName.GetExpression<T, TKey>(typeof(T).GetExpressionParameter()).Compile();
+            return propertyName
+                .GetExpression<T, TKey>(typeof(T).GetExpressionParameter())
+                .Compile();
         }
 
         /// <summary>
@@ -98,12 +111,25 @@ namespace VOL.Core.Extensions
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public static Expression<Func<T, TKey>> GetExpression<T, TKey>(this string propertyName, ParameterExpression parameter)
+        public static Expression<Func<T, TKey>> GetExpression<T, TKey>(
+            this string propertyName,
+            ParameterExpression parameter
+        )
         {
             if (typeof(TKey).Name == "Object")
-                return Expression.Lambda<Func<T, TKey>>(Expression.Convert(Expression.Property(parameter, propertyName), typeof(object)), parameter);
-            return Expression.Lambda<Func<T, TKey>>(Expression.Property(parameter, propertyName), parameter);
+                return Expression.Lambda<Func<T, TKey>>(
+                    Expression.Convert(
+                        Expression.Property(parameter, propertyName),
+                        typeof(object)
+                    ),
+                    parameter
+                );
+            return Expression.Lambda<Func<T, TKey>>(
+                Expression.Property(parameter, propertyName),
+                parameter
+            );
         }
+
         /// <summary>
         /// 创建lambda表达式：p=>false
         /// object不能确认字段类型(datetime,int,string),如动态排序OrderBy(x=>x.ID)会用到此功能,返回的就是x=>x.ID
@@ -116,41 +142,50 @@ namespace VOL.Core.Extensions
             return propertyName.GetExpression<T, object>(typeof(T).GetExpressionParameter());
         }
 
-        public static Expression<Func<T, object>> GetExpression<T>(this string propertyName, ParameterExpression parameter)
+        public static Expression<Func<T, object>> GetExpression<T>(
+            this string propertyName,
+            ParameterExpression parameter
+        )
         {
-            return Expression.Lambda<Func<T, object>>(Expression.Convert(Expression.Property(parameter, propertyName), typeof(object)), parameter);
+            return Expression.Lambda<Func<T, object>>(
+                Expression.Convert(Expression.Property(parameter, propertyName), typeof(object)),
+                parameter
+            );
         }
 
-
-
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="propertyName">字段名</param>
         /// <param name="propertyValue">表达式的值</param>
-        /// <param name="expressionType">创建表达式的类型,如:p=>p.propertyName != propertyValue 
+        /// <param name="expressionType">创建表达式的类型,如:p=>p.propertyName != propertyValue
         /// p=>p.propertyName.Contains(propertyValue)</param>
         /// <returns></returns>
-        public static Expression<Func<T, bool>> CreateExpression<T>(this string propertyName, object propertyValue, LinqExpressionType expressionType)
+        public static Expression<Func<T, bool>> CreateExpression<T>(
+            this string propertyName,
+            object propertyValue,
+            LinqExpressionType expressionType
+        )
         {
             return propertyName.CreateExpression<T>(propertyValue, null, expressionType);
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="propertyName">字段名</param>
         /// <param name="propertyValue">表达式的值</param>
-        /// <param name="expressionType">创建表达式的类型,如:p=>p.propertyName != propertyValue 
+        /// <param name="expressionType">创建表达式的类型,如:p=>p.propertyName != propertyValue
         /// p=>p.propertyName.Contains(propertyValue)</param>
         /// <returns></returns>
         private static Expression<Func<T, bool>> CreateExpression<T>(
-          this string propertyName,
-          object propertyValue,
-          ParameterExpression parameter,
-          LinqExpressionType expressionType)
+            this string propertyName,
+            object propertyValue,
+            ParameterExpression parameter,
+            LinqExpressionType expressionType
+        )
         {
             Type proType = typeof(T).GetProperty(propertyName).PropertyType;
             //创建节点变量如p=>的节点p
@@ -161,7 +196,8 @@ namespace VOL.Core.Extensions
             MemberExpression memberProperty = Expression.PropertyOrField(parameter, propertyName);
             if (expressionType == LinqExpressionType.In)
             {
-                if (!(propertyValue is System.Collections.IList list) || list.Count == 0) throw new Exception("属性值类型不正确");
+                if (!(propertyValue is System.Collections.IList list) || list.Count == 0)
+                    throw new Exception("属性值类型不正确");
 
                 bool isStringValue = true;
                 List<object> objList = new List<object>();
@@ -183,7 +219,11 @@ namespace VOL.Core.Extensions
                     //创建集合常量并设置为常量的值
                     ConstantExpression constantCollection = Expression.Constant(list);
                     //创建一个表示调用带参数的方法的：new string[]{"1","a"}.Contains("a");
-                    MethodCallExpression methodCall = Expression.Call(constantCollection, method, memberProperty);
+                    MethodCallExpression methodCall = Expression.Call(
+                        constantCollection,
+                        method,
+                        memberProperty
+                    );
                     return Expression.Lambda<Func<T, bool>>(methodCall, parameter);
                 }
                 //非string字段，按上面方式处理报异常Null TypeMapping in Sql Tree
@@ -191,24 +231,39 @@ namespace VOL.Core.Extensions
                 foreach (var value in list)
                 {
                     ConstantExpression constantExpression = Expression.Constant(value);
-                    UnaryExpression unaryExpression = Expression.Convert(memberProperty, constantExpression.Type);
+                    UnaryExpression unaryExpression = Expression.Convert(
+                        memberProperty,
+                        constantExpression.Type
+                    );
 
-                    body = body == null
-                        ? Expression.Equal(unaryExpression, constantExpression)
-                        : Expression.OrElse(body, Expression.Equal(unaryExpression, constantExpression));
+                    body =
+                        body == null
+                            ? Expression.Equal(unaryExpression, constantExpression)
+                            : Expression.OrElse(
+                                body,
+                                Expression.Equal(unaryExpression, constantExpression)
+                            );
                 }
                 return Expression.Lambda<Func<T, bool>>(body, parameter);
             }
 
             //  object value = propertyValue;
-            ConstantExpression constant = proType.ToString() == "System.String"
-                ? Expression.Constant(propertyValue) : Expression.Constant(propertyValue.ToString().ChangeType(proType));
+            ConstantExpression constant =
+                proType.ToString() == "System.String"
+                    ? Expression.Constant(propertyValue)
+                    : Expression.Constant(propertyValue.ToString().ChangeType(proType));
 
             // DateTime只选择了日期的时候自动在结束日期加一天，修复DateTime类型使用日期区间查询无法查询到结束日期的问题
-            if ((proType == typeof(DateTime) || proType == typeof(DateTime?)) && expressionType == LinqExpressionType.LessThanOrEqual && propertyValue.ToString().Length == 10)
+            if (
+                (proType == typeof(DateTime) || proType == typeof(DateTime?))
+                && expressionType == LinqExpressionType.LessThanOrEqual
+                && propertyValue.ToString().Length == 10
+            )
             {
                 expressionType = LinqExpressionType.LessThan;
-                constant = Expression.Constant(Convert.ToDateTime(propertyValue.ToString()).AddDays(1));
+                constant = Expression.Constant(
+                    Convert.ToDateTime(propertyValue.ToString()).AddDays(1)
+                );
             }
 
             UnaryExpression member = Expression.Convert(memberProperty, constant.Type);
@@ -217,41 +272,68 @@ namespace VOL.Core.Extensions
             {
                 //p=>p.propertyName == propertyValue
                 case LinqExpressionType.Equal:
-                    expression = Expression.Lambda<Func<T, bool>>(Expression.Equal(member, constant), parameter);
+                    expression = Expression.Lambda<Func<T, bool>>(
+                        Expression.Equal(member, constant),
+                        parameter
+                    );
                     break;
                 //p=>p.propertyName != propertyValue
                 case LinqExpressionType.NotEqual:
-                    expression = Expression.Lambda<Func<T, bool>>(Expression.NotEqual(member, constant), parameter);
+                    expression = Expression.Lambda<Func<T, bool>>(
+                        Expression.NotEqual(member, constant),
+                        parameter
+                    );
                     break;
                 //   p => p.propertyName > propertyValue
                 case LinqExpressionType.GreaterThan:
-                    expression = Expression.Lambda<Func<T, bool>>(Expression.GreaterThan(member, constant), parameter);
+                    expression = Expression.Lambda<Func<T, bool>>(
+                        Expression.GreaterThan(member, constant),
+                        parameter
+                    );
                     break;
                 //   p => p.propertyName < propertyValue
                 case LinqExpressionType.LessThan:
-                    expression = Expression.Lambda<Func<T, bool>>(Expression.LessThan(member, constant), parameter);
+                    expression = Expression.Lambda<Func<T, bool>>(
+                        Expression.LessThan(member, constant),
+                        parameter
+                    );
                     break;
                 // p => p.propertyName >= propertyValue
                 case LinqExpressionType.ThanOrEqual:
-                    expression = Expression.Lambda<Func<T, bool>>(Expression.GreaterThanOrEqual(member, constant), parameter);
+                    expression = Expression.Lambda<Func<T, bool>>(
+                        Expression.GreaterThanOrEqual(member, constant),
+                        parameter
+                    );
                     break;
                 // p => p.propertyName <= propertyValue
                 case LinqExpressionType.LessThanOrEqual:
-                    expression = Expression.Lambda<Func<T, bool>>(Expression.LessThanOrEqual(member, constant), parameter);
+                    expression = Expression.Lambda<Func<T, bool>>(
+                        Expression.LessThanOrEqual(member, constant),
+                        parameter
+                    );
                     break;
                 //   p => p.propertyName.Contains(propertyValue)
                 // p => !p.propertyName.Contains(propertyValue)
                 case LinqExpressionType.Contains:
                 case LinqExpressionType.NotContains:
-                    MethodInfo method = typeof(string).GetMethod("Contains", new[] { typeof(string) });
+                    MethodInfo method = typeof(string).GetMethod(
+                        "Contains",
+                        new[] { typeof(string) }
+                    );
                     constant = Expression.Constant(propertyValue, typeof(string));
                     if (expressionType == LinqExpressionType.Contains)
                     {
-                        expression = Expression.Lambda<Func<T, bool>>(Expression.Call(member, method, constant), parameter);
+                        expression = Expression.Lambda<Func<T, bool>>(
+                            Expression.Call(member, method, constant),
+                            parameter
+                        );
                     }
                     else
                     {
-                        expression = Expression.Lambda<Func<T, bool>>(Expression.Not(Expression.Call(member, method, constant)), parameter);
+                        expression = Expression.Lambda<Func<T, bool>>(
+                            Expression.Not(Expression.Call(member, method, constant)),
+                            parameter
+                        );
                     }
                     break;
                 default:
@@ -274,24 +356,29 @@ namespace VOL.Core.Extensions
         /// <typeparam name="T"></typeparam>
         /// <param name="expression"></param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<string, QueryOrderBy>> GetExpressionToPair<T>(this Expression<Func<T, Dictionary<object, QueryOrderBy>>> expression)
+        public static IEnumerable<KeyValuePair<string, QueryOrderBy>> GetExpressionToPair<T>(
+            this Expression<Func<T, Dictionary<object, QueryOrderBy>>> expression
+        )
         {
-
             foreach (var exp in ((ListInitExpression)expression.Body).Initializers)
             {
                 yield return new KeyValuePair<string, QueryOrderBy>(
-                exp.Arguments[0] is MemberExpression ?
-                (exp.Arguments[0] as MemberExpression).Member.Name.ToString()
-                : ((exp.Arguments[0] as UnaryExpression).Operand as MemberExpression).Member.Name,
-                 (QueryOrderBy)(
-                 exp.Arguments[1] as ConstantExpression != null
-                  ? (exp.Arguments[1] as ConstantExpression).Value
-                 //2021.07.04增加自定排序按条件表达式
-                 : Expression.Lambda<Func<QueryOrderBy>>(exp.Arguments[1] as Expression).Compile()()
-                 ));
+                    exp.Arguments[0] is MemberExpression
+                        ? (exp.Arguments[0] as MemberExpression).Member.Name.ToString()
+                        : ((exp.Arguments[0] as UnaryExpression).Operand as MemberExpression)
+                            .Member
+                            .Name,
+                    (QueryOrderBy)(
+                        exp.Arguments[1] as ConstantExpression != null
+                            ? (exp.Arguments[1] as ConstantExpression).Value
+                            //2021.07.04增加自定排序按条件表达式
+                            : Expression
+                                .Lambda<Func<QueryOrderBy>>(exp.Arguments[1] as Expression)
+                                .Compile()()
+                    )
+                );
             }
         }
-
 
         /// <summary>
         /// 表达式转换成KeyValList(主要用于多字段排序，并且多个字段的排序规则不一样)
@@ -305,15 +392,22 @@ namespace VOL.Core.Extensions
         /// <typeparam name="T"></typeparam>
         /// <param name="expression"></param>
         /// <returns></returns>
-        public static Dictionary<string, QueryOrderBy> GetExpressionToDic<T>(this Expression<Func<T, Dictionary<object, QueryOrderBy>>> expression)
+        public static Dictionary<string, QueryOrderBy> GetExpressionToDic<T>(
+            this Expression<Func<T, Dictionary<object, QueryOrderBy>>> expression
+        )
         {
             //2020.09.14增加排序字段null值判断
             if (expression == null)
             {
                 return new Dictionary<string, QueryOrderBy>();
             }
-            return expression.GetExpressionToPair().Reverse().ToList().ToDictionary(x => x.Key, x => x.Value);
+            return expression
+                .GetExpressionToPair()
+                .Reverse()
+                .ToList()
+                .ToDictionary(x => x.Key, x => x.Value);
         }
+
         /// <summary>
         /// 解析多字段排序
         /// </summary>
@@ -321,22 +415,32 @@ namespace VOL.Core.Extensions
         /// <param name="queryable"></param>
         /// <param name="orderBySelector">string=排序的字段,bool=true降序/false升序</param>
         /// <returns></returns>
-        public static ISugarQueryable<TEntity> GetISugarQueryableOrderBy<TEntity>(this ISugarQueryable<TEntity> queryable, Dictionary<string, QueryOrderBy> orderBySelector)
+        public static ISugarQueryable<TEntity> GetISugarQueryableOrderBy<TEntity>(
+            this ISugarQueryable<TEntity> queryable,
+            Dictionary<string, QueryOrderBy> orderBySelector
+        )
         {
             string[] orderByKeys = orderBySelector.Select(x => x.Key).ToArray();
-            if (orderByKeys == null || orderByKeys.Length == 0) return queryable;
+            if (orderByKeys == null || orderByKeys.Length == 0)
+                return queryable;
 
             ISugarQueryable<TEntity> queryableOrderBy = null;
             string orderByKey = orderByKeys[0];
-            queryableOrderBy = orderBySelector[orderByKey] == QueryOrderBy.Desc
-                ? queryableOrderBy = queryable.OrderByDescending(orderByKey.GetExpression<TEntity>())
-                : queryable.OrderBy(orderByKey.GetExpression<TEntity>());
+            queryableOrderBy =
+                orderBySelector[orderByKey] == QueryOrderBy.Desc
+                    ? queryableOrderBy = queryable.OrderByDescending(
+                        orderByKey.GetExpression<TEntity>()
+                    )
+                    : queryable.OrderBy(orderByKey.GetExpression<TEntity>());
 
             for (int i = 1; i < orderByKeys.Length; i++)
             {
-                queryableOrderBy = orderBySelector[orderByKeys[i]] == QueryOrderBy.Desc
-                   ? queryableOrderBy.OrderByDescending(orderByKeys[i].GetExpression<TEntity>())
-                   : queryableOrderBy.OrderBy(orderByKeys[i].GetExpression<TEntity>());
+                queryableOrderBy =
+                    orderBySelector[orderByKeys[i]] == QueryOrderBy.Desc
+                        ? queryableOrderBy.OrderByDescending(
+                            orderByKeys[i].GetExpression<TEntity>()
+                        )
+                        : queryableOrderBy.OrderBy(orderByKeys[i].GetExpression<TEntity>());
             }
             return queryableOrderBy;
         }
@@ -348,7 +452,9 @@ namespace VOL.Core.Extensions
         /// <typeparam name="TEntity"></typeparam>
         /// <param name="expression">格式 Expression<Func<Out_Scheduling, object>>sch=x=>new {x.v1,x.v2} or x=>x.v1 解析里面的值返回为数组</param>
         /// <returns></returns>
-        public static string[] GetExpressionToArray<TEntity>(this Expression<Func<TEntity, object>> expression)
+        public static string[] GetExpressionToArray<TEntity>(
+            this Expression<Func<TEntity, object>> expression
+        )
         {
             string[] propertyNames = null;
             if (expression.Body is MemberExpression)
@@ -368,7 +474,7 @@ namespace VOL.Core.Extensions
         /// <summary>
         /// 通过字段动态生成where and /or表达
         /// 如:有多个where条件，当条件成立时where 1=1 and/or 2=2,依次往后拼接
-        /// 
+        ///
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="listParas">ExpressionParameters
@@ -381,6 +487,7 @@ namespace VOL.Core.Extensions
         {
             return listExpress.Compose<T>(Expression.And);
         }
+
         /// <summary>
         /// 同上面and用法相同
         /// </summary>
@@ -391,7 +498,11 @@ namespace VOL.Core.Extensions
         {
             return listExpress.Compose<T>(Expression.OrElse);
         }
-        private static Expression<Func<T, bool>> Compose<T>(this List<ExpressionParameters> listExpress, Func<Expression, Expression, Expression> merge)
+
+        private static Expression<Func<T, bool>> Compose<T>(
+            this List<ExpressionParameters> listExpress,
+            Func<Expression, Expression, Expression> merge
+        )
         {
             ParameterExpression parameter = Expression.Parameter(typeof(T), "p");
             Expression<Func<T, bool>> expression = null;
@@ -403,11 +514,15 @@ namespace VOL.Core.Extensions
                 }
                 else
                 {
-                    expression = expression.Compose(exp.Field.GetExpression<T, bool>(parameter), merge);
+                    expression = expression.Compose(
+                        exp.Field.GetExpression<T, bool>(parameter),
+                        merge
+                    );
                 }
             }
             return expression;
         }
+
         /// <summary>
         /// https://blogs.msdn.microsoft.com/meek/2008/05/02/linq-to-entities-combining-predicates/
         /// 表达式合并(合并生产的sql语句有性能问题)
@@ -417,27 +532,46 @@ namespace VOL.Core.Extensions
         /// <param name="first"></param>
         /// <param name="second"></param>
         /// <returns></returns>
-        public static Expression<Func<T, bool>> And<T>(this Expression<Func<T, bool>> first, Expression<Func<T, bool>> second)
+        public static Expression<Func<T, bool>> And<T>(
+            this Expression<Func<T, bool>> first,
+            Expression<Func<T, bool>> second
+        )
         {
             return first.Compose(second, Expression.And);
         }
-        public static Expression<Func<T, bool>> Or<T>(this Expression<Func<T, bool>> first, Expression<Func<T, bool>> second)
+
+        public static Expression<Func<T, bool>> Or<T>(
+            this Expression<Func<T, bool>> first,
+            Expression<Func<T, bool>> second
+        )
         {
             return first.Compose(second, Expression.OrElse);
         }
-        public static Expression<T> Compose<T>(this Expression<T> first, Expression<T> second, Func<Expression, Expression, Expression> merge)
+
+        public static Expression<T> Compose<T>(
+            this Expression<T> first,
+            Expression<T> second,
+            Func<Expression, Expression, Expression> merge
+        )
         {
-            // build parameter map (from parameters of second to parameters of first)  
-            var map = first.Parameters.Select((f, i) => new { f, s = second.Parameters[i] }).ToDictionary(p => p.s, p => p.f);
-            // replace parameters in the second lambda expression with parameters from the first  
+            // build parameter map (from parameters of second to parameters of first)
+            var map = first
+                .Parameters.Select((f, i) => new { f, s = second.Parameters[i] })
+                .ToDictionary(p => p.s, p => p.f);
+            // replace parameters in the second lambda expression with parameters from the first
             var secondBody = ParameterRebinder.ReplaceParameters(map, second.Body);
-            // apply composition of lambda expression bodies to parameters from the first expression  
+            // apply composition of lambda expression bodies to parameters from the first expression
             return Expression.Lambda<T>(merge(first.Body, secondBody), first.Parameters);
         }
 
-        public static ISugarQueryable<Result> GetQueryableSelect<Source, Result>(this ISugarQueryable<Source> queryable)
+        public static ISugarQueryable<Result> GetQueryableSelect<Source, Result>(
+            this ISugarQueryable<Source> queryable
+        )
         {
-            Expression<Func<Source, Result>> expression = CreateMemberInitExpression<Source, Result>();
+            Expression<Func<Source, Result>> expression = CreateMemberInitExpression<
+                Source,
+                Result
+            >();
             return queryable.Select(expression);
         }
 
@@ -449,7 +583,9 @@ namespace VOL.Core.Extensions
         /// <typeparam name="Source"></typeparam>
         /// <typeparam name="Result"></typeparam>
         /// <returns></returns>
-        public static Expression<Func<Source, Result>> CreateMemberInitExpression<Source, Result>(Type resultType = null)
+        public static Expression<Func<Source, Result>> CreateMemberInitExpression<Source, Result>(
+            Type resultType = null
+        )
         {
             resultType = resultType ?? typeof(Result);
             ParameterExpression left = Expression.Parameter(typeof(Source), "p");
@@ -459,17 +595,30 @@ namespace VOL.Core.Extensions
             foreach (PropertyInfo propertyInfo in propertyInfos)
             {
                 MemberExpression member = Expression.Property(left, propertyInfo.Name);
-                MemberBinding speciesMemberBinding = Expression.Bind(resultType.GetMember(propertyInfo.Name)[0], member);
+                MemberBinding speciesMemberBinding = Expression.Bind(
+                    resultType.GetMember(propertyInfo.Name)[0],
+                    member
+                );
                 memberBindings.Add(speciesMemberBinding);
             }
-            MemberInitExpression memberInitExpression = Expression.MemberInit(newExpression, memberBindings);
-            Expression<Func<Source, Result>> expression = Expression.Lambda<Func<Source, Result>>(memberInitExpression, new ParameterExpression[] { left });
+            MemberInitExpression memberInitExpression = Expression.MemberInit(
+                newExpression,
+                memberBindings
+            );
+            Expression<Func<Source, Result>> expression = Expression.Lambda<Func<Source, Result>>(
+                memberInitExpression,
+                new ParameterExpression[] { left }
+            );
             return expression;
         }
-        public static Expression<Func<Source, object>> CreateMemberInitExpression<Source>(Type resultType)
+
+        public static Expression<Func<Source, object>> CreateMemberInitExpression<Source>(
+            Type resultType
+        )
         {
             return CreateMemberInitExpression<Source, object>(resultType);
         }
+
         /// <summary>
         /// 属性判断待完
         /// </summary>
@@ -479,14 +628,20 @@ namespace VOL.Core.Extensions
         {
             return type.GetProperties().GetGenericProperties();
         }
+
         /// <summary>
         /// 属性判断待完
         /// </summary>
         /// <param name="properties"></param>
         /// <returns></returns>
-        public static IEnumerable<PropertyInfo> GetGenericProperties(this IEnumerable<PropertyInfo> properties)
+        public static IEnumerable<PropertyInfo> GetGenericProperties(
+            this IEnumerable<PropertyInfo> properties
+        )
         {
-            return properties.Where(x => !x.PropertyType.IsGenericType && x.PropertyType.GetInterface("IList") == null || x.PropertyType.GetInterface("IEnumerable", false) == null);
+            return properties.Where(x =>
+                !x.PropertyType.IsGenericType && x.PropertyType.GetInterface("IList") == null
+                || x.PropertyType.GetInterface("IEnumerable", false) == null
+            );
         }
     }
 
@@ -495,21 +650,26 @@ namespace VOL.Core.Extensions
         public string Field { get; set; }
         public LinqExpressionType ExpressionType { get; set; }
         public object Value { get; set; }
-        // public 
+        // public
     }
+
     public class ParameterRebinder : ExpressionVisitor
     {
-
         private readonly Dictionary<ParameterExpression, ParameterExpression> map;
+
         public ParameterRebinder(Dictionary<ParameterExpression, ParameterExpression> map)
         {
             this.map = map ?? new Dictionary<ParameterExpression, ParameterExpression>();
         }
 
-        public static Expression ReplaceParameters(Dictionary<ParameterExpression, ParameterExpression> map, Expression exp)
+        public static Expression ReplaceParameters(
+            Dictionary<ParameterExpression, ParameterExpression> map,
+            Expression exp
+        )
         {
             return new ParameterRebinder(map).Visit(exp);
         }
+
         protected override Expression VisitParameter(ParameterExpression p)
         {
             ParameterExpression replacement;

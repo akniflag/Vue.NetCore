@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using VOL.Core.Configuration;
 using VOL.Core.Extensions;
 using VOL.Core.Filters;
@@ -21,17 +21,24 @@ namespace VOL.Core.Controllers.Basic
     {
         protected IServiceBase Service;
         private WebResponseContent _baseWebResponseContent { get; set; }
-        public ApiBaseController()
-        {
-        }
+
+        public ApiBaseController() { }
+
         public ApiBaseController(IServiceBase service)
         {
             Service = service;
         }
-        public ApiBaseController(string projectName, string folder, string tablename, IServiceBase service)
+
+        public ApiBaseController(
+            string projectName,
+            string folder,
+            string tablename,
+            IServiceBase service
+        )
         {
             Service = service;
         }
+
         [ActionLog("查询")]
         [ApiActionPermission(Enums.ActionPermissionOptions.Search)]
         [HttpPost, Route("GetPageData")]
@@ -67,6 +74,7 @@ namespace VOL.Core.Controllers.Basic
         {
             return Json(InvokeService("Upload", new object[] { fileInput }));
         }
+
         /// <summary>
         /// 下载导入Excel模板
         /// </summary>
@@ -77,15 +85,18 @@ namespace VOL.Core.Controllers.Basic
         [ApiExplorerSettings(IgnoreApi = true)]
         public virtual ActionResult DownLoadTemplate()
         {
-            _baseWebResponseContent = InvokeService("DownLoadTemplate", new object[] { }) as WebResponseContent;
-            if (!_baseWebResponseContent.Status) return Json(_baseWebResponseContent);
+            _baseWebResponseContent =
+                InvokeService("DownLoadTemplate", new object[] { }) as WebResponseContent;
+            if (!_baseWebResponseContent.Status)
+                return Json(_baseWebResponseContent);
             byte[] fileBytes = System.IO.File.ReadAllBytes(_baseWebResponseContent.Data.ToString());
             return File(
-                    fileBytes,
-                    System.Net.Mime.MediaTypeNames.Application.Octet,
-                    Path.GetFileName(_baseWebResponseContent.Data.ToString())
-                );
+                fileBytes,
+                System.Net.Mime.MediaTypeNames.Application.Octet,
+                Path.GetFileName(_baseWebResponseContent.Data.ToString())
+            );
         }
+
         /// <summary>
         /// 导入表数据Excel
         /// </summary>
@@ -113,28 +124,33 @@ namespace VOL.Core.Controllers.Basic
         {
             var result = InvokeService("Export", new object[] { loadData }) as WebResponseContent;
             return File(
-                   System.IO.File.ReadAllBytes(result.Data.ToString().MapPath()),
-                   System.Net.Mime.MediaTypeNames.Application.Octet,
-                   Path.GetFileName(result.Data.ToString())
-               );
+                System.IO.File.ReadAllBytes(result.Data.ToString().MapPath()),
+                System.Net.Mime.MediaTypeNames.Application.Octet,
+                Path.GetFileName(result.Data.ToString())
+            );
         }
-
 
         /// <summary>
         /// 通过key删除文件
         /// </summary>
         /// <param name="keys"></param>
         /// <returns></returns>
-       // [ActionLog("删除")]
+        // [ActionLog("删除")]
         [ApiActionPermission(Enums.ActionPermissionOptions.Delete)]
         [HttpPost, Route("Del")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public virtual ActionResult Del([FromBody] object[] keys)
         {
-            _baseWebResponseContent = InvokeService("Del", new object[] { keys, true }) as WebResponseContent;
-            Logger.Info(Enums.LoggerType.Del, keys.Serialize(), _baseWebResponseContent.Status ? "Ok" : _baseWebResponseContent.Message);
+            _baseWebResponseContent =
+                InvokeService("Del", new object[] { keys, true }) as WebResponseContent;
+            Logger.Info(
+                Enums.LoggerType.Del,
+                keys.Serialize(),
+                _baseWebResponseContent.Status ? "Ok" : _baseWebResponseContent.Message
+            );
             return Json(_baseWebResponseContent);
         }
+
         /// <summary>
         /// 审核
         /// </summary>
@@ -144,12 +160,23 @@ namespace VOL.Core.Controllers.Basic
         [ApiActionPermission(Enums.ActionPermissionOptions.Audit)]
         [HttpPost, Route("Audit")]
         [ApiExplorerSettings(IgnoreApi = true)]
-        public virtual ActionResult Audit([FromBody] object[] id, int? auditStatus, string auditReason)
+        public virtual ActionResult Audit(
+            [FromBody] object[] id,
+            int? auditStatus,
+            string auditReason
+        )
         {
-            _baseWebResponseContent = InvokeService("Audit", new object[] { id, auditStatus, auditReason }) as WebResponseContent;
-            Logger.Info(Enums.LoggerType.Del, id?.Serialize() + "," + (auditStatus ?? -1) + "," + auditReason, _baseWebResponseContent.Status ? "Ok" : _baseWebResponseContent.Message);
+            _baseWebResponseContent =
+                InvokeService("Audit", new object[] { id, auditStatus, auditReason })
+                as WebResponseContent;
+            Logger.Info(
+                Enums.LoggerType.Del,
+                id?.Serialize() + "," + (auditStatus ?? -1) + "," + auditReason,
+                _baseWebResponseContent.Status ? "Ok" : _baseWebResponseContent.Message
+            );
             return Json(_baseWebResponseContent);
         }
+
         /// <summary>
         /// 新增支持主子表
         /// </summary>
@@ -161,13 +188,18 @@ namespace VOL.Core.Controllers.Basic
         [ApiExplorerSettings(IgnoreApi = true)]
         public virtual ActionResult Add([FromBody] SaveModel saveModel)
         {
-            _baseWebResponseContent = InvokeService("Add",
-                new Type[] { typeof(SaveModel) },
-                new object[] { saveModel }) as WebResponseContent;
-            Logger.Info(Enums.LoggerType.Add, null, _baseWebResponseContent.Status ? "Ok" : _baseWebResponseContent.Message);
+            _baseWebResponseContent =
+                InvokeService("Add", new Type[] { typeof(SaveModel) }, new object[] { saveModel })
+                as WebResponseContent;
+            Logger.Info(
+                Enums.LoggerType.Add,
+                null,
+                _baseWebResponseContent.Status ? "Ok" : _baseWebResponseContent.Message
+            );
             _baseWebResponseContent.Data = _baseWebResponseContent.Data?.Serialize();
             return Json(_baseWebResponseContent);
         }
+
         /// <summary>
         /// 编辑支持主子表
         /// [ModelBinder(BinderType =(typeof(ModelBinder.BaseModelBinder)))]可指定绑定modelbinder
@@ -180,8 +212,13 @@ namespace VOL.Core.Controllers.Basic
         [ApiExplorerSettings(IgnoreApi = true)]
         public virtual ActionResult Update([FromBody] SaveModel saveModel)
         {
-            _baseWebResponseContent = InvokeService("Update", new object[] { saveModel }) as WebResponseContent;
-            Logger.Info(Enums.LoggerType.Edit, null, _baseWebResponseContent.Status ? "Ok" : _baseWebResponseContent.Message);
+            _baseWebResponseContent =
+                InvokeService("Update", new object[] { saveModel }) as WebResponseContent;
+            Logger.Info(
+                Enums.LoggerType.Edit,
+                null,
+                _baseWebResponseContent.Status ? "Ok" : _baseWebResponseContent.Message
+            );
             _baseWebResponseContent.Data = _baseWebResponseContent.Data?.Serialize();
             return Json(_baseWebResponseContent);
         }
@@ -196,6 +233,7 @@ namespace VOL.Core.Controllers.Basic
         {
             return Service.GetType().GetMethod(methodName).Invoke(Service, parameters);
         }
+
         /// <summary>
         /// 调用service方法
         /// </summary>

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using VOL.Core.Controllers.Basic;
 using VOL.Entity.AttributeManager;
 using VOL.Sys.IServices;
+
 namespace VOL.Sys.Controllers
 {
     [Route("api/Sys_QuartzLog")]
@@ -13,9 +14,6 @@ namespace VOL.Sys.Controllers
     public partial class Sys_QuartzLogController : ApiBaseController<ISys_QuartzLogService>
     {
         public Sys_QuartzLogController(ISys_QuartzLogService service)
-        : base(service)
-        {
-        }
+            : base(service) { }
     }
 }
-

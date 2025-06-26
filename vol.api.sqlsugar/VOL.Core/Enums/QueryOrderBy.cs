@@ -6,7 +6,7 @@ namespace VOL.Core.Enums
 {
     public enum QueryOrderBy
     {
-        Desc=1,
-        Asc=2
+        Desc = 1,
+        Asc = 2,
     }
 }

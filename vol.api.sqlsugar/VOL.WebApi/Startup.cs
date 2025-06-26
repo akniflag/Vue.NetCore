@@ -47,6 +47,7 @@ namespace VOL.WebApi
 
         public IConfiguration Configuration { get; }
         private IServiceCollection Services { get; set; }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -64,44 +65,56 @@ namespace VOL.WebApi
                 options.Filters.Add(typeof(ActionExecuteFilter));
                 //  options.SuppressAsyncSuffixInActionNames = false;
             });
-            services.AddControllers()
-              .AddNewtonsoftJson(op =>
-              {
-                  op.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver();
-                  op.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
-              });
+            services
+                .AddControllers()
+                .AddNewtonsoftJson(op =>
+                {
+                    op.SerializerSettings.ContractResolver =
+                        new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver();
+                    op.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
+                });
 
-            Services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-             .AddJwtBearer(options =>
-             {
-                 options.TokenValidationParameters = new TokenValidationParameters
-                 {
-                     SaveSigninToken = true,//保存token,后台验证token是否生效(重要)
-                     ValidateIssuer = true,//是否验证Issuer
-                     ValidateAudience = true,//是否验证Audience
-                     ValidateLifetime = true,//是否验证失效时间
-                     ValidateIssuerSigningKey = true,//是否验证SecurityKey
-                     ValidAudience = AppSetting.Secret.Audience,//Audience
-                     ValidIssuer = AppSetting.Secret.Issuer,//Issuer，这两项和前面签发jwt的设置一致
-                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AppSetting.Secret.JWT))
-                 };
-                 options.Events = new JwtBearerEvents()
-                 {
-                     OnChallenge = context =>
-                     {
-                         context.HandleResponse();
-                         context.Response.Clear();
-                         context.Response.ContentType = "application/json";
-                         context.Response.StatusCode = 401;
-                         context.Response.WriteAsync(new { message = "授权未通过", status = false, code = 401 }.Serialize());
-                         return Task.CompletedTask;
-                     }
-                 };
-             });
+            Services
+                .AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        SaveSigninToken = true, //保存token,后台验证token是否生效(重要)
+                        ValidateIssuer = true, //是否验证Issuer
+                        ValidateAudience = true, //是否验证Audience
+                        ValidateLifetime = true, //是否验证失效时间
+                        ValidateIssuerSigningKey = true, //是否验证SecurityKey
+                        ValidAudience = AppSetting.Secret.Audience, //Audience
+                        ValidIssuer = AppSetting.Secret.Issuer, //Issuer，这两项和前面签发jwt的设置一致
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(AppSetting.Secret.JWT)
+                        ),
+                    };
+                    options.Events = new JwtBearerEvents()
+                    {
+                        OnChallenge = context =>
+                        {
+                            context.HandleResponse();
+                            context.Response.Clear();
+                            context.Response.ContentType = "application/json";
+                            context.Response.StatusCode = 401;
+                            context.Response.WriteAsync(
+                                new
+                                {
+                                    message = "授权未通过",
+                                    status = false,
+                                    code = 401,
+                                }.Serialize()
+                            );
+                            return Task.CompletedTask;
+                        },
+                    };
+                });
             //必须appsettings.json中配置
             string corsUrls = Configuration["CorsUrls"];
             if (string.IsNullOrEmpty(corsUrls))
@@ -110,63 +123,90 @@ namespace VOL.WebApi
             }
             services.AddCors(options =>
             {
-                options.AddDefaultPolicy(
-                        builder =>
-                        {
-                            builder.AllowAnyOrigin()
-                           .SetPreflightMaxAge(TimeSpan.FromSeconds(2520))
-                            .AllowAnyHeader().AllowAnyMethod();
-                        });
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder
+                        .AllowAnyOrigin()
+                        .SetPreflightMaxAge(TimeSpan.FromSeconds(2520))
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
             });
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddControllers();
-            services.AddSwaggerGen(c =>
-            {
-                //分为2份接口文档
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "VOL.Core后台Api", Version = "v1", Description = "这是对文档的描述。。" });
-                c.SwaggerDoc("v2", new OpenApiInfo { Title = "VOL.Core对外三方Api", Version = "v2", Description = "xxx接口文档" });  //控制器里使用[ApiExplorerSettings(GroupName = "v2")]              
-                                                                                                                             //启用中文注释功能
-                                                                                                                             // var basePath = PlatformServices.Default.Application.ApplicationBasePath;
-                                                                                                                             //  var xmlPath = Path.Combine(basePath, "VOL.WebApi.xml");
-                                                                                                                             //   c.IncludeXmlComments(xmlPath, true);//显示控制器xml注释内容
-                                                                                                                             //添加过滤器 可自定义添加对控制器的注释描述
-                                                                                                                             //c.DocumentFilter<SwaggerDocTag>();
-
-                var security = new Dictionary<string, IEnumerable<string>> { { AppSetting.Secret.Issuer, new string[] { } } };
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+            services
+                .AddSwaggerGen(c =>
                 {
-                    Description = "JWT授权token前面需要加上字段Bearer与一个空格,如Bearer token",
-                    Name = "Authorization",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.ApiKey,
-                    BearerFormat = "JWT",
-                    Scheme = "Bearer"
-                });
-
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
-                        new OpenApiSecurityScheme
+                    //分为2份接口文档
+                    c.SwaggerDoc(
+                        "v1",
+                        new OpenApiInfo
                         {
-                            Reference = new OpenApiReference {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                            }
-                        },
-                        new string[] { }
-                    }
+                            Title = "VOL.Core后台Api",
+                            Version = "v1",
+                            Description = "这是对文档的描述。。",
+                        }
+                    );
+                    c.SwaggerDoc(
+                        "v2",
+                        new OpenApiInfo
+                        {
+                            Title = "VOL.Core对外三方Api",
+                            Version = "v2",
+                            Description = "xxx接口文档",
+                        }
+                    ); //控制器里使用[ApiExplorerSettings(GroupName = "v2")]
+                    //启用中文注释功能
+                    // var basePath = PlatformServices.Default.Application.ApplicationBasePath;
+                    //  var xmlPath = Path.Combine(basePath, "VOL.WebApi.xml");
+                    //   c.IncludeXmlComments(xmlPath, true);//显示控制器xml注释内容
+                    //添加过滤器 可自定义添加对控制器的注释描述
+                    //c.DocumentFilter<SwaggerDocTag>();
+
+                    var security = new Dictionary<string, IEnumerable<string>>
+                    {
+                        { AppSetting.Secret.Issuer, new string[] { } },
+                    };
+                    c.AddSecurityDefinition(
+                        "Bearer",
+                        new OpenApiSecurityScheme()
+                        {
+                            Description =
+                                "JWT授权token前面需要加上字段Bearer与一个空格,如Bearer token",
+                            Name = "Authorization",
+                            In = ParameterLocation.Header,
+                            Type = SecuritySchemeType.ApiKey,
+                            BearerFormat = "JWT",
+                            Scheme = "Bearer",
+                        }
+                    );
+
+                    c.AddSecurityRequirement(
+                        new OpenApiSecurityRequirement
+                        {
+                            {
+                                new OpenApiSecurityScheme
+                                {
+                                    Reference = new OpenApiReference
+                                    {
+                                        Type = ReferenceType.SecurityScheme,
+                                        Id = "Bearer",
+                                    },
+                                },
+                                new string[] { }
+                            },
+                        }
+                    );
+                })
+                .AddControllers()
+                .ConfigureApiBehaviorOptions(options =>
+                {
+                    options.SuppressConsumesConstraintForFormFileParameters = true;
+                    options.SuppressInferBindingSourcesForParameters = true;
+                    options.SuppressModelStateInvalidFilter = true;
+                    options.SuppressMapClientErrors = true;
+                    options.ClientErrorMapping[404].Link = "https://*/404";
                 });
-            })
-             .AddControllers()
-            .ConfigureApiBehaviorOptions(options =>
-            {
-                options.SuppressConsumesConstraintForFormFileParameters = true;
-                options.SuppressInferBindingSourcesForParameters = true;
-                options.SuppressModelStateInvalidFilter = true;
-                options.SuppressMapClientErrors = true;
-                options.ClientErrorMapping[404].Link =
-                    "https://*/404";
-            });
             services.AddSignalR();
             //services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
             //services.AddTransient<IPDFService, PDFService>();
@@ -180,35 +220,49 @@ namespace VOL.WebApi
             //设置文件上传大小限制
             services.Configure<FormOptions>(x =>
             {
-                x.MultipartBodyLengthLimit = 1024 * 1024 * 100;//100M
+                x.MultipartBodyLengthLimit = 1024 * 1024 * 100; //100M
             });
             services.Configure<KestrelServerOptions>(options =>
             {
-                options.Limits.MaxRequestBodySize = 1024 * 1024 * 100;//100M
+                options.Limits.MaxRequestBodySize = 1024 * 1024 * 100; //100M
             });
             services.Configure<IISServerOptions>(options =>
             {
-                options.MaxRequestBodySize = 1024 * 1024 * 100;//100M
+                options.MaxRequestBodySize = 1024 * 1024 * 100; //100M
             });
 
             AppSetting.Init(services, Configuration);
             services.UseSqlSugar();
         }
+
         public void ConfigureContainer(ContainerBuilder builder)
         {
             Services.AddModule(builder, Configuration);
             //初始化流程表，表里面必须有AuditStatus字段
-            WorkFlowContainer.Instance
+            WorkFlowContainer
+                .Instance
                 ////name= 流程实例名称
-                 ////  filterFields流程实例名称
-                 .Use<Sys_User>(name: "用户管理",
-                    filterFields: x => new { x.UserTrueName, x.Role_Id,x.Email }, //审批过滤条件的字段
-                    formFields: x => new { x.UserTrueName, x.Role_Id, x.Email }//审批界面显示的字段
-                 )
+                ////  filterFields流程实例名称
+                .Use<Sys_User>(
+                    name: "用户管理",
+                    filterFields: x => new
+                    {
+                        x.UserTrueName,
+                        x.Role_Id,
+                        x.Email,
+                    }, //审批过滤条件的字段
+                    formFields: x => new
+                    {
+                        x.UserTrueName,
+                        x.Role_Id,
+                        x.Email,
+                    } //审批界面显示的字段
+                )
                 // .Use<App_Expert>()
                 //run方法必须写在最后位置
                 .Run();
         }
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -222,10 +276,8 @@ namespace VOL.WebApi
             }
             app.UseMiddleware<ExceptionHandlerMiddleWare>();
             app.UseDefaultFiles();
-            app.UseStaticFiles().UseStaticFiles(new StaticFileOptions
-            {
-                ServeUnknownFileTypes = true
-            });
+            app.UseStaticFiles()
+                .UseStaticFiles(new StaticFileOptions { ServeUnknownFileTypes = true });
             app.Use(HttpRequestMiddleware.Context);
 
             //2021.06.27增加创建默认upload文件夹
@@ -236,19 +288,23 @@ namespace VOL.WebApi
                 Directory.CreateDirectory(_uploadPath);
             }
 
-            app.UseStaticFiles(new StaticFileOptions()
-            {
-                FileProvider = new PhysicalFileProvider(
-                Path.Combine(Directory.GetCurrentDirectory(), @"Upload")),
-                //配置访问虚拟目录时文件夹别名
-                RequestPath = "/Upload",
-                OnPrepareResponse = (Microsoft.AspNetCore.StaticFiles.StaticFileResponseContext staticFile) =>
+            app.UseStaticFiles(
+                new StaticFileOptions()
                 {
-                    //可以在此处读取请求的信息进行权限认证
-                    //  staticFile.File
-                    //  staticFile.Context.Response.StatusCode;
+                    FileProvider = new PhysicalFileProvider(
+                        Path.Combine(Directory.GetCurrentDirectory(), @"Upload")
+                    ),
+                    //配置访问虚拟目录时文件夹别名
+                    RequestPath = "/Upload",
+                    OnPrepareResponse = (
+                        Microsoft.AspNetCore.StaticFiles.StaticFileResponseContext staticFile
+                    ) => {
+                        //可以在此处读取请求的信息进行权限认证
+                        //  staticFile.File
+                        //  staticFile.Context.Response.StatusCode;
+                    },
                 }
-            });
+            );
             //配置HttpContext
             app.UseStaticHttpContext();
 
@@ -272,14 +328,15 @@ namespace VOL.WebApi
                 {
                     string corsUrls = Configuration["CorsUrls"];
 
-                    endpoints.MapHub<HomePageMessageHub>("/message")
-                    .RequireCors(t =>
-                    t.WithOrigins(corsUrls.Split(',')).
-                    AllowAnyMethod().
-                    AllowAnyHeader().
-                    AllowCredentials());
+                    endpoints
+                        .MapHub<HomePageMessageHub>("/message")
+                        .RequireCors(t =>
+                            t.WithOrigins(corsUrls.Split(','))
+                                .AllowAnyMethod()
+                                .AllowAnyHeader()
+                                .AllowCredentials()
+                        );
                 }
-
             });
         }
     }

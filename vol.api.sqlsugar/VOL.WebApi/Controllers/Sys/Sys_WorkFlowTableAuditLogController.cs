@@ -6,16 +6,15 @@ using Microsoft.AspNetCore.Mvc;
 using VOL.Core.Controllers.Basic;
 using VOL.Entity.AttributeManager;
 using VOL.Sys.IServices;
+
 namespace VOL.Sys.Controllers
 {
     [Route("api/Sys_WorkFlowTableAuditLog")]
     [PermissionTable(Name = "Sys_WorkFlowTableAuditLog")]
-    public partial class Sys_WorkFlowTableAuditLogController : ApiBaseController<ISys_WorkFlowTableAuditLogService>
+    public partial class Sys_WorkFlowTableAuditLogController
+        : ApiBaseController<ISys_WorkFlowTableAuditLogService>
     {
         public Sys_WorkFlowTableAuditLogController(ISys_WorkFlowTableAuditLogService service)
-        : base(service)
-        {
-        }
+            : base(service) { }
     }
 }
-

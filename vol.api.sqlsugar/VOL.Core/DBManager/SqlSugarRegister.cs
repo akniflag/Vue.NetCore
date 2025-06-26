@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using SqlSugar;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
+using SqlSugar;
 using VOL.Core.Configuration;
 using VOL.Core.DBManager;
 using VOL.Core.DbSqlSugar;
@@ -18,7 +18,6 @@ namespace VOL.Core.DBManager
 {
     public static class SqlSugarRegister
     {
-
         /// <summary>
         ///系统库链接
         /// </summary>
@@ -27,17 +26,13 @@ namespace VOL.Core.DBManager
         {
             return new ConnectionConfig()
             {
-                DbType = DbManger.GetDbType(),// SqlSugar.DbType.SqlServer,
+                DbType = DbManger.GetDbType(), // SqlSugar.DbType.SqlServer,
                 ConnectionString = DBServerProvider.GetConnectionString(null),
                 IsAutoCloseConnection = true,
                 ConfigId = "default",
-                MoreSettings = new ConnMoreSettings()
-                {
-                    PgSqlIsAutoToLower = false
-                }
+                MoreSettings = new ConnMoreSettings() { PgSqlIsAutoToLower = false },
             };
         }
-
 
         public static IServiceCollection UseSqlSugar(this IServiceCollection services)
         {
@@ -49,31 +44,31 @@ namespace VOL.Core.DBManager
             services.AddSingleton<ISqlSugarClient>(s =>
             {
                 SqlSugarScope sqlSugar = new SqlSugarScope(
-                 GetSysConnectionConfig(),
-               //这里自定义数据库链接
-               //new List<ConnectionConfig>()
-               //{
-               //   sysConfig,
-               //    new ConnectionConfig(){
-               //    DbType = dbType,// SqlSugar.DbType.SqlServer,
-               //    ConnectionString = DBServerProvider.SysConnectingString,
-               //    IsAutoCloseConnection = true,
-               //    ConfigId ="名字"// typeof(SysDbContext).Name,
-               //  },
+                    GetSysConnectionConfig(),
+                    //这里自定义数据库链接
+                    //new List<ConnectionConfig>()
+                    //{
+                    //   sysConfig,
+                    //    new ConnectionConfig(){
+                    //    DbType = dbType,// SqlSugar.DbType.SqlServer,
+                    //    ConnectionString = DBServerProvider.SysConnectingString,
+                    //    IsAutoCloseConnection = true,
+                    //    ConfigId ="名字"// typeof(SysDbContext).Name,
+                    //  },
 
-               //},
-               db =>
-               {
-                   //单例参数配置，所有上下文生效
-                   db.Aop.OnLogExecuting = (sql, pars) =>
-                   {
-                       if (AppSetting.ShowSqlLog)
-                       {
-                           Console.Write(sql);
-                       }
-                   };
-
-               });
+                    //},
+                    db =>
+                    {
+                        //单例参数配置，所有上下文生效
+                        db.Aop.OnLogExecuting = (sql, pars) =>
+                        {
+                            if (AppSetting.ShowSqlLog)
+                            {
+                                Console.Write(sql);
+                            }
+                        };
+                    }
+                );
                 return sqlSugar;
             });
             return services;

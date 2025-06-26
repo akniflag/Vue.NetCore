@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using VOL.Core.Controllers.Basic;
 using VOL.Core.Extensions;
 using VOL.Core.Filters;
@@ -11,8 +11,6 @@ namespace VOL.Sys.Controllers
     public partial class Sys_DictionaryController : ApiBaseController<ISys_DictionaryService>
     {
         public Sys_DictionaryController(ISys_DictionaryService service)
-        : base("System", "System", "Sys_Dictionary", service)
-        {
-        }
+            : base("System", "System", "Sys_Dictionary", service) { }
     }
 }

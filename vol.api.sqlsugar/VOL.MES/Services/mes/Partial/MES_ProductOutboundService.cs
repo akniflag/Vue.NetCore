@@ -6,34 +6,34 @@
 *用户信息、权限、角色等使用UserContext.Current操作
 *MES_ProductOutboundService对增、删、改查、导入、导出、审核业务代码扩展参照ServiceFunFilter
 */
-using VOL.Core.BaseProvider;
-using VOL.Core.Extensions.AutofacManager;
-using VOL.Entity.DomainModels;
 using System.Linq;
-using VOL.Core.Utilities;
 using System.Linq.Expressions;
-using VOL.Core.Extensions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Http;
-using VOL.MES.IRepositories;
 using SqlSugar;
-using VOL.Core.DbSqlSugar;
+using VOL.Core.BaseProvider;
 using VOL.Core.DBManager;
+using VOL.Core.DbSqlSugar;
+using VOL.Core.Extensions;
+using VOL.Core.Extensions.AutofacManager;
+using VOL.Core.Utilities;
+using VOL.Entity.DomainModels;
+using VOL.MES.IRepositories;
 
 namespace VOL.MES.Services
 {
     public partial class MES_ProductOutboundService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IMES_ProductOutboundRepository _repository;//访问数据库
+        private readonly IMES_ProductOutboundRepository _repository; //访问数据库
 
         [ActivatorUtilitiesConstructor]
         public MES_ProductOutboundService(
             IMES_ProductOutboundRepository dbRepository,
             IHttpContextAccessor httpContextAccessor
-            )
-        : base(dbRepository)
+        )
+            : base(dbRepository)
         {
             _httpContextAccessor = httpContextAccessor;
             _repository = dbRepository;
@@ -45,11 +45,12 @@ namespace VOL.MES.Services
         {
             SummaryExpress = (ISugarQueryable<MES_ProductOutbound> queryable) =>
             {
-                return queryable.Select(x => new
-                {
-                    OutboundQuantity = SqlFunc.AggregateSum(x.OutboundQuantity).ToString("f2")
-                })
-            .FirstOrDefault();
+                return queryable
+                    .Select(x => new
+                    {
+                        OutboundQuantity = SqlFunc.AggregateSum(x.OutboundQuantity).ToString("f2"),
+                    })
+                    .FirstOrDefault();
             };
             return base.GetPageData(options);
         }

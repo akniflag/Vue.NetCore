@@ -9,6 +9,7 @@
         /// 用户密码加密key
         /// </summary>
         public string User { get; set; }
+
         /// <summary>
         /// 数据库加密key
         /// </summary>
@@ -31,6 +32,5 @@
         /// 导出文件加密key
         /// </summary>
         public string ExportFile = "C5ABA9E202D94C13A3CB66002BF77FAF";
-
     }
 }

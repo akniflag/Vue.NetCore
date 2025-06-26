@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using VOL.Core.Controllers.Basic;
 using VOL.Entity.AttributeManager;
 using VOL.MES.IServices;
+
 namespace VOL.MES.Controllers
 {
     [Route("api/MES_Material")]
@@ -13,9 +14,6 @@ namespace VOL.MES.Controllers
     public partial class MES_MaterialController : ApiBaseController<IMES_MaterialService>
     {
         public MES_MaterialController(IMES_MaterialService service)
-        : base(service)
-        {
-        }
+            : base(service) { }
     }
 }
-

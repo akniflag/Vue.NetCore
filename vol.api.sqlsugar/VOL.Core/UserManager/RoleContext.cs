@@ -1,7 +1,7 @@
-﻿using SqlSugar;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using SqlSugar;
 using VOL.Core.CacheManager;
 using VOL.Core.DBManager;
 using VOL.Core.Extensions.AutofacManager;
@@ -13,12 +13,12 @@ namespace VOL.Core.UserManager
 {
     public static class RoleContext
     {
-
         private static object _RoleObj = new object();
         private static string _RoleVersionn = "";
         public const string Key = "inernalRole";
 
         private static List<RoleNodes> _roles { get; set; }
+
         public static List<RoleNodes> GetAllRoleId()
         {
             var cacheService = AutofacContainerModule.GetService<CacheManager.ICacheService>();
@@ -29,12 +29,18 @@ namespace VOL.Core.UserManager
             }
             lock (_RoleObj)
             {
-                if (_RoleVersionn != "" && _roles != null && _RoleVersionn == cacheService.Get(Key)) return _roles;
-                _roles = DBServerProvider.DbContext
-                  .Set<Sys_Role>()
-                   .Where(x => true)
-                   .Select(s => new RoleNodes() { Id = s.Role_Id, ParentId = s.ParentId, RoleName = s.RoleName })
-             .ToList();
+                if (_RoleVersionn != "" && _roles != null && _RoleVersionn == cacheService.Get(Key))
+                    return _roles;
+                _roles = DBServerProvider
+                    .DbContext.Set<Sys_Role>()
+                    .Where(x => true)
+                    .Select(s => new RoleNodes()
+                    {
+                        Id = s.Role_Id,
+                        ParentId = s.ParentId,
+                        RoleName = s.RoleName,
+                    })
+                    .ToList();
 
                 string cacheVersion = cacheService.Get(Key);
                 if (string.IsNullOrEmpty(cacheVersion))
@@ -54,17 +60,20 @@ namespace VOL.Core.UserManager
         {
             AutofacContainerModule.GetService<CacheManager.ICacheService>().Remove(Key);
         }
+
         /// <summary>
-        /// 
+        ///
         /// 获取当前角色下的所有角色(包括自己的角色)
         /// </summary>
         /// <param name="roleId"></param>
         /// <returns></returns>
         public static List<RoleNodes> GetAllChildren(int roleId)
         {
-            if (roleId <= 0) return new List<RoleNodes>() { };
+            if (roleId <= 0)
+                return new List<RoleNodes>() { };
             var roles = GetAllRoleId();
-            if (UserContext.IsRoleIdSuperAdmin(roleId)) return roles;
+            if (UserContext.IsRoleIdSuperAdmin(roleId))
+                return roles;
 
             var list = GetChildren(roles, roleId);
             //if (list.Any(x => x.Id == roleId))
@@ -73,12 +82,14 @@ namespace VOL.Core.UserManager
             //}
             return list;
         }
+
         public static List<int> GetAllChildrenIds(int roleId)
         {
             var roleIds = GetAllChildren(roleId).Select(x => x.Id).ToList();
             roleIds.Add(roleId);
             return roleIds;
         }
+
         /// <summary>
         /// 获取所有子节点
         /// </summary>
@@ -90,11 +101,15 @@ namespace VOL.Core.UserManager
             for (int i = 0; i < rolesChildren.Count; i++)
             {
                 RoleNodes node = rolesChildren[i];
-                var children = roles.Where(x => x.ParentId == node.Id && !rolesChildren.Any(c => c.Id == x.Id)).Distinct().ToList();
+                var children = roles
+                    .Where(x => x.ParentId == node.Id && !rolesChildren.Any(c => c.Id == x.Id))
+                    .Distinct()
+                    .ToList();
                 rolesChildren.AddRange(children);
             }
             return rolesChildren;
         }
+
         /// <summary>
         /// 获取当前角色下的所有用户
         /// </summary>
@@ -106,12 +121,13 @@ namespace VOL.Core.UserManager
             {
                 throw new Exception("未获取到当前角色");
             }
-            return DBServerProvider.DbContext
-                  .Set<Sys_User>()
-                  .Where(u => roles.Contains(u.Role_Id)).Select(s => s.User_Id);
-
+            return DBServerProvider
+                .DbContext.Set<Sys_User>()
+                .Where(u => roles.Contains(u.Role_Id))
+                .Select(s => s.User_Id);
         }
     }
+
     public class RoleNodes
     {
         public int Id { get; set; }

@@ -38,17 +38,19 @@ namespace VOL.Sys.Services
         public async Task<object> GetMenu()
         {
             //  DBServerProvider.SqlDapper.q
-            return (await repository.FindAsync(x => 1 == 1, a =>
-             new
-             {
-                 id = a.Menu_Id,
-                 parentId = a.ParentId,
-                 name = a.MenuName,
-                 a.MenuType,
-                 a.OrderNo
-             })).OrderByDescending(a => a.OrderNo)
-                .ThenByDescending(q => q.parentId).ToList();
-
+            return (
+                await repository.FindAsync(
+                    x => 1 == 1,
+                    a => new
+                    {
+                        id = a.Menu_Id,
+                        parentId = a.ParentId,
+                        name = a.MenuName,
+                        a.MenuType,
+                        a.OrderNo,
+                    }
+                )
+            ).OrderByDescending(a => a.OrderNo).ThenByDescending(q => q.parentId).ToList();
         }
 
         private List<Sys_Menu> GetAllMenu()
@@ -61,11 +63,14 @@ namespace VOL.Sys.Services
             }
             lock (_menuObj)
             {
-                if (_menuVersionn != "" && _menus != null && _menuVersionn == _cacheVersion) return _menus;
+                if (_menuVersionn != "" && _menus != null && _menuVersionn == _cacheVersion)
+                    return _menus;
                 //2020.12.27增加菜单界面上不显示，但可以分配权限
-                _menus = repository.FindAsIQueryable(x => x.Enable == 1 || x.Enable == 2)
+                _menus = repository
+                    .FindAsIQueryable(x => x.Enable == 1 || x.Enable == 2)
                     .OrderByDescending(a => a.OrderNo)
-                    .ThenByDescending(q => q.ParentId).ToList();
+                    .ThenByDescending(q => q.ParentId)
+                    .ToList();
 
                 _menus.ForEach(x =>
                 {
@@ -79,7 +84,8 @@ namespace VOL.Sys.Services
                         }
                         catch { }
                     }
-                    if (x.Actions == null) x.Actions = new List<Sys_Actions>();
+                    if (x.Actions == null)
+                        x.Actions = new List<Sys_Actions>();
                 });
 
                 string cacheVersion = CacheContext.Get(_menuCacheKey);
@@ -106,14 +112,16 @@ namespace VOL.Sys.Services
             return GetUserMenuList(roleId);
         }
 
-
         public List<Sys_Menu> GetUserMenuList(int roleId)
         {
             if (UserContext.IsRoleIdSuperAdmin(roleId))
             {
                 return GetAllMenu();
             }
-            List<int> menuIds = UserContext.Current.GetPermissions(roleId).Select(x => x.Menu_Id).ToList();
+            List<int> menuIds = UserContext
+                .Current.GetPermissions(roleId)
+                .Select(x => x.Menu_Id)
+                .ToList();
             return GetAllMenu().Where(x => menuIds.Contains(x.Menu_Id)).ToList();
         }
 
@@ -136,37 +144,40 @@ namespace VOL.Sys.Services
             //2020.12.27增加菜单界面上不显示，但可以分配权限
             if (UserContext.IsRoleIdSuperAdmin(roleId))
             {
-                return await Task.Run(() => GetAllMenu()
-                .Where(c => c.MenuType == UserContext.MenuType)
-                .Select(x =>
-                new
-                {
-                    id = x.Menu_Id,
-                    name = x.MenuName,
-                    url = x.Url,
-                    parentId = x.ParentId,
-                    icon = x.Icon,
-                    x.Enable,
-                    x.TableName, // 2022.03.26增移动端加菜单类型
-                    permission = x.Actions.Select(s => s.Value).ToArray()
-                }).ToList());
+                return await Task.Run(() =>
+                    GetAllMenu()
+                        .Where(c => c.MenuType == UserContext.MenuType)
+                        .Select(x => new
+                        {
+                            id = x.Menu_Id,
+                            name = x.MenuName,
+                            url = x.Url,
+                            parentId = x.ParentId,
+                            icon = x.Icon,
+                            x.Enable,
+                            x.TableName, // 2022.03.26增移动端加菜单类型
+                            permission = x.Actions.Select(s => s.Value).ToArray(),
+                        })
+                        .ToList()
+                );
             }
 
-            var menu = from a in UserContext.Current.Permissions
-                       join b in GetAllMenu().Where(c => c.MenuType == UserContext.MenuType)
-                       on a.Menu_Id equals b.Menu_Id
-                       orderby b.OrderNo descending
-                       select new
-                       {
-                           id = a.Menu_Id,
-                           name = b.MenuName,
-                           url = b.Url,
-                           parentId = b.ParentId,
-                           icon = b.Icon,
-                           b.Enable,
-                           b.TableName, // 2022.03.26增移动端加菜单类型
-                           permission = a.UserAuthArr
-                       };
+            var menu =
+                from a in UserContext.Current.Permissions
+                join b in GetAllMenu().Where(c => c.MenuType == UserContext.MenuType)
+                    on a.Menu_Id equals b.Menu_Id
+                orderby b.OrderNo descending
+                select new
+                {
+                    id = a.Menu_Id,
+                    name = b.MenuName,
+                    url = b.Url,
+                    parentId = b.ParentId,
+                    icon = b.Icon,
+                    b.Enable,
+                    b.TableName, // 2022.03.26增移动端加菜单类型
+                    permission = a.UserAuthArr,
+                };
             return menu.ToList();
         }
 
@@ -178,25 +189,34 @@ namespace VOL.Sys.Services
         public async Task<WebResponseContent> Save(Sys_Menu menu)
         {
             WebResponseContent webResponse = new WebResponseContent();
-            if (menu == null) return webResponse.Error("没有获取到提交的参数");
-            if (menu.Menu_Id > 0 && menu.Menu_Id == menu.ParentId) return webResponse.Error("父级ID不能是当前菜单的ID");
+            if (menu == null)
+                return webResponse.Error("没有获取到提交的参数");
+            if (menu.Menu_Id > 0 && menu.Menu_Id == menu.ParentId)
+                return webResponse.Error("父级ID不能是当前菜单的ID");
             try
             {
                 webResponse = menu.ValidationEntity(x => new { x.MenuName, x.TableName });
-                if (!webResponse.Status) return webResponse;
+                if (!webResponse.Status)
+                    return webResponse;
                 if (menu.TableName != "/" && menu.TableName != ".")
                 {
                     // 2022.03.26增移动端加菜单类型判断
-                    Sys_Menu sysMenu = await repository.FindAsyncFirst(x => x.TableName == menu.TableName);
+                    Sys_Menu sysMenu = await repository.FindAsyncFirst(x =>
+                        x.TableName == menu.TableName
+                    );
                     if (sysMenu != null)
                     {
                         sysMenu.MenuType ??= 0;
                         if (sysMenu.MenuType == menu.MenuType)
                         {
-                            if ((menu.Menu_Id > 0 && sysMenu.Menu_Id != menu.Menu_Id)
-                            || menu.Menu_Id <= 0)
+                            if (
+                                (menu.Menu_Id > 0 && sysMenu.Menu_Id != menu.Menu_Id)
+                                || menu.Menu_Id <= 0
+                            )
                             {
-                                return webResponse.Error($"视图/表名【{menu.TableName}】已被其他菜单使用");
+                                return webResponse.Error(
+                                    $"视图/表名【{menu.TableName}】已被其他菜单使用"
+                                );
                             }
                         }
                     }
@@ -213,27 +233,40 @@ namespace VOL.Sys.Services
                     {
                         return webResponse.Error($"父级id不能为自己");
                     }
-                    if (repository.Exists(x => x.ParentId == menu.Menu_Id && menu.ParentId == x.Menu_Id))
+                    if (
+                        repository.Exists(x =>
+                            x.ParentId == menu.Menu_Id && menu.ParentId == x.Menu_Id
+                        )
+                    )
                     {
-                        return webResponse.Error($"不能选择此父级id，选择的父级id与当前菜单形成依赖关系");
+                        return webResponse.Error(
+                            $"不能选择此父级id，选择的父级id与当前菜单形成依赖关系"
+                        );
                     }
 
-                    _changed = repository.FindAsIQueryable(c => c.Menu_Id == menu.Menu_Id).Select(s => s.Auth).FirstOrDefault() != menu.Auth;
+                    _changed =
+                        repository
+                            .FindAsIQueryable(c => c.Menu_Id == menu.Menu_Id)
+                            .Select(s => s.Auth)
+                            .FirstOrDefault() != menu.Auth;
 
-                    repository.Update(menu.SetModifyDefaultVal(), p => new
-                    {
-                        p.ParentId,
-                        p.MenuName,
-                        p.Url,
-                        p.Auth,
-                        p.OrderNo,
-                        p.Icon,
-                        p.Enable,
-                        p.MenuType,// 2022.03.26增移动端加菜单类型
-                        p.TableName,
-                        p.ModifyDate,
-                        p.Modifier
-                    });
+                    repository.Update(
+                        menu.SetModifyDefaultVal(),
+                        p => new
+                        {
+                            p.ParentId,
+                            p.MenuName,
+                            p.Url,
+                            p.Auth,
+                            p.OrderNo,
+                            p.Icon,
+                            p.Enable,
+                            p.MenuType, // 2022.03.26增移动端加菜单类型
+                            p.TableName,
+                            p.ModifyDate,
+                            p.Modifier,
+                        }
+                    );
                 }
                 await repository.SaveChangesAsync();
 
@@ -247,31 +280,30 @@ namespace VOL.Sys.Services
             }
             catch (Exception ex)
             {
-                webResponse.Error(ex.Message); 
+                webResponse.Error(ex.Message);
             }
             finally
             {
-                Logger.Info($"表:{menu.TableName},菜单：{menu.MenuName},权限{menu.Auth},{(webResponse.Status ? "成功" : "失败")}{webResponse.Message}");
+                Logger.Info(
+                    $"表:{menu.TableName},菜单：{menu.MenuName},权限{menu.Auth},{(webResponse.Status ? "成功" : "失败")}{webResponse.Message}"
+                );
             }
             return webResponse;
-
         }
 
         public async Task<WebResponseContent> DelMenu(int menuId)
         {
-            WebResponseContent webResponse =new  WebResponseContent();
-      
+            WebResponseContent webResponse = new WebResponseContent();
+
             if (await repository.ExistsAsync(x => x.ParentId == menuId))
             {
                 return webResponse.Error("当前菜单存在子菜单,请先删除子菜单!");
             }
-            repository.Delete(new Sys_Menu()
-            {
-                Menu_Id = menuId
-            }, true);
+            repository.Delete(new Sys_Menu() { Menu_Id = menuId }, true);
             CacheContext.Add(_menuCacheKey, DateTime.Now.ToString("yyyyMMddHHMMssfff"));
             return webResponse.OK("删除成功");
         }
+
         /// <summary>
         /// 编辑菜单时，获取菜单信息
         /// </summary>
@@ -280,8 +312,7 @@ namespace VOL.Sys.Services
         public async Task<object> GetTreeItem(int menuId)
         {
             var sysMenu = (await base.repository.FindAsync(x => x.Menu_Id == menuId))
-                .Select(
-                p => new
+                .Select(p => new
                 {
                     p.Menu_Id,
                     p.ParentId,
@@ -296,10 +327,10 @@ namespace VOL.Sys.Services
                     p.CreateDate,
                     p.Creator,
                     p.TableName,
-                    p.ModifyDate
-                }).FirstOrDefault();
+                    p.ModifyDate,
+                })
+                .FirstOrDefault();
             return sysMenu;
         }
     }
 }
-

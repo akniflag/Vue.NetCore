@@ -6,35 +6,35 @@
 *用户信息、权限、角色等使用UserContext.Current操作
 *Sys_DepartmentService对增、删、改查、导入、导出、审核业务代码扩展参照ServiceFunFilter
 */
-using VOL.Core.BaseProvider;
-using VOL.Core.Extensions.AutofacManager;
-using VOL.Entity.DomainModels;
+using System.Collections.Generic;
 using System.Linq;
-using VOL.Core.Utilities;
 using System.Linq.Expressions;
-using VOL.Core.Extensions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Http;
-using VOL.Sys.IRepositories;
-using System.Collections.Generic;
+using SqlSugar;
+using VOL.Core.BaseProvider;
+using VOL.Core.Extensions;
+using VOL.Core.Extensions.AutofacManager;
 using VOL.Core.ManageUser;
 using VOL.Core.UserManager;
-using SqlSugar;
+using VOL.Core.Utilities;
+using VOL.Entity.DomainModels;
+using VOL.Sys.IRepositories;
 
 namespace VOL.Sys.Services
 {
     public partial class Sys_DepartmentService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly ISys_DepartmentRepository _repository;//访问数据库
+        private readonly ISys_DepartmentRepository _repository; //访问数据库
 
         [ActivatorUtilitiesConstructor]
         public Sys_DepartmentService(
             ISys_DepartmentRepository dbRepository,
             IHttpContextAccessor httpContextAccessor
-            )
-        : base(dbRepository)
+        )
+            : base(dbRepository)
         {
             _httpContextAccessor = httpContextAccessor;
             _repository = dbRepository;
@@ -61,6 +61,7 @@ namespace VOL.Sys.Services
                 return queryable.Where(x => deptIds.Contains(x.DepartmentId));
             };
         }
+
         public override WebResponseContent Export(PageDataOptions pageData)
         {
             FilterData();
@@ -68,6 +69,7 @@ namespace VOL.Sys.Services
         }
 
         WebResponseContent webResponse = new WebResponseContent();
+
         public override WebResponseContent Add(SaveModel saveDataModel)
         {
             AddOnExecuting = (Sys_Department dept, object list) =>
@@ -76,15 +78,28 @@ namespace VOL.Sys.Services
             };
             return base.Add(saveDataModel).Reload();
         }
+
         public override WebResponseContent Update(SaveModel saveModel)
         {
-            UpdateOnExecuting = (Sys_Department dept, object addList, object updateList, List<object> delKeys) =>
+            UpdateOnExecuting = (
+                Sys_Department dept,
+                object addList,
+                object updateList,
+                List<object> delKeys
+            ) =>
             {
-                if (_repository.Exists(x => x.DepartmentId == dept.ParentId && x.DepartmentId == dept.DepartmentId))
+                if (
+                    _repository.Exists(x =>
+                        x.DepartmentId == dept.ParentId && x.DepartmentId == dept.DepartmentId
+                    )
+                )
                 {
                     return webResponse.Error("上级组织不能选择自己");
                 }
-                if (_repository.Exists(x => x.ParentId == dept.DepartmentId) && _repository.Exists(x => x.DepartmentId == dept.ParentId))
+                if (
+                    _repository.Exists(x => x.ParentId == dept.DepartmentId)
+                    && _repository.Exists(x => x.DepartmentId == dept.ParentId)
+                )
                 {
                     return webResponse.Error("不能选择此上级组织");
                 }
@@ -98,5 +113,4 @@ namespace VOL.Sys.Services
             return base.Del(keys, delList).Reload();
         }
     }
-
 }

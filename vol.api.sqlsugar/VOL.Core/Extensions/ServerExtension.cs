@@ -1,7 +1,7 @@
-﻿using VOL.Core.BaseProvider.ServerMapPath;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using VOL.Core.BaseProvider.ServerMapPath;
 using VOL.Core.Extensions.AutofacManager;
 
 namespace VOL.Core.Extensions
@@ -17,15 +17,16 @@ namespace VOL.Core.Extensions
         {
             return MapPath(path, false);
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="path"></param>
         /// <param name="rootPath">获取wwwroot路径</param>
         /// <returns></returns>
-        public static string MapPath(this string path,bool rootPath)
+        public static string MapPath(this string path, bool rootPath)
         {
-            return AutofacContainerModule.GetService<IPathProvider>().MapPath(path,rootPath);
+            return AutofacContainerModule.GetService<IPathProvider>().MapPath(path, rootPath);
         }
     }
 }

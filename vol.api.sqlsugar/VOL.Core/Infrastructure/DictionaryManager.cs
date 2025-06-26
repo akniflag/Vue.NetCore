@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using VOL.Core.CacheManager;
 using VOL.Core.DBManager;
 using VOL.Core.DbSqlSugar;
@@ -21,38 +21,44 @@ namespace VOL.Core.Infrastructure
 
         public static List<Sys_Dictionary> Dictionaries
         {
-            get
-            {
-                return GetAllDictionary();
-            }
+            get { return GetAllDictionary(); }
         }
 
         public static Sys_Dictionary GetDictionary(string dicNo)
         {
             return GetDictionaries(new string[] { dicNo }).FirstOrDefault();
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="dicNos"></param>
         /// <param name="executeSql">是否执行自定义sql</param>
         /// <returns></returns>
-        public static IEnumerable<Sys_Dictionary> GetDictionaries(IEnumerable<string> dicNos, bool executeSql = true)
+        public static IEnumerable<Sys_Dictionary> GetDictionaries(
+            IEnumerable<string> dicNos,
+            bool executeSql = true
+        )
         {
             static List<Sys_DictionaryList> query(string sql)
             {
                 try
                 {
-                    return DbManger.SqlSugarClient.QueryList<SourceKeyVaule>(sql, null).Select(s => new Sys_DictionaryList()
-                    {
-                        DicName = s.Value,
-                        DicValue = s.Key.ToString()
-                    }).ToList();
+                    return DbManger
+                        .SqlSugarClient.QueryList<SourceKeyVaule>(sql, null)
+                        .Select(s => new Sys_DictionaryList()
+                        {
+                            DicName = s.Value,
+                            DicValue = s.Key.ToString(),
+                        })
+                        .ToList();
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error($"字典执行sql异常,sql:{sql},异常信息：{ex.Message + ex.StackTrace}");
-                    throw new Exception(ex.Message+ex.StackTrace) ;
+                    Logger.Error(
+                        $"字典执行sql异常,sql:{sql},异常信息：{ex.Message + ex.StackTrace}"
+                    );
+                    throw new Exception(ex.Message + ex.StackTrace);
                 }
             }
             foreach (var item in Dictionaries.Where(x => dicNos.Contains(x.DicNo)))
@@ -69,6 +75,7 @@ namespace VOL.Core.Infrastructure
                 yield return item;
             }
         }
+
         /// <summary>
         /// 每次变更字典配置的时候会重新拉取所有配置进行缓存(自行根据实际处理)
         /// </summary>
@@ -84,11 +91,17 @@ namespace VOL.Core.Infrastructure
 
             lock (_dicObj)
             {
-                if (_dicVersionn != "" && _dictionaries != null && _dicVersionn == cacheService.Get(Key)) return _dictionaries;
-                _dictionaries = DBServerProvider.DbContext
-                    .Set<Sys_Dictionary>()
+                if (
+                    _dicVersionn != ""
+                    && _dictionaries != null
+                    && _dicVersionn == cacheService.Get(Key)
+                )
+                    return _dictionaries;
+                _dictionaries = DBServerProvider
+                    .DbContext.Set<Sys_Dictionary>()
                     .Where(x => x.Enable == 1)
-                    .Includes(c => c.Sys_DictionaryList).ToList();
+                    .Includes(c => c.Sys_DictionaryList)
+                    .ToList();
 
                 string cacheVersion = cacheService.Get(Key);
                 if (string.IsNullOrEmpty(cacheVersion))

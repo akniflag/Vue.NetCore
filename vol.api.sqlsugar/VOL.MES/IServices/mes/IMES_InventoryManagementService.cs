@@ -6,7 +6,5 @@ using VOL.Entity.DomainModels;
 
 namespace VOL.MES.IServices
 {
-    public partial interface IMES_InventoryManagementService : IService<MES_InventoryManagement>
-    {
-    }
+    public partial interface IMES_InventoryManagementService : IService<MES_InventoryManagement> { }
 }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using VOL.Core.Controllers.Basic;
 using VOL.Entity.AttributeManager;
 using VOL.MES.IServices;
+
 namespace VOL.MES.Controllers
 {
     [Route("api/MES_ProcessRoute")]
@@ -13,9 +14,6 @@ namespace VOL.MES.Controllers
     public partial class MES_ProcessRouteController : ApiBaseController<IMES_ProcessRouteService>
     {
         public MES_ProcessRouteController(IMES_ProcessRouteService service)
-        : base(service)
-        {
-        }
+            : base(service) { }
     }
 }
-

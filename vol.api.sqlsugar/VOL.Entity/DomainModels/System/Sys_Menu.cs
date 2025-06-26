@@ -4,7 +4,6 @@
  *Date：2018-07-01
  * 此代码由框架生成，请勿随意更改
  */
-using SqlSugar;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -12,6 +11,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SqlSugar;
 using VOL.Entity.SystemModels;
 
 namespace VOL.Entity.DomainModels
@@ -40,7 +40,6 @@ namespace VOL.Entity.DomainModels
         [Editable(true)]
         [Required(AllowEmptyStrings = false)]
         public int ParentId { get; set; }
-
 
         /// <summary>
         ///菜单名称
@@ -79,7 +78,6 @@ namespace VOL.Entity.DomainModels
         [Editable(true)]
         public string Auth { get; set; }
 
-
         /// <summary>
         ///
         /// </summary>
@@ -88,7 +86,6 @@ namespace VOL.Entity.DomainModels
         [Column(TypeName = "nvarchar(200)")]
         [Editable(true)]
         public string Description { get; set; }
-
 
         /// <summary>
         ///图标
@@ -150,7 +147,6 @@ namespace VOL.Entity.DomainModels
         [Editable(true)]
         public byte? Enable { get; set; }
 
-
         /// <summary>
         /// 2022.03.26
         /// 菜单类型1:移动端，0:PC端
@@ -160,7 +156,6 @@ namespace VOL.Entity.DomainModels
         [Column(TypeName = "int")]
         [Editable(true)]
         public int? MenuType { get; set; }
-
 
         [Navigate(NavigateType.OneToMany, nameof(Menu_Id), nameof(Menu_Id))]
         public List<Sys_Actions> Actions { get; set; }

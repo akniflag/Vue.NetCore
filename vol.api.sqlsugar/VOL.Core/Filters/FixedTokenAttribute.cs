@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Filters;
-using System;
+﻿using System;
 using System.Net;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Filters;
 using VOL.Core.Configuration;
 using VOL.Core.Extensions;
 using VOL.Core.ManageUser;
@@ -14,6 +14,7 @@ namespace VOL.Core.Filters
     {
         AuthorizationFilterContext OnAuthorization(AuthorizationFilterContext context);
     }
+
     public class FixedTokenAttribute : Attribute, IFixedTokenFilter, IAllowAnonymous
     {
         public AuthorizationFilterContext OnAuthorization(AuthorizationFilterContext context)
@@ -39,8 +40,9 @@ namespace VOL.Core.Filters
             }
             else
             {
-                fixedoken = ((ClaimsIdentity)context.HttpContext.User.Identity)
-                ?.BootstrapContext?.ToString();
+                fixedoken = (
+                    (ClaimsIdentity)context.HttpContext.User.Identity
+                )?.BootstrapContext?.ToString();
             }
             //判断当前用户的token与缓存的token是否相同
             if (UserContext.Current.Token != fixedoken)

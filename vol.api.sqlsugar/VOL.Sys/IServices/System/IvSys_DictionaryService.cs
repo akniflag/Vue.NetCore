@@ -9,8 +9,5 @@ using VOL.Entity.DomainModels;
 
 namespace VOL.Sys.IServices
 {
-    public partial interface IvSys_DictionaryService : IService<vSys_Dictionary>
-    {
-    }
- }
-
+    public partial interface IvSys_DictionaryService : IService<vSys_Dictionary> { }
+}

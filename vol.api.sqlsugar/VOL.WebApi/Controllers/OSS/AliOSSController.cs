@@ -2,12 +2,12 @@
 //using Aliyun.Acs.Core.Auth.Sts;
 //using Aliyun.Acs.Core.Exceptions;
 //using Aliyun.Acs.Core.Profile;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using VOL.Core.CacheManager;
 using VOL.Core.Filters;
 using VOL.Core.Services;
@@ -23,20 +23,19 @@ namespace VOL.WebApi.Controllers.OSS
     public class AliOSSController : Controller
     {
         private ICacheService _cache { get; set; }
+
         public AliOSSController(ICacheService cache)
         {
             _cache = cache;
         }
-    
+
         [Route("getAccessToken"), HttpGet]
         public object GetAccessToken()
         {
-
-            // //Region对照(创建创建 Bucket时选择的地域)https://oss.console.aliyun.com/bucket列表中的【地域】列，根据地域在下面的链接里面【Region ID】值 
+            // //Region对照(创建创建 Bucket时选择的地域)https://oss.console.aliyun.com/bucket列表中的【地域】列，根据地域在下面的链接里面【Region ID】值
             // //https://help.aliyun.com/document_detail/31837.htm?spm=a2c4g.11186623.0.0.57a8396cwRnyQV#section-plb-2vy-5db
             // string region = "oss-cn-beijing";
 
-             
             ////https://ram.console.aliyun.com/users 用户点击进去里面找
             // string accessKeyID = "LTAI5tR4bQnBZqF8ruGiw123";
             // string accessKeySecret = "gZUwXdy1mVsPvROfNCsvmVWOeqi123";
@@ -52,7 +51,7 @@ namespace VOL.WebApi.Controllers.OSS
             // DefaultAcsClient client = new DefaultAcsClient(profile);
             // var request = new AssumeRoleRequest()
             // {
-            //      RoleArn = ARN, 
+            //      RoleArn = ARN,
             //     //这个 随便填写
             //     RoleSessionName = "oss"
             // };

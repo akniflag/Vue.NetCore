@@ -4,11 +4,8 @@ using System.Text;
 
 namespace VOL.Core.Utilities
 {
-  public  class ApiAuthorizeRequire
+    public class ApiAuthorizeRequire
     {
-        public static void Require()
-        {
-
-        }
+        public static void Require() { }
     }
 }

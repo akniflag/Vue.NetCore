@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using VOL.Core.Controllers.Basic;
 using VOL.Entity.AttributeManager;
 using VOL.Sys.IServices;
+
 namespace VOL.Sys.Controllers
 {
     [Route("api/Sys_WorkFlowTable")]
@@ -13,9 +14,6 @@ namespace VOL.Sys.Controllers
     public partial class Sys_WorkFlowTableController : ApiBaseController<ISys_WorkFlowTableService>
     {
         public Sys_WorkFlowTableController(ISys_WorkFlowTableService service)
-        : base(service)
-        {
-        }
+            : base(service) { }
     }
 }
-

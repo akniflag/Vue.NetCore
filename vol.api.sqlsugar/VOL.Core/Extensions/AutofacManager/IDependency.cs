@@ -6,7 +6,5 @@ using System.Threading.Tasks;
 
 namespace VOL.Core.Extensions.AutofacManager
 {
-    public interface IDependency
-    {
-    }
+    public interface IDependency { }
 }

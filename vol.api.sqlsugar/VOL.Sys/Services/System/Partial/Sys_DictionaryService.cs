@@ -1,8 +1,8 @@
-﻿using SqlSugar;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using SqlSugar;
 using VOL.Core.BaseProvider;
 using VOL.Core.Const;
 using VOL.Core.DBManager;
@@ -16,9 +16,8 @@ namespace VOL.Sys.Services
 {
     public partial class Sys_DictionaryService
     {
-        protected override void Init(IRepository<Sys_Dictionary> repository)
-        {
-        }
+        protected override void Init(IRepository<Sys_Dictionary> repository) { }
+
         /// <summary>
         /// 代码生成器获取所有字典项编号(超级管理权限)
         /// </summary>
@@ -35,15 +34,20 @@ namespace VOL.Sys.Services
 
         public object GetVueDictionary(string[] dicNos)
         {
-            if (dicNos == null || dicNos.Count() == 0) return new string[] { };
-            var dicConfig = DictionaryManager.GetDictionaries(dicNos, false).Select(s => new
-            {
-                dicNo = s.DicNo,
-                config = s.Config,
-                dbSql = s.DbSql,
-                list = s.Sys_DictionaryList.OrderByDescending(o => o.OrderNo)
-                          .Select(list => new { key = list.DicValue, value = list.DicName })
-            }).ToList();
+            if (dicNos == null || dicNos.Count() == 0)
+                return new string[] { };
+            var dicConfig = DictionaryManager
+                .GetDictionaries(dicNos, false)
+                .Select(s => new
+                {
+                    dicNo = s.DicNo,
+                    config = s.Config,
+                    dbSql = s.DbSql,
+                    list = s
+                        .Sys_DictionaryList.OrderByDescending(o => o.OrderNo)
+                        .Select(list => new { key = list.DicValue, value = list.DicName }),
+                })
+                .ToList();
 
             object GetSourceData(string dicNo, string dbSql, object data)
             {
@@ -55,14 +59,15 @@ namespace VOL.Sys.Services
                 }
                 return repository.SqlSugarClient.QueryList<object>(dbSql, null);
             }
-            return dicConfig.Select(item => new
-            {
-                item.dicNo,
-                item.config,
-                data = GetSourceData(item.dicNo, item.dbSql, item.list)
-            }).ToList();
+            return dicConfig
+                .Select(item => new
+                {
+                    item.dicNo,
+                    item.config,
+                    data = GetSourceData(item.dicNo, item.dbSql, item.list),
+                })
+                .ToList();
         }
-
 
         /// <summary>
         /// 通过远程搜索
@@ -84,7 +89,10 @@ namespace VOL.Sys.Services
                 return null;
             }
             sql = $"SELECT * FROM ({sql}) AS t WHERE value LIKE @value";
-            return repository.SqlSugarClient.QueryList<object>(sql, new { value = "%" + value + "%" });
+            return repository.SqlSugarClient.QueryList<object>(
+                sql,
+                new { value = "%" + value + "%" }
+            );
         }
 
         /// <summary>
@@ -109,7 +117,6 @@ namespace VOL.Sys.Services
             //return await Task.FromResult(repository.DapperContext.QueryFirst<object>(sql, new { key }));
         }
 
-
         /// <summary>
         ///  table加载数据后刷新当前table数据的字典项(适用字典数据量比较大的情况)
         /// </summary>
@@ -122,7 +129,8 @@ namespace VOL.Sys.Services
             {
                 return GetPgSqlTableDictionary(keyData);
             }
-            var dicInfo = Dictionaries.Where(x => keyData.ContainsKey(x.DicNo) && !string.IsNullOrEmpty(x.DbSql))
+            var dicInfo = Dictionaries
+                .Where(x => keyData.ContainsKey(x.DicNo) && !string.IsNullOrEmpty(x.DbSql))
                 .Select(x => new { x.DicNo, x.DbSql })
                 .ToList();
             List<object> list = new List<object>();
@@ -133,10 +141,14 @@ namespace VOL.Sys.Services
                 {
                     //  2020.05.01增加根据用户信息加载字典数据源sql
                     string sql = DictionaryHandler.GetCustomDBSql(x.DicNo, x.DbSql);
-                    sql = $"SELECT * FROM ({sql}) AS t WHERE " +
-                   $"{keySql}" +
-                   $" in @data";
-                    list.Add(new { key = x.DicNo, data = repository.SqlSugarClient.QueryList<object>(sql, new { data }) });
+                    sql = $"SELECT * FROM ({sql}) AS t WHERE " + $"{keySql}" + $" in @data";
+                    list.Add(
+                        new
+                        {
+                            key = x.DicNo,
+                            data = repository.SqlSugarClient.QueryList<object>(sql, new { data }),
+                        }
+                    );
                 }
             });
             return list;
@@ -149,7 +161,8 @@ namespace VOL.Sys.Services
         /// <returns></returns>
         public object GetPgSqlTableDictionary(Dictionary<string, object[]> keyData)
         {
-            var dicInfo = Dictionaries.Where(x => keyData.ContainsKey(x.DicNo) && !string.IsNullOrEmpty(x.DbSql))
+            var dicInfo = Dictionaries
+                .Where(x => keyData.ContainsKey(x.DicNo) && !string.IsNullOrEmpty(x.DbSql))
                 .Select(x => new { x.DicNo, x.DbSql })
                 .ToList();
             List<object> list = new List<object>();
@@ -160,12 +173,20 @@ namespace VOL.Sys.Services
                 {
                     string sql = DictionaryHandler.GetCustomDBSql(x.DicNo, x.DbSql);
                     sql = $"SELECT * FROM ({sql}) AS t WHERE t.key=any(@data)";
-                    list.Add(new { key = x.DicNo, data = repository.SqlSugarClient.QueryList<object>(sql, new { data = data.Select(s => s.ToString()).ToList() }) });
+                    list.Add(
+                        new
+                        {
+                            key = x.DicNo,
+                            data = repository.SqlSugarClient.QueryList<object>(
+                                sql,
+                                new { data = data.Select(s => s.ToString()).ToList() }
+                            ),
+                        }
+                    );
                 }
             });
             return list;
         }
-
 
         public override PageGridData<Sys_Dictionary> GetPageData(PageDataOptions pageData)
         {
@@ -176,37 +197,49 @@ namespace VOL.Sys.Services
             };
             return base.GetPageData(pageData);
         }
+
         public override WebResponseContent Update(SaveModel saveDataModel)
         {
-            if (saveDataModel.MainData.DicKeyIsNullOrEmpty("DicNo")
-                || saveDataModel.MainData.DicKeyIsNullOrEmpty("Dic_ID"))
+            if (
+                saveDataModel.MainData.DicKeyIsNullOrEmpty("DicNo")
+                || saveDataModel.MainData.DicKeyIsNullOrEmpty("Dic_ID")
+            )
                 return base.Add(saveDataModel);
             //判断修改的字典编号是否在其他ID存在
             string dicNo = saveDataModel.MainData["DicNo"].ToString().Trim();
-            if (base.repository.Exists(x => x.DicNo == dicNo && x.Dic_ID != saveDataModel.MainData["Dic_ID"].GetInt()))
-                return new WebResponseContent().Error($"字典编号:{ dicNo}已存在。!");
+            if (
+                base.repository.Exists(x =>
+                    x.DicNo == dicNo && x.Dic_ID != saveDataModel.MainData["Dic_ID"].GetInt()
+                )
+            )
+                return new WebResponseContent().Error($"字典编号:{dicNo}已存在。!");
 
-            base.UpdateOnExecuting = (Sys_Dictionary dictionary, object addList, object editList, List<object> obj) =>
+            base.UpdateOnExecuting = (
+                Sys_Dictionary dictionary,
+                object addList,
+                object editList,
+                List<object> obj
+            ) =>
             {
                 List<Sys_DictionaryList> listObj = new List<Sys_DictionaryList>();
                 listObj.AddRange(addList as List<Sys_DictionaryList>);
                 listObj.AddRange(editList as List<Sys_DictionaryList>);
 
                 WebResponseContent _responseData = CheckKeyValue(listObj);
-                if (!_responseData.Status) return _responseData;
+                if (!_responseData.Status)
+                    return _responseData;
 
                 dictionary.DbSql = SqlFilters(dictionary.DbSql);
                 return new WebResponseContent(true);
             };
             return RemoveCache(base.Update(saveDataModel));
-
         }
-
 
         private WebResponseContent CheckKeyValue(List<Sys_DictionaryList> dictionaryLists)
         {
             WebResponseContent webResponse = new WebResponseContent();
-            if (dictionaryLists == null || dictionaryLists.Count == 0) return webResponse.OK();
+            if (dictionaryLists == null || dictionaryLists.Count == 0)
+                return webResponse.OK();
 
             if (dictionaryLists.GroupBy(g => g.DicName).Any(x => x.Count() > 1))
                 return webResponse.Error("【字典项名称】不能有重复的值");
@@ -219,7 +252,8 @@ namespace VOL.Sys.Services
 
         private static string SqlFilters(string source)
         {
-            if (string.IsNullOrEmpty(source)) return source;
+            if (string.IsNullOrEmpty(source))
+                return source;
 
             //   source = source.Replace("'", "''");
             source = Regex.Replace(source, "-", "", RegexOptions.IgnoreCase);
@@ -231,10 +265,10 @@ namespace VOL.Sys.Services
             source = Regex.Replace(source, "drop ", "", RegexOptions.IgnoreCase);
             source = Regex.Replace(source, "truncate ", "", RegexOptions.IgnoreCase);
             source = Regex.Replace(source, "declare ", "", RegexOptions.IgnoreCase);
-            source = Regex.Replace(source,  "xp_cmdshell ", "", RegexOptions.IgnoreCase);
+            source = Regex.Replace(source, "xp_cmdshell ", "", RegexOptions.IgnoreCase);
             source = Regex.Replace(source, "/add ", "", RegexOptions.IgnoreCase);
             source = Regex.Replace(source, " net user ", "", RegexOptions.IgnoreCase);
-            //去除执行存储过程的命令关键字 
+            //去除执行存储过程的命令关键字
             source = Regex.Replace(source, " exec ", "", RegexOptions.IgnoreCase);
             source = Regex.Replace(source, " execute ", "", RegexOptions.IgnoreCase);
             //防止16进制注入
@@ -242,9 +276,11 @@ namespace VOL.Sys.Services
 
             return source;
         }
+
         public override WebResponseContent Add(SaveModel saveDataModel)
         {
-            if (saveDataModel.MainData.DicKeyIsNullOrEmpty("DicNo")) return base.Add(saveDataModel);
+            if (saveDataModel.MainData.DicKeyIsNullOrEmpty("DicNo"))
+                return base.Add(saveDataModel);
 
             string dicNo = saveDataModel.MainData["DicNo"].ToString();
             if (base.repository.Exists(x => x.DicNo == dicNo))
@@ -253,7 +289,8 @@ namespace VOL.Sys.Services
             base.AddOnExecuting = (Sys_Dictionary dic, object obj) =>
             {
                 WebResponseContent _responseData = CheckKeyValue(obj as List<Sys_DictionaryList>);
-                if (!_responseData.Status) return _responseData;
+                if (!_responseData.Status)
+                    return _responseData;
 
                 dic.DbSql = SqlFilters(dic.DbSql);
                 return new WebResponseContent(true);
@@ -282,4 +319,3 @@ namespace VOL.Sys.Services
         }
     }
 }
-

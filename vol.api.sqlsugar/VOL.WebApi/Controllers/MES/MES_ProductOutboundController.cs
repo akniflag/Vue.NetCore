@@ -6,16 +6,15 @@ using Microsoft.AspNetCore.Mvc;
 using VOL.Core.Controllers.Basic;
 using VOL.Entity.AttributeManager;
 using VOL.MES.IServices;
+
 namespace VOL.MES.Controllers
 {
     [Route("api/MES_ProductOutbound")]
     [PermissionTable(Name = "MES_ProductOutbound")]
-    public partial class MES_ProductOutboundController : ApiBaseController<IMES_ProductOutboundService>
+    public partial class MES_ProductOutboundController
+        : ApiBaseController<IMES_ProductOutboundService>
     {
         public MES_ProductOutboundController(IMES_ProductOutboundService service)
-        : base(service)
-        {
-        }
+            : base(service) { }
     }
 }
-

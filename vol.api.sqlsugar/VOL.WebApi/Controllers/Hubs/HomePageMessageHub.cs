@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.SignalR;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.SignalR;
 using VOL.Core.CacheManager;
 using VOL.Core.Extensions;
 using VOL.Core.ManageUser;
@@ -21,8 +21,8 @@ namespace VOL.WebApi.Controllers.Hubs
     {
         private readonly ICacheService _cacheService;
 
-
-        private static ConcurrentDictionary<string, string> _connectionIds = new ConcurrentDictionary<string, string>();
+        private static ConcurrentDictionary<string, string> _connectionIds =
+            new ConcurrentDictionary<string, string>();
 
         /// <summary>
         /// 构造 注入
@@ -39,7 +39,10 @@ namespace VOL.WebApi.Controllers.Hubs
         public override async Task OnConnectedAsync()
         {
             //Console.WriteLine($"建立连接{Context.ConnectionId}");
-            _connectionIds[Context.ConnectionId] = Context.GetHttpContext().Request.Query["userName"].ToString();
+            _connectionIds[Context.ConnectionId] = Context
+                .GetHttpContext()
+                .Request.Query["userName"]
+                .ToString();
             //添加到一个组下
             //await Groups.AddToGroupAsync(Context.ConnectionId, "SignalR Users");
             //发送上线消息
@@ -88,17 +91,22 @@ namespace VOL.WebApi.Controllers.Hubs
         /// <returns></returns>
         public async Task<bool> SendHomeMessage(string username, string title, string message)
         {
-            if (_connectionIds[Context.ConnectionId]!="admin")
+            if (_connectionIds[Context.ConnectionId] != "admin")
             {
                 return false;
             }
-            await Clients.Clients(GetCnnectionIds(username).ToArray()).SendAsync("ReceiveHomePageMessage", new
-            {
-                //   username,
-                title,
-                message,
-                date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:sss")
-            });
+            await Clients
+                .Clients(GetCnnectionIds(username).ToArray())
+                .SendAsync(
+                    "ReceiveHomePageMessage",
+                    new
+                    {
+                        //   username,
+                        title,
+                        message,
+                        date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:sss"),
+                    }
+                );
             return true;
         }
 
@@ -108,16 +116,12 @@ namespace VOL.WebApi.Controllers.Hubs
         /// <returns></returns>
         public async Task<bool> UserOffline()
         {
-            var cid = Context.ConnectionId;//也可以从缓存中获取ConnectionId
+            var cid = Context.ConnectionId; //也可以从缓存中获取ConnectionId
             //  await Clients.Client(cid).SendAsync("ReceiveHomePageMessage", 3, new { title = "系统消息", content = "离线成功" });
             //移除缓存
-            if (_connectionIds.TryRemove(cid, out string value))
-            {
-            }
+            if (_connectionIds.TryRemove(cid, out string value)) { }
             await Task.CompletedTask;
             return true;
         }
-
-
     }
 }

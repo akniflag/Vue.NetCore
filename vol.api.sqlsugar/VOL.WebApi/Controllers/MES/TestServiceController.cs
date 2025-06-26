@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using VOL.Core.Controllers.Basic;
 using VOL.Entity.AttributeManager;
 using VOL.MES.IServices;
+
 namespace VOL.MES.Controllers
 {
     [Route("api/TestService")]
@@ -13,9 +14,6 @@ namespace VOL.MES.Controllers
     public partial class TestServiceController : ApiBaseController<ITestServiceService>
     {
         public TestServiceController(ITestServiceService service)
-        : base(service)
-        {
-        }
+            : base(service) { }
     }
 }
-

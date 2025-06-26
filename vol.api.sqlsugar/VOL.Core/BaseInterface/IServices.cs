@@ -4,7 +4,5 @@ using System.Text;
 
 namespace VOL.Core.BaseInterface
 {
-    public interface IServices
-    {
-    }
+    public interface IServices { }
 }

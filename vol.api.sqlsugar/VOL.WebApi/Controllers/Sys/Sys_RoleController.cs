@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using VOL.Core.Controllers.Basic;
 using VOL.Core.Enums;
 using VOL.Core.Filters;
@@ -16,11 +16,6 @@ namespace VOL.Sys.Controllers
     public partial class Sys_RoleController : ApiBaseController<ISys_RoleService>
     {
         public Sys_RoleController(ISys_RoleService service)
-        : base("System", "System", "Sys_Role", service)
-        {
-
-        }
+            : base("System", "System", "Sys_Role", service) { }
     }
 }
-
-

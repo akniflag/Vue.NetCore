@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System;
 using VOL.Core.Filters;
 
 namespace VOL.Core.Controllers.Basic
@@ -8,17 +8,19 @@ namespace VOL.Core.Controllers.Basic
     [JWTAuthorize, ApiController]
     public class VolController : Controller
     {
-        public VolController()
-        {
+        public VolController() { }
 
-        }
         /// <summary>
         /// 2020.11.21增加json原格式返回数据(默认是驼峰格式)
         /// </summary>
         /// <param name="data"></param>
         /// <param name="serializerSettings"></param>
         /// <returns></returns>
-        protected JsonResult JsonNormal(object data, JsonSerializerSettings serializerSettings = null, bool formateDate = true)
+        protected JsonResult JsonNormal(
+            object data,
+            JsonSerializerSettings serializerSettings = null,
+            bool formateDate = true
+        )
         {
             serializerSettings = serializerSettings ?? new JsonSerializerSettings();
             serializerSettings.ContractResolver = null;
@@ -30,9 +32,15 @@ namespace VOL.Core.Controllers.Basic
             return Json(data, serializerSettings);
         }
     }
+
     public class LongCovert : JsonConverter
     {
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override object ReadJson(
+            JsonReader reader,
+            Type objectType,
+            object existingValue,
+            JsonSerializer serializer
+        )
         {
             if (reader.Value == null)
             {
@@ -46,6 +54,7 @@ namespace VOL.Core.Controllers.Basic
         {
             return typeof(long) == objectType || typeof(long?) == objectType;
         }
+
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             if (value == null)

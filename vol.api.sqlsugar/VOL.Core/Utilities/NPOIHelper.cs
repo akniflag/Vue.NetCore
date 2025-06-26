@@ -103,7 +103,6 @@
 //                            sheet.SetColumnWidth(column.Ordinal, (arrColWidth[column.Ordinal] + 1) * 256);
 //                        }
 
-
 //                    }
 //                    #endregion
 //                    rowIndex = intTop;
@@ -228,7 +227,6 @@
 
 //        }
 
-
 //        /// <summary>
 //        /// DataSet 导出到 Excel 的 MemoryStream
 //        /// </summary>
@@ -256,7 +254,6 @@
 //            #endregion
 
 //            #region 注释
-
 
 //            //ICellStyle dateStyle = workbook.CreateCellStyle();
 //            //IDataFormat format = workbook.CreateDataFormat();
@@ -327,7 +324,6 @@
 //            //                //设置列宽
 //            //                sheet.SetColumnWidth(column.Ordinal, (arrColWidth[column.Ordinal] + 1) * 256);
 //            //            }
-
 
 //            //        }
 //            //        #endregion
@@ -484,10 +480,8 @@
 //                                dd = 100 * 256;
 //                            }
 
-
 //                            sheet.SetColumnWidth(column.Ordinal, dd);
 //                        }
-
 
 //                    }
 //                    #endregion

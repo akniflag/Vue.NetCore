@@ -6,16 +6,15 @@ using Microsoft.AspNetCore.Mvc;
 using VOL.Core.Controllers.Basic;
 using VOL.Entity.AttributeManager;
 using VOL.MES.IServices;
+
 namespace VOL.MES.Controllers
 {
     [Route("api/MES_EquipmentManagement")]
     [PermissionTable(Name = "MES_EquipmentManagement")]
-    public partial class MES_EquipmentManagementController : ApiBaseController<IMES_EquipmentManagementService>
+    public partial class MES_EquipmentManagementController
+        : ApiBaseController<IMES_EquipmentManagementService>
     {
         public MES_EquipmentManagementController(IMES_EquipmentManagementService service)
-        : base(service)
-        {
-        }
+            : base(service) { }
     }
 }
-

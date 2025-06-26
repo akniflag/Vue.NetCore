@@ -6,16 +6,15 @@ using Microsoft.AspNetCore.Mvc;
 using VOL.Core.Controllers.Basic;
 using VOL.Entity.AttributeManager;
 using VOL.MES.IServices;
+
 namespace VOL.MES.Controllers
 {
     [Route("api/MES_LocationManagement")]
     [PermissionTable(Name = "MES_LocationManagement")]
-    public partial class MES_LocationManagementController : ApiBaseController<IMES_LocationManagementService>
+    public partial class MES_LocationManagementController
+        : ApiBaseController<IMES_LocationManagementService>
     {
         public MES_LocationManagementController(IMES_LocationManagementService service)
-        : base(service)
-        {
-        }
+            : base(service) { }
     }
 }
-

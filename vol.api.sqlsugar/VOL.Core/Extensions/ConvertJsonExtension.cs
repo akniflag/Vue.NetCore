@@ -1,10 +1,10 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
 using System.Text;
+using Newtonsoft.Json;
 using VOL.Core.Controllers.Basic;
 
 namespace VOL.Core.Extensions
@@ -26,27 +26,37 @@ namespace VOL.Core.Extensions
                 switch (c)
                 {
                     case '\"':
-                        sb.Append("\\\""); break;
+                        sb.Append("\\\"");
+                        break;
                     case '\\':
-                        sb.Append("\\\\"); break;
+                        sb.Append("\\\\");
+                        break;
                     case '/':
-                        sb.Append("\\/"); break;
+                        sb.Append("\\/");
+                        break;
                     case '\b':
-                        sb.Append("\\b"); break;
+                        sb.Append("\\b");
+                        break;
                     case '\f':
-                        sb.Append("\\f"); break;
+                        sb.Append("\\f");
+                        break;
                     case '\n':
-                        sb.Append("\\n"); break;
+                        sb.Append("\\n");
+                        break;
                     case '\r':
-                        sb.Append("\\r"); break;
+                        sb.Append("\\r");
+                        break;
                     case '\t':
-                        sb.Append("\\t"); break;
+                        sb.Append("\\t");
+                        break;
                     default:
-                        sb.Append(c); break;
+                        sb.Append(c);
+                        break;
                 }
             }
             return sb.ToString();
         }
+
         /// <summary>
         /// 格式化字符型、日期型、布尔型
         /// </summary>
@@ -89,6 +99,7 @@ namespace VOL.Core.Extensions
             object obj = list[0];
             return ListToJson<T>(list, obj.GetType().Name);
         }
+
         /// <summary>
         /// list转换为json
         /// </summary>
@@ -115,7 +126,12 @@ namespace VOL.Core.Extensions
                 for (int j = 0; j < pi.Length; j++)
                 {
                     Type type = pi[j].GetValue(list[i], null).GetType();
-                    Json.Append("\"" + pi[j].Name.ToString() + "\":" + StringFormat(pi[j].GetValue(list[i], null).ToString(), type));
+                    Json.Append(
+                        "\""
+                            + pi[j].Name.ToString()
+                            + "\":"
+                            + StringFormat(pi[j].GetValue(list[i], null).ToString(), type)
+                    );
                     if (j < pi.Length - 1)
                     {
                         Json.Append(",");
@@ -189,11 +205,11 @@ namespace VOL.Core.Extensions
         #endregion
 
         #region 普通集合转换Json
-        /// <summary>    
-        /// 普通集合转换Json   
-        /// </summary>   
-        /// <param name="array">集合对象</param> 
-        /// <returns>Json字符串</returns>  
+        /// <summary>
+        /// 普通集合转换Json
+        /// </summary>
+        /// <param name="array">集合对象</param>
+        /// <returns>Json字符串</returns>
         public static string ToArrayString(this IEnumerable array)
         {
             string jsonString = "[";
@@ -207,11 +223,11 @@ namespace VOL.Core.Extensions
         #endregion
 
         #region  DataSet转换为Json
-        /// <summary>    
-        /// DataSet转换为Json   
-        /// </summary>    
-        /// <param name="dataSet">DataSet对象</param>   
-        /// <returns>Json字符串</returns>    
+        /// <summary>
+        /// DataSet转换为Json
+        /// </summary>
+        /// <param name="dataSet">DataSet对象</param>
+        /// <returns>Json字符串</returns>
         public static string ToJson(this DataSet dataSet)
         {
             string jsonString = "{";
@@ -225,11 +241,11 @@ namespace VOL.Core.Extensions
         #endregion
 
         #region Datatable转换为Json
-        /// <summary>     
-        /// Datatable转换为Json     
-        /// </summary>    
-        /// <param name="table">Datatable对象</param>     
-        /// <returns>Json字符串</returns>     
+        /// <summary>
+        /// Datatable转换为Json
+        /// </summary>
+        /// <param name="table">Datatable对象</param>
+        /// <returns>Json字符串</returns>
         public static string ToJson(this DataTable dt)
         {
             StringBuilder jsonString = new StringBuilder();
@@ -260,9 +276,10 @@ namespace VOL.Core.Extensions
             jsonString.Append("]");
             return jsonString.ToString();
         }
-        /// <summary>    
-        /// DataTable转换为Json     
-        /// </summary>    
+
+        /// <summary>
+        /// DataTable转换为Json
+        /// </summary>
         public static string ToJson(this DataTable dt, string jsonName)
         {
             StringBuilder Json = new StringBuilder();
@@ -277,7 +294,12 @@ namespace VOL.Core.Extensions
                     for (int j = 0; j < dt.Columns.Count; j++)
                     {
                         Type type = dt.Rows[i][j].GetType();
-                        Json.Append("\"" + dt.Columns[j].ColumnName.ToString() + "\":" + StringFormat(dt.Rows[i][j].ToString(), type));
+                        Json.Append(
+                            "\""
+                                + dt.Columns[j].ColumnName.ToString()
+                                + "\":"
+                                + StringFormat(dt.Rows[i][j].ToString(), type)
+                        );
                         if (j < dt.Columns.Count - 1)
                         {
                             Json.Append(",");
@@ -297,11 +319,11 @@ namespace VOL.Core.Extensions
         #endregion
 
         #region DataReader转换为Json
-        /// <summary>     
-        /// DataReader转换为Json     
-        /// </summary>     
-        /// <param name="dataReader">DataReader对象</param>     
-        /// <returns>Json字符串</returns>  
+        /// <summary>
+        /// DataReader转换为Json
+        /// </summary>
+        /// <param name="dataReader">DataReader对象</param>
+        /// <returns>Json字符串</returns>
         public static string ReaderJson(this IDataReader dataReader)
         {
             StringBuilder jsonString = new StringBuilder();
@@ -351,14 +373,13 @@ namespace VOL.Core.Extensions
 
         public static string Serialize(this object obj, JsonSerializerSettings formatDate = null)
         {
-            if (obj == null) return null;
-            formatDate = formatDate ?? new JsonSerializerSettings
-            {
-                DateFormatString = "yyyy-MM-dd HH:mm:ss"
-            };
+            if (obj == null)
+                return null;
+            formatDate =
+                formatDate
+                ?? new JsonSerializerSettings { DateFormatString = "yyyy-MM-dd HH:mm:ss" };
             formatDate.Converters.Add(new LongCovert());
             return JsonConvert.SerializeObject(obj, formatDate);
         }
     }
 }
-

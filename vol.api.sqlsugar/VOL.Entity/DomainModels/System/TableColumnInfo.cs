@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace VOL.Entity.DomainModels.Sys
 {
-   public class TableColumnInfo
+    public class TableColumnInfo
     {
-
-       public string Prec_Scale { get; set; }
-       public string ColumnType { get; set; }
-       public string ColumnName { get; set; }
+        public string Prec_Scale { get; set; }
+        public string ColumnType { get; set; }
+        public string ColumnName { get; set; }
     }
 }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using VOL.Core.Controllers.Basic;
 using VOL.Entity.AttributeManager;
 using VOL.MES.IServices;
+
 namespace VOL.MES.Controllers
 {
     [Route("api/MES_Customer")]
@@ -13,9 +14,6 @@ namespace VOL.MES.Controllers
     public partial class MES_CustomerController : ApiBaseController<IMES_CustomerService>
     {
         public MES_CustomerController(IMES_CustomerService service)
-        : base(service)
-        {
-        }
+            : base(service) { }
     }
 }
-

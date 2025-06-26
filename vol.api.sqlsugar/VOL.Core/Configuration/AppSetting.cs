@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using System.IO;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using System.IO;
 using VOL.Core.Const;
 using VOL.Core.Extensions;
 
@@ -50,19 +50,22 @@ namespace VOL.Core.Configuration
         /// </summary>
         public static Kafka Kafka { get; set; }
 
-
         /// <summary>
         /// JWT有效期(分钟=默认120)
         /// </summary>
         public static int ExpMinutes { get; private set; } = 120;
 
         public static string CurrentPath { get; private set; } = null;
-        public static string DownLoadPath { get { return CurrentPath + "\\Download\\"; } }
+        public static string DownLoadPath
+        {
+            get { return CurrentPath + "\\Download\\"; }
+        }
 
         /// <summary>
         /// 是否显示sql日志
         /// </summary>
         public static bool ShowSqlLog { get; set; }
+
         public static void Init(IServiceCollection services, IConfiguration configuration)
         {
             Configuration = configuration;
@@ -80,10 +83,13 @@ namespace VOL.Core.Configuration
             Secret = provider.GetRequiredService<IOptions<Secret>>().Value;
 
             //设置修改或删除时需要设置为默认用户信息的字段
-            CreateMember = provider.GetRequiredService<IOptions<CreateMember>>().Value ?? new CreateMember();
-            ModifyMember = provider.GetRequiredService<IOptions<ModifyMember>>().Value ?? new ModifyMember();
+            CreateMember =
+                provider.GetRequiredService<IOptions<CreateMember>>().Value ?? new CreateMember();
+            ModifyMember =
+                provider.GetRequiredService<IOptions<ModifyMember>>().Value ?? new ModifyMember();
 
-            GlobalFilter = provider.GetRequiredService<IOptions<GlobalFilter>>().Value ?? new GlobalFilter();
+            GlobalFilter =
+                provider.GetRequiredService<IOptions<GlobalFilter>>().Value ?? new GlobalFilter();
 
             GlobalFilter.Actions = GlobalFilter.Actions ?? new string[0];
             Kafka = provider.GetRequiredService<IOptions<Kafka>>().Value ?? new Kafka();
@@ -100,7 +106,9 @@ namespace VOL.Core.Configuration
 
             try
             {
-                _connection.DbConnectionString = _connection.DbConnectionString.DecryptDES(Secret.DB);
+                _connection.DbConnectionString = _connection.DbConnectionString.DecryptDES(
+                    Secret.DB
+                );
             }
             catch { }
 
@@ -108,17 +116,19 @@ namespace VOL.Core.Configuration
             {
                 try
                 {
-                    _connection.RedisConnectionString = _connection.RedisConnectionString.DecryptDES(Secret.Redis);
+                    _connection.RedisConnectionString =
+                        _connection.RedisConnectionString.DecryptDES(Secret.Redis);
                 }
                 catch { }
             }
-
         }
+
         // 多个节点name格式 ：["key:key1"]
         public static string GetSettingString(string key)
         {
             return Configuration[key];
         }
+
         // 多个节点,通过.GetSection("key")["key1"]获取
         public static IConfigurationSection GetSection(string key)
         {
@@ -135,12 +145,9 @@ namespace VOL.Core.Configuration
         public bool UseSignalR { get; set; }
     }
 
-    public class CreateMember: TableDefaultColumns
-    {
-    }
-    public class ModifyMember: TableDefaultColumns
-    {
-    }
+    public class CreateMember : TableDefaultColumns { }
+
+    public class ModifyMember : TableDefaultColumns { }
 
     public abstract class TableDefaultColumns
     {
@@ -148,6 +155,7 @@ namespace VOL.Core.Configuration
         public string UserNameField { get; set; }
         public string DateField { get; set; }
     }
+
     public class GlobalFilter
     {
         public string Message { get; set; }
@@ -164,6 +172,7 @@ namespace VOL.Core.Configuration
         public ConsumerSettings ConsumerSettings { get; set; }
         public Topics Topics { get; set; }
     }
+
     public class ProducerSettings
     {
         public string BootstrapServers { get; set; }
@@ -172,6 +181,7 @@ namespace VOL.Core.Configuration
         public string SaslUsername { get; set; }
         public string SaslPassword { get; set; }
     }
+
     public class ConsumerSettings
     {
         public string BootstrapServers { get; set; }
@@ -181,6 +191,7 @@ namespace VOL.Core.Configuration
         public string SaslPassword { get; set; }
         public string GroupId { get; set; }
     }
+
     public class Topics
     {
         public string TestTopic { get; set; }

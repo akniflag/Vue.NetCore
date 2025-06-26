@@ -6,7 +6,5 @@ using VOL.Entity.DomainModels;
 
 namespace VOL.MES.IServices
 {
-    public partial interface IMES_ProcessReportService : IService<MES_ProcessReport>
-    {
-    }
+    public partial interface IMES_ProcessReportService : IService<MES_ProcessReport> { }
 }

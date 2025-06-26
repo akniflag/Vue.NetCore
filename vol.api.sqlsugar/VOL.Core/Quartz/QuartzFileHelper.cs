@@ -5,10 +5,9 @@ using VOL.Core.Configuration;
 using VOL.Core.Extensions;
 using VOL.Core.Utilities;
 
-
 namespace VOL.Core.Quartz
 {
-  public static  class QuartzFileHelper
+    public static class QuartzFileHelper
     {
         public static void OK(string message)
         {
@@ -20,7 +19,7 @@ namespace VOL.Core.Quartz
             Write(message, "error");
         }
 
-        private static void Write(string message,string folder)
+        private static void Write(string message, string folder)
         {
             try
             {

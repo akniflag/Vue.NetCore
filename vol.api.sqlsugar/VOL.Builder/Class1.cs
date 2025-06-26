@@ -2,7 +2,5 @@
 
 namespace VOL.Builder
 {
-    public class Class1
-    {
-    }
+    public class Class1 { }
 }

@@ -6,7 +6,5 @@ using VOL.Entity.DomainModels;
 
 namespace VOL.Sys.IServices
 {
-    public partial interface IFormDesignOptionsService : IService<FormDesignOptions>
-    {
-    }
+    public partial interface IFormDesignOptionsService : IService<FormDesignOptions> { }
 }

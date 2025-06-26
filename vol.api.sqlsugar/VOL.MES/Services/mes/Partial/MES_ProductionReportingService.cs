@@ -6,34 +6,34 @@
 *用户信息、权限、角色等使用UserContext.Current操作
 *MES_ProductionReportingService对增、删、改查、导入、导出、审核业务代码扩展参照ServiceFunFilter
 */
-using VOL.Core.BaseProvider;
-using VOL.Core.Extensions.AutofacManager;
-using VOL.Entity.DomainModels;
 using System.Linq;
-using VOL.Core.Utilities;
 using System.Linq.Expressions;
-using VOL.Core.Extensions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Http;
-using VOL.MES.IRepositories;
 using SqlSugar;
-using VOL.Core.DbSqlSugar;
+using VOL.Core.BaseProvider;
 using VOL.Core.DBManager;
+using VOL.Core.DbSqlSugar;
+using VOL.Core.Extensions;
+using VOL.Core.Extensions.AutofacManager;
+using VOL.Core.Utilities;
+using VOL.Entity.DomainModels;
+using VOL.MES.IRepositories;
 
 namespace VOL.MES.Services
 {
     public partial class MES_ProductionReportingService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IMES_ProductionReportingRepository _repository;//访问数据库
+        private readonly IMES_ProductionReportingRepository _repository; //访问数据库
 
         [ActivatorUtilitiesConstructor]
         public MES_ProductionReportingService(
             IMES_ProductionReportingRepository dbRepository,
             IHttpContextAccessor httpContextAccessor
-            )
-        : base(dbRepository)
+        )
+            : base(dbRepository)
         {
             _httpContextAccessor = httpContextAccessor;
             _repository = dbRepository;
@@ -45,32 +45,33 @@ namespace VOL.MES.Services
         {
             SummaryExpress = (ISugarQueryable<MES_ProductionReporting> queryable) =>
             {
-                return queryable.Select(o => new
-                {
-                    //注意大小写和数据库字段大小写一样
-                    AcceptedQuantity = SqlFunc.AggregateSum(o.AcceptedQuantity),
-                    RejectedQuantity = SqlFunc.AggregateSum(o.RejectedQuantity),
-                    Total = SqlFunc.AggregateSum(o.Total),
-                    ReportHour = SqlFunc.AggregateSum(o.ReportHour)
-                })
-                .FirstOrDefault();
+                return queryable
+                    .Select(o => new
+                    {
+                        //注意大小写和数据库字段大小写一样
+                        AcceptedQuantity = SqlFunc.AggregateSum(o.AcceptedQuantity),
+                        RejectedQuantity = SqlFunc.AggregateSum(o.RejectedQuantity),
+                        Total = SqlFunc.AggregateSum(o.Total),
+                        ReportHour = SqlFunc.AggregateSum(o.ReportHour),
+                    })
+                    .FirstOrDefault();
             };
             return base.GetPageData(options);
         }
 
         protected override object GetDetailSummary<Detail>(ISugarQueryable<Detail> queryeable)
         {
-
             //ef写法（需要与前端开发文档上的【table显示合计】一起使用）
-            return ((ISugarQueryable<MES_ProductionReportingDetail>)queryeable).Select(o => new
-            {
-                //Weight/Qty注意大小写和数据库字段大小写一样
-                AcceptedQuantity = SqlFunc.AggregateSum(o.AcceptedQuantity),
-                RejectedQuantity = SqlFunc.AggregateSum(o.RejectedQuantity),
-                ReportedQuantity = SqlFunc.AggregateSum(o.ReportedQuantity),
-                ReportHour = SqlFunc.AggregateSum(o.ReportHour)
-
-            }).FirstOrDefault();
+            return ((ISugarQueryable<MES_ProductionReportingDetail>)queryeable)
+                .Select(o => new
+                {
+                    //Weight/Qty注意大小写和数据库字段大小写一样
+                    AcceptedQuantity = SqlFunc.AggregateSum(o.AcceptedQuantity),
+                    RejectedQuantity = SqlFunc.AggregateSum(o.RejectedQuantity),
+                    ReportedQuantity = SqlFunc.AggregateSum(o.ReportedQuantity),
+                    ReportHour = SqlFunc.AggregateSum(o.ReportHour),
+                })
+                .FirstOrDefault();
         }
     }
 }

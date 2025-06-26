@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using VOL.Core.Controllers.Basic;
 using VOL.Entity.AttributeManager;
 using VOL.Sys.IServices;
+
 namespace VOL.Sys.Controllers
 {
     [Route("api/FormDesignOptions")]
@@ -13,9 +14,6 @@ namespace VOL.Sys.Controllers
     public partial class FormDesignOptionsController : ApiBaseController<IFormDesignOptionsService>
     {
         public FormDesignOptionsController(IFormDesignOptionsService service)
-        : base(service)
-        {
-        }
+            : base(service) { }
     }
 }
-

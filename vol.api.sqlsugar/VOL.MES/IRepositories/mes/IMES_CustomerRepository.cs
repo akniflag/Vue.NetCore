@@ -8,11 +8,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VOL.Core.BaseProvider;
-using VOL.Entity.DomainModels;
 using VOL.Core.Extensions.AutofacManager;
+using VOL.Entity.DomainModels;
+
 namespace VOL.MES.IRepositories
 {
-    public partial interface IMES_CustomerRepository : IDependency,IRepository<MES_Customer>
-    {
-    }
+    public partial interface IMES_CustomerRepository : IDependency, IRepository<MES_Customer> { }
 }

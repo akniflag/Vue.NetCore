@@ -8,7 +8,6 @@ namespace VOL.Core.Enums
     {
         False = 0,
         Ok = 1,
-        TokenExpire = 2
-
+        TokenExpire = 2,
     }
 }

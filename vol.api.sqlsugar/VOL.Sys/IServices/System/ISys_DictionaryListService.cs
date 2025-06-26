@@ -6,7 +6,5 @@ using VOL.Entity.DomainModels;
 
 namespace VOL.Sys.IServices
 {
-    public partial interface ISys_DictionaryListService : IService<Sys_DictionaryList>
-    {
-    }
+    public partial interface ISys_DictionaryListService : IService<Sys_DictionaryList> { }
 }

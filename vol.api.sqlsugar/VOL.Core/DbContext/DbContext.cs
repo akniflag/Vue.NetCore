@@ -1,9 +1,9 @@
-﻿using SqlSugar;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SqlSugar;
 using VOL.Core.DBManager;
 
 namespace VOL.Core.DbContext
@@ -14,13 +14,14 @@ namespace VOL.Core.DbContext
 
         public bool QueryTracking
         {
-            set
-            {
-            }
+            set { }
         }
-        public DbContext() : base() { }
 
-        public virtual ISugarQueryable<TEntity> Set<TEntity>(bool filterDeleted = false) where TEntity : class
+        public DbContext()
+            : base() { }
+
+        public virtual ISugarQueryable<TEntity> Set<TEntity>(bool filterDeleted = false)
+            where TEntity : class
         {
             return this.SqlSugarClient.Set<TEntity>(filterDeleted);
         }

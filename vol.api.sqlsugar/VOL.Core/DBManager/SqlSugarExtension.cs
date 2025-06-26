@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using SqlSugar;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
+using SqlSugar;
 using VOL.Core.BaseProvider;
 using VOL.Core.Configuration;
 using VOL.Core.DbContext;
@@ -19,8 +19,8 @@ namespace VOL.Core.DBManager
 {
     public static class SqlSugarExtension
     {
-
-        public static int Add<T>(this VOLContext dbContext, T table, bool saveChange = false) where T : class, new()
+        public static int Add<T>(this VOLContext dbContext, T table, bool saveChange = false)
+            where T : class, new()
         {
             dbContext.SqlSugarClient.Insertable(table).AddQueue();
             if (saveChange)
@@ -30,7 +30,12 @@ namespace VOL.Core.DBManager
             return 1;
         }
 
-        public static int Add<T>(this ISqlSugarClient sqlSugarClient, T table, bool saveChange = false) where T : class, new()
+        public static int Add<T>(
+            this ISqlSugarClient sqlSugarClient,
+            T table,
+            bool saveChange = false
+        )
+            where T : class, new()
         {
             sqlSugarClient.Insertable(table).AddQueue();
             if (saveChange)
@@ -40,7 +45,12 @@ namespace VOL.Core.DBManager
             return 1;
         }
 
-        public static async Task<int> AddAsync<T>(this VOLContext dbContext, T list, bool saveChange = false) where T : class, new()
+        public static async Task<int> AddAsync<T>(
+            this VOLContext dbContext,
+            T list,
+            bool saveChange = false
+        )
+            where T : class, new()
         {
             dbContext.SqlSugarClient.Insertable(list).AddQueue();
             if (saveChange)
@@ -50,7 +60,12 @@ namespace VOL.Core.DBManager
             return 1;
         }
 
-        public static int AddRange<T>(this VOLContext dbContext, List<T> list, bool saveChange = false) where T : class, new()
+        public static int AddRange<T>(
+            this VOLContext dbContext,
+            List<T> list,
+            bool saveChange = false
+        )
+            where T : class, new()
         {
             dbContext.SqlSugarClient.Insertable(list).AddQueue();
             if (saveChange)
@@ -60,7 +75,12 @@ namespace VOL.Core.DBManager
             return list.Count;
         }
 
-        public static async Task<int> AddRangeAsync<T>(this VOLContext dbContext, List<T> list, bool saveChange = false) where T : class, new()
+        public static async Task<int> AddRangeAsync<T>(
+            this VOLContext dbContext,
+            List<T> list,
+            bool saveChange = false
+        )
+            where T : class, new()
         {
             dbContext.SqlSugarClient.Insertable(list).AddQueue();
             if (saveChange)
@@ -69,34 +89,104 @@ namespace VOL.Core.DBManager
             }
             return list.Count;
         }
-        public static int Update<TSource>(this VOLContext dbContext, TSource entity, bool saveChanges = false) where TSource : class, new()
+
+        public static int Update<TSource>(
+            this VOLContext dbContext,
+            TSource entity,
+            bool saveChanges = false
+        )
+            where TSource : class, new()
         {
-            return UpdateRange<TSource>(dbContext, new List<TSource>() { entity }, new string[] { }, saveChanges);
-        }
-        public static int Update<TSource>(this VOLContext dbContext, TSource entity, Expression<Func<TSource, object>> updateMainFields, bool saveChanges = false) where TSource : class, new()
-        {
-            return UpdateRange<TSource>(dbContext, new List<TSource>() { entity }, updateMainFields.GetExpressionProperty(), saveChanges);
+            return UpdateRange<TSource>(
+                dbContext,
+                new List<TSource>() { entity },
+                new string[] { },
+                saveChanges
+            );
         }
 
-        public static int Update<TSource>(this VOLContext dbContext, TSource entity, string[] properties, bool saveChanges = false) where TSource : class, new()
+        public static int Update<TSource>(
+            this VOLContext dbContext,
+            TSource entity,
+            Expression<Func<TSource, object>> updateMainFields,
+            bool saveChanges = false
+        )
+            where TSource : class, new()
         {
-            return UpdateRange<TSource>(dbContext, new List<TSource>() { entity }, properties, saveChanges);
+            return UpdateRange<TSource>(
+                dbContext,
+                new List<TSource>() { entity },
+                updateMainFields.GetExpressionProperty(),
+                saveChanges
+            );
         }
-        public static int UpdateRange<TSource>(this VOLContext dbContext, IEnumerable<TSource> entities, bool saveChanges = false) where TSource : class, new()
+
+        public static int Update<TSource>(
+            this VOLContext dbContext,
+            TSource entity,
+            string[] properties,
+            bool saveChanges = false
+        )
+            where TSource : class, new()
+        {
+            return UpdateRange<TSource>(
+                dbContext,
+                new List<TSource>() { entity },
+                properties,
+                saveChanges
+            );
+        }
+
+        public static int UpdateRange<TSource>(
+            this VOLContext dbContext,
+            IEnumerable<TSource> entities,
+            bool saveChanges = false
+        )
+            where TSource : class, new()
         {
             return UpdateRange<TSource>(dbContext, entities, new string[] { }, saveChanges);
         }
-        public static int UpdateRange<TSource>(this VOLContext dbContext, IEnumerable<TSource> entities, Expression<Func<TSource, object>> updateMainFields, bool saveChanges = false) where TSource : class, new()
+
+        public static int UpdateRange<TSource>(
+            this VOLContext dbContext,
+            IEnumerable<TSource> entities,
+            Expression<Func<TSource, object>> updateMainFields,
+            bool saveChanges = false
+        )
+            where TSource : class, new()
         {
-            return UpdateRange<TSource>(dbContext, entities, updateMainFields.GetExpressionProperty(), saveChanges);
+            return UpdateRange<TSource>(
+                dbContext,
+                entities,
+                updateMainFields.GetExpressionProperty(),
+                saveChanges
+            );
         }
-        public static int UpdateRange<TSource>(this VOLContext dbContext, IEnumerable<TSource> entities, string[] properties, bool saveChanges = false) where TSource : class, new()
+
+        public static int UpdateRange<TSource>(
+            this VOLContext dbContext,
+            IEnumerable<TSource> entities,
+            string[] properties,
+            bool saveChanges = false
+        )
+            where TSource : class, new()
         {
             return dbContext.SqlSugarClient.UpdateRange<TSource>(entities, properties, saveChanges);
         }
-        public static int Update<TSource>(this ISqlSugarClient sqlSugarClient, TSource entity, string[] properties, bool saveChanges = false) where TSource : class, new()
+
+        public static int Update<TSource>(
+            this ISqlSugarClient sqlSugarClient,
+            TSource entity,
+            string[] properties,
+            bool saveChanges = false
+        )
+            where TSource : class, new()
         {
-            return sqlSugarClient.UpdateRange<TSource>(new List<TSource>() { entity }, properties, saveChanges);
+            return sqlSugarClient.UpdateRange<TSource>(
+                new List<TSource>() { entity },
+                properties,
+                saveChanges
+            );
         }
 
         //public static int Update<TSource>(this SqlSugarScope sqlSugarScope, TSource entity, string[] properties, bool saveChanges = false) where TSource : class, new()
@@ -104,7 +194,13 @@ namespace VOL.Core.DBManager
         //    return sqlSugarScope.UpdateRange<TSource>(new List<TSource>() { entity }, properties, saveChanges);
         //}
 
-        public static int UpdateRange<TSource>(this ISqlSugarClient sqlSugarClient, IEnumerable<TSource> entities, string[] properties, bool saveChanges = false) where TSource : class, new()
+        public static int UpdateRange<TSource>(
+            this ISqlSugarClient sqlSugarClient,
+            IEnumerable<TSource> entities,
+            string[] properties,
+            bool saveChanges = false
+        )
+            where TSource : class, new()
         {
             if (entities.Count() == 0)
             {
@@ -118,7 +214,9 @@ namespace VOL.Core.DBManager
                 {
                     properties = properties.Where(x => x != keyName).ToArray();
                 }
-                properties = properties.Where(x => entityProperty.Select(s => s.Name).Contains(x)).ToArray();
+                properties = properties
+                    .Where(x => entityProperty.Select(s => s.Name).Contains(x))
+                    .ToArray();
             }
             if (properties == null || properties.Length == 0)
             {
@@ -126,7 +224,10 @@ namespace VOL.Core.DBManager
             }
             else
             {
-                sqlSugarClient.Updateable<TSource>(entities.ToList()).UpdateColumns(properties).AddQueue();
+                sqlSugarClient
+                    .Updateable<TSource>(entities.ToList())
+                    .UpdateColumns(properties)
+                    .AddQueue();
             }
             if (!saveChanges)
             {
@@ -134,7 +235,6 @@ namespace VOL.Core.DBManager
             }
             return sqlSugarClient.SaveQueues();
         }
-
 
         public static Task<T> FirstOrDefaultAsync<T>(this ISugarQueryable<T> queryable)
         {
@@ -146,7 +246,10 @@ namespace VOL.Core.DBManager
             return queryable.First();
         }
 
-        public static ISugarQueryable<T> Include<T, TProperty>(this ISugarQueryable<T> queryable, Expression<Func<T, TProperty>> incluedProperty)
+        public static ISugarQueryable<T> Include<T, TProperty>(
+            this ISugarQueryable<T> queryable,
+            Expression<Func<T, TProperty>> incluedProperty
+        )
         {
             return queryable.Includes(incluedProperty);
         }
@@ -156,11 +259,13 @@ namespace VOL.Core.DBManager
             return queryable.First();
         }
 
-        public static ISugarQueryable<T> ThenByDescending<T>(this ISugarQueryable<T> queryable, Expression<Func<T, object>> expression)
+        public static ISugarQueryable<T> ThenByDescending<T>(
+            this ISugarQueryable<T> queryable,
+            Expression<Func<T, object>> expression
+        )
         {
             return queryable.OrderByDescending(expression);
         }
-
 
         public static int SaveChanges(this ISqlSugarClient sqlSugarClient)
         {
@@ -172,30 +277,46 @@ namespace VOL.Core.DBManager
             return await sqlSugarClient.SaveQueuesAsync();
         }
 
-
-        public static ISugarQueryable<TEntity> Set<TEntity>(this ISqlSugarClient sqlSugarClient, bool filterDeleted = false) where TEntity : class
+        public static ISugarQueryable<TEntity> Set<TEntity>(
+            this ISqlSugarClient sqlSugarClient,
+            bool filterDeleted = false
+        )
+            where TEntity : class
         {
             return sqlSugarClient.Queryable<TEntity>();
         }
 
-        public static List<T> QueryList<T>(this ISqlSugarClient sqlSugarClient, string sql, object parameters)
+        public static List<T> QueryList<T>(
+            this ISqlSugarClient sqlSugarClient,
+            string sql,
+            object parameters
+        )
         {
             return sqlSugarClient.Ado.SqlQuery<T>(sql, parameters);
         }
-        public static object ExecuteScalar(this ISqlSugarClient sqlSugarClient, string sql, object parameters)
+
+        public static object ExecuteScalar(
+            this ISqlSugarClient sqlSugarClient,
+            string sql,
+            object parameters
+        )
         {
             return sqlSugarClient.Ado.GetScalar(sql, parameters);
         }
-        public static int ExcuteNonQuery(this ISqlSugarClient sqlSugarClient, string sql, object parameters)
+
+        public static int ExcuteNonQuery(
+            this ISqlSugarClient sqlSugarClient,
+            string sql,
+            object parameters
+        )
         {
             return sqlSugarClient.Ado.ExecuteCommand(sql, parameters);
         }
+
         public static ISqlSugarClient SetTimout(this ISqlSugarClient sqlSugarClient, int time)
         {
             // sqlSugarClient.Ado.CommandTimeOut = time;
             return sqlSugarClient;
         }
-
-
     }
 }

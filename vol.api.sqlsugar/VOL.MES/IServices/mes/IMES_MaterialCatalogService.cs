@@ -6,7 +6,5 @@ using VOL.Entity.DomainModels;
 
 namespace VOL.MES.IServices
 {
-    public partial interface IMES_MaterialCatalogService : IService<MES_MaterialCatalog>
-    {
-    }
+    public partial interface IMES_MaterialCatalogService : IService<MES_MaterialCatalog> { }
 }

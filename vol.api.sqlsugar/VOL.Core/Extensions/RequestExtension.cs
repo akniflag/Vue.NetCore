@@ -1,19 +1,20 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Microsoft.AspNetCore.Http;
 using VOL.Core.Enums;
 
 namespace VOL.Core.Extensions
 {
     public static class HttpContextExtension
     {
-
-        public static T GetService<T>(this HttpContext context) where T : class
+        public static T GetService<T>(this HttpContext context)
+            where T : class
         {
             return context.RequestServices.GetService(typeof(T)) as T;
         }
+
         public static string GetUserIp(this HttpContext context)
         {
             string realIP = null;
@@ -62,19 +63,26 @@ namespace VOL.Core.Extensions
             }
         }
 
-        public static T Request<T>(this HttpContext context, string parameter) where T : class
+        public static T Request<T>(this HttpContext context, string parameter)
+            where T : class
         {
             return context.RequestString(parameter)?.DeserializeObject<T>();
         }
+
         public static string RequestString(this HttpContext context, string parameter)
         {
             string requestParam = context.GetRequestParameters();
-            if (string.IsNullOrEmpty(requestParam)) return null;
-            Dictionary<string, object> keyValues = requestParam.DeserializeObject<Dictionary<string, object>>();
-            if (keyValues == null || keyValues.Count == 0) return null;
+            if (string.IsNullOrEmpty(requestParam))
+                return null;
+            Dictionary<string, object> keyValues = requestParam.DeserializeObject<
+                Dictionary<string, object>
+            >();
+            if (keyValues == null || keyValues.Count == 0)
+                return null;
             if (keyValues.TryGetValue(parameter, out object value))
             {
-                if (value == null) return null;
+                if (value == null)
+                    return null;
                 if (value.GetType() == typeof(string))
                 {
                     return value?.ToString();
@@ -83,6 +91,7 @@ namespace VOL.Core.Extensions
             }
             return null;
         }
+
         /// <summary>
         /// 是否为ajax请求
         /// </summary>
@@ -91,8 +100,10 @@ namespace VOL.Core.Extensions
         public static bool IsAjaxRequest(this HttpContext context)
         {
             return context.Request("X-Requested-With") == "XMLHttpRequest"
-                || (context.Request.Headers != null
-                   && context.Request.Headers["X-Requested-With"] == "XMLHttpRequest");
+                || (
+                    context.Request.Headers != null
+                    && context.Request.Headers["X-Requested-With"] == "XMLHttpRequest"
+                );
         }
 
         public static UserAgent GetAgentType(this HttpContext context)
@@ -108,17 +119,15 @@ namespace VOL.Core.Extensions
                 return UserAgent.Windows;
             }
             return UserAgent.Android;
-
         }
 
         /// <summary>
         /// 获取请求的参数
         /// net core 2.0已增加回读方法 context.Request.EnableRewind();
-        /// 
+        ///
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-
         public static string GetRequestParameters(this HttpContext context)
         {
             string prarameters = null;
@@ -129,16 +138,27 @@ namespace VOL.Core.Extensions
 
             //context.Request.EnableBuffering();
             context.Request.Body.Seek(0, SeekOrigin.Begin);
-            if (context.Request.Body == null
+            if (
+                context.Request.Body == null
                 || !context.Request.Body.CanRead
                 || !context.Request.Body.CanSeek
-                || context.Request.Body.Length == 0 || context.Request.Body.Length > 10000)
+                || context.Request.Body.Length == 0
+                || context.Request.Body.Length > 10000
+            )
                 return prarameters;
             if (context.Request.ContentType.Contains("application/json"))
             {
                 if (context.Request.Body.Position > 0)
                     context.Request.Body.Position = 0;
-                using (StreamReader reader = new StreamReader(context.Request.Body, Encoding.UTF8, detectEncodingFromByteOrderMarks: true, bufferSize: 1024, leaveOpen: true))
+                using (
+                    StreamReader reader = new StreamReader(
+                        context.Request.Body,
+                        Encoding.UTF8,
+                        detectEncodingFromByteOrderMarks: true,
+                        bufferSize: 1024,
+                        leaveOpen: true
+                    )
+                )
                 {
                     prarameters += reader.ReadToEnd();
                 }

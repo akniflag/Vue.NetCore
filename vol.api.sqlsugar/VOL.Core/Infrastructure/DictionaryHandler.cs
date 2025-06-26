@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.AspNetCore.Http;
 using VOL.Core.Const;
 using VOL.Core.Enums;
 using VOL.Core.ManageUser;
@@ -45,7 +45,6 @@ namespace VOL.Core.Infrastructure
         /// <returns></returns>
         public static string GetRolesSql(string originalSql)
         {
-         
             if (UserContext.Current.IsSuperAdmin)
             {
                 return originalSql;
@@ -56,12 +55,15 @@ namespace VOL.Core.Infrastructure
             roleIds.Add(currnetRoleId);
             if (DBType.Name == DbCurrentType.PgSql.ToString())
             {
-                originalSql = $"SELECT \"Role_Id\" as key,\"Role_Id\" as id,\"RoleName\" as value,\"ParentId\" AS parentId from \"Sys_Role\""
-                   +$" where \"Role_Id\"  in ({string.Join(',', roleIds)})";
+                originalSql =
+                    $"SELECT \"Role_Id\" as key,\"Role_Id\" as id,\"RoleName\" as value,\"ParentId\" AS parentId from \"Sys_Role\""
+                    + $" where \"Role_Id\"  in ({string.Join(',', roleIds)})";
             }
-            else {
-                originalSql= $@"SELECT Role_Id as 'key',Role_Id AS id,ParentId AS parentId,RoleName as 'value' FROM Sys_Role 
-                      WHERE Enable=1  and Role_Id in ({string.Join(',', roleIds)})"; 
+            else
+            {
+                originalSql =
+                    $@"SELECT Role_Id as 'key',Role_Id AS id,ParentId AS parentId,RoleName as 'value' FROM Sys_Role 
+                      WHERE Enable=1  and Role_Id in ({string.Join(',', roleIds)})";
             }
             return originalSql;
         }

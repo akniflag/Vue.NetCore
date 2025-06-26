@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc.Filters;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace VOL.Core.ObjectActionValidator
 {
@@ -10,8 +10,12 @@ namespace VOL.Core.ObjectActionValidator
     {
         public ObjectModelValidatorFilter(ValidatorModel validatorGroup)
         {
-            MethodsParameters = validatorGroup.GetModelParameters()?.Select(x => x.ToLower())?.ToArray();
+            MethodsParameters = validatorGroup
+                .GetModelParameters()
+                ?.Select(x => x.ToLower())
+                ?.ToArray();
         }
+
         public string[] MethodsParameters { get; }
     }
 }

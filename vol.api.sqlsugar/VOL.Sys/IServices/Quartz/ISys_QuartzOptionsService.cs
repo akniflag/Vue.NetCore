@@ -6,7 +6,5 @@ using VOL.Entity.DomainModels;
 
 namespace VOL.Sys.IServices
 {
-    public partial interface ISys_QuartzOptionsService : IService<Sys_QuartzOptions>
-    {
-    }
+    public partial interface ISys_QuartzOptionsService : IService<Sys_QuartzOptions> { }
 }

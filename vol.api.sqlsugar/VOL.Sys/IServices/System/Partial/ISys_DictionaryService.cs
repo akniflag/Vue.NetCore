@@ -25,4 +25,3 @@ namespace VOL.Sys.IServices
         Task<object> GetRemoteDefaultKeyValue(string dicNo, string key);
     }
 }
-

@@ -1,9 +1,9 @@
-﻿using CSRedis;
-using Newtonsoft.Json;
-using StackExchange.Redis;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CSRedis;
+using Newtonsoft.Json;
+using StackExchange.Redis;
 using VOL.Core.Configuration;
 using VOL.Core.Const;
 
@@ -41,13 +41,15 @@ namespace VOL.Core.CacheManager
             RedisHelper.RPush(key, val);
         }
 
-        public T ListDequeue<T>(string key) where T : class
+        public T ListDequeue<T>(string key)
+            where T : class
         {
             string value = RedisHelper.RPop(key);
             if (string.IsNullOrEmpty(value))
                 return null;
             return JsonConvert.DeserializeObject<T>(value);
         }
+
         public object ListDequeue(string key)
         {
             string value = RedisHelper.RPop(key);
@@ -66,11 +68,18 @@ namespace VOL.Core.CacheManager
         {
             RedisHelper.LTrim(key, keepIndex, -1);
         }
+
         public bool Add(string key, string value, int expireSeconds = -1, bool isSliding = false)
         {
             return RedisHelper.Set(key, value, expireSeconds);
         }
-        public bool AddObject(string key, object value, int expireSeconds = -1, bool isSliding = false)
+
+        public bool AddObject(
+            string key,
+            object value,
+            int expireSeconds = -1,
+            bool isSliding = false
+        )
         {
             return RedisHelper.Set(key, value, expireSeconds);
         }
@@ -85,6 +94,7 @@ namespace VOL.Core.CacheManager
             RedisHelper.Del(key);
             return true;
         }
+
         /// <summary>
         /// 批量删除缓存
         /// </summary>
@@ -94,15 +104,18 @@ namespace VOL.Core.CacheManager
         {
             RedisHelper.Del(keys.ToArray());
         }
+
         /// <summary>
         /// 获取缓存
         /// </summary>
         /// <param name="key">缓存Key</param>
         /// <returns></returns>
-        public T Get<T>(string key) where T : class
+        public T Get<T>(string key)
+            where T : class
         {
             return RedisHelper.Get<T>(key);
         }
+
         /// <summary>
         /// 获取缓存
         /// </summary>
@@ -112,8 +125,7 @@ namespace VOL.Core.CacheManager
         {
             return RedisHelper.Get(key);
         }
-        public void Dispose()
-        {
-        }
+
+        public void Dispose() { }
     }
 }

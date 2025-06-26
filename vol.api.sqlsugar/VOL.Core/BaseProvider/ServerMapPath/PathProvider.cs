@@ -1,6 +1,5 @@
-﻿
+﻿using System.IO;
 using Microsoft.AspNetCore.Hosting;
-using System.IO;
 using VOL.Core.Extensions;
 using VOL.Core.Extensions.AutofacManager;
 
@@ -21,6 +20,7 @@ namespace VOL.Core.BaseProvider.ServerMapPath
         {
             _hostingEnvironment = environment;
         }
+
         public IWebHostEnvironment GetHostingEnvironment()
         {
             return _hostingEnvironment;
@@ -30,8 +30,9 @@ namespace VOL.Core.BaseProvider.ServerMapPath
         {
             return MapPath(path, false);
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="path"></param>
         /// <param name="rootPath">获取wwwroot路径</param>
@@ -42,7 +43,8 @@ namespace VOL.Core.BaseProvider.ServerMapPath
             {
                 if (_hostingEnvironment.WebRootPath == null)
                 {
-                    _hostingEnvironment.WebRootPath = _hostingEnvironment.ContentRootPath + "/wwwroot".ReplacePath();
+                    _hostingEnvironment.WebRootPath =
+                        _hostingEnvironment.ContentRootPath + "/wwwroot".ReplacePath();
                 }
                 return Path.Combine(_hostingEnvironment.WebRootPath, path).ReplacePath();
             }

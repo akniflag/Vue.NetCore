@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Primitives;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Primitives;
 using VOL.Core.Configuration;
 using VOL.Core.Extensions;
 
@@ -12,7 +12,6 @@ namespace VOL.Core.Quartz
 {
     public static class QuartzAuthorization
     {
-
         private static string _quartzAccessKey;
 
         public static string Key = "QuartzAccessKey";
@@ -27,6 +26,7 @@ namespace VOL.Core.Quartz
                 return _quartzAccessKey;
             }
         }
+
         public static string GetAccessKey()
         {
             if (string.IsNullOrEmpty(_quartzAccessKey))
@@ -52,14 +52,22 @@ namespace VOL.Core.Quartz
 
         public static AuthorizationFilterContext Validation(AuthorizationFilterContext context)
         {
-            bool result = context.HttpContext.Request.Headers.TryGetValue(Key, out StringValues value);
+            bool result = context.HttpContext.Request.Headers.TryGetValue(
+                Key,
+                out StringValues value
+            );
             if (!result || AccessKey != value)
             {
                 context.Result = new ContentResult()
                 {
-                    Content = new { message = "key不匹配", status = false, code = 401 }.Serialize(),
+                    Content = new
+                    {
+                        message = "key不匹配",
+                        status = false,
+                        code = 401,
+                    }.Serialize(),
                     ContentType = "application/json",
-                    StatusCode = 401
+                    StatusCode = 401,
                 };
                 return context;
             }

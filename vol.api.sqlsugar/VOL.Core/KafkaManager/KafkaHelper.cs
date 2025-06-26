@@ -56,10 +56,10 @@
 //            return "127.0.0.1";
 //        }
 
-//        /// <summary>  
-//        /// 将c# DateTime时间格式转换为Unix时间戳格式(毫秒级)  
-//        /// </summary>  
-//        /// <returns>long</returns>  
+//        /// <summary>
+//        /// 将c# DateTime时间格式转换为Unix时间戳格式(毫秒级)
+//        /// </summary>
+//        /// <returns>long</returns>
 //        public static long GetTimeStamp()
 //        {
 //            DateTime time = DateTime.Now;

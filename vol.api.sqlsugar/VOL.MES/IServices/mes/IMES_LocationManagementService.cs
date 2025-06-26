@@ -6,7 +6,5 @@ using VOL.Entity.DomainModels;
 
 namespace VOL.MES.IServices
 {
-    public partial interface IMES_LocationManagementService : IService<MES_LocationManagement>
-    {
-    }
+    public partial interface IMES_LocationManagementService : IService<MES_LocationManagement> { }
 }

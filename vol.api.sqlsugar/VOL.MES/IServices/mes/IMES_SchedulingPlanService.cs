@@ -6,7 +6,5 @@ using VOL.Entity.DomainModels;
 
 namespace VOL.MES.IServices
 {
-    public partial interface IMES_SchedulingPlanService : IService<MES_SchedulingPlan>
-    {
-    }
+    public partial interface IMES_SchedulingPlanService : IService<MES_SchedulingPlan> { }
 }

@@ -12,7 +12,6 @@ using VOL.Core.Extensions;
 
 namespace VOL.Core.Extensions
 {
-
     public static class IdentityCode
     {
         /// <summary>
@@ -23,18 +22,19 @@ namespace VOL.Core.Extensions
         /// <param name="codeField">要设置单据号的字段</param>
         /// <param name="preCode">单据号前缀,如：{TC}{2023}{0001}</param>
         /// <param name="dateFieldExpression">排序字段，每天都从第1个号码开始</param>
-        /// 
+        ///
         /// 使用示例：
         ///   Sys_User user=  new Sys_User();
         ///   user.Create(x => x.UserName, "U", x => x.CreateDate);
         /// <returns></returns>
-        public static string Create<T>(this T entity,
+        public static string Create<T>(
+            this T entity,
             Expression<Func<T, object>> codeField,
             string preCode = "Code",
             Expression<Func<T, object>> dateFieldExpression = null
-            ) where T : class
+        )
+            where T : class
         {
-
             string dateField;
             if (dateFieldExpression == null)
             {
@@ -49,7 +49,9 @@ namespace VOL.Core.Extensions
             var condition = dateField.CreateExpression<T>(dateNow, LinqExpressionType.ThanOrEqual);
             var field = codeField.GetExpressionPropertyFirst();
             var select = field.GetExpression<T, string>();
-            string orderNo = DbManger.Db.Queryable<T>().Where(condition)
+            string orderNo = DbManger
+                .Db.Queryable<T>()
+                .Where(condition)
                 .OrderByDescending(codeField)
                 .Select(select)
                 .FirstOrDefault()

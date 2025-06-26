@@ -6,7 +6,5 @@ using VOL.Entity.DomainModels;
 
 namespace VOL.MES.IServices
 {
-    public partial interface ITestServiceService : IService<TestService>
-    {
-    }
+    public partial interface ITestServiceService : IService<TestService> { }
 }

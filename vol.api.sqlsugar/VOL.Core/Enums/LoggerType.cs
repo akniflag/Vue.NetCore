@@ -49,6 +49,6 @@ namespace VOL.Core.Enums
         ParEmpty,
         NoToken,
         ReplaceToeken,
-        KafkaException
+        KafkaException,
     }
 }

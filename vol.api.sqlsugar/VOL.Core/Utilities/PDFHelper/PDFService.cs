@@ -1,5 +1,4 @@
-
-﻿//using WkHtmlToPdfDotNet;
+//using WkHtmlToPdfDotNet;
 //using WkHtmlToPdfDotNet.Contracts;
 
 //namespace VOL.Core.Utilities.PDFHelper
@@ -52,7 +51,7 @@
 //                GlobalSettings = globalSettings,
 //                Objects = { objectSettings }
 //            };
- 
+
 //            var file = _converter.Convert(pdf);
 //            //return File(file, "application/pdf");
 //            return file;

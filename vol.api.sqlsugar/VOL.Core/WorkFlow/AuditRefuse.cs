@@ -8,6 +8,6 @@ namespace VOL.Core.WorkFlow
     {
         流程结束 = 0,
         返回上一节点 = 1,
-        流程重新开始 = 2
+        流程重新开始 = 2,
     }
 }

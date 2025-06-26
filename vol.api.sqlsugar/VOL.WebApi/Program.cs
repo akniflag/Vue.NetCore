@@ -9,7 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using VOL.Core.Configuration;
-
 using VOL.WebApi.Controllers.MqDataHandle;
 
 namespace VOL.WebApi
@@ -22,7 +21,7 @@ namespace VOL.WebApi
             AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
             //CreateHostBuilder(args).Build().Run();
             var host = CreateHostBuilder(args).Build();
-            #region kafka¶©ÔÄÏûÏ¢
+            #region kafkaï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
             //if (AppSetting.Kafka.UseConsumer)
             //{
             //    using var scope = host.Services.CreateScope();
@@ -30,9 +29,9 @@ namespace VOL.WebApi
             //    testConsumer.Consume(res =>
             //    {
             //        Console.WriteLine($"recieve:{DateTime.Now.ToLongTimeString()}  value:{res.Message.Value}");
-            //        //¾²Ì¬·½·¨ Êý¾Ý´¦Àí Èë¿âµÈ²Ù×÷
+            //        //ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ý´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½È²ï¿½ï¿½ï¿½
             //        bool bl = DataHandle.AlarmData(res.Message.Value);
-            //        //»Øµ÷º¯ÊýÐè·µ»Ø±ãÓÚÖ´ÐÐCommit
+            //        //ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½è·µï¿½Ø±ï¿½ï¿½ï¿½Ö´ï¿½ï¿½Commit
             //        return bl;
             //    }, AppSetting.Kafka.Topics.TestTopic);
             //}
@@ -41,17 +40,18 @@ namespace VOL.WebApi
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
-               Host.CreateDefaultBuilder(args)
-                   .ConfigureWebHostDefaults(webBuilder =>
-                   {
-                       webBuilder.ConfigureKestrel(serverOptions =>
-                       {
-                           serverOptions.Limits.MaxRequestBodySize = 10485760;
-                           // Set properties and call methods on options
-                       });
-                       webBuilder.UseKestrel().UseUrls("http://*:9991");
-                       webBuilder.UseIIS();
-                       webBuilder.UseStartup<Startup>();
-                   }).UseServiceProviderFactory(new AutofacServiceProviderFactory());
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.ConfigureKestrel(serverOptions =>
+                    {
+                        serverOptions.Limits.MaxRequestBodySize = 10485760;
+                        // Set properties and call methods on options
+                    });
+                    webBuilder.UseKestrel().UseUrls("http://*:9991");
+                    webBuilder.UseIIS();
+                    webBuilder.UseStartup<Startup>();
+                })
+                .UseServiceProviderFactory(new AutofacServiceProviderFactory());
     }
 }

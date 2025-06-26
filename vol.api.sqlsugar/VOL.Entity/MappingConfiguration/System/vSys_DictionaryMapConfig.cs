@@ -1,6 +1,6 @@
-﻿using VOL.Entity.MappingConfiguration;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using VOL.Entity.DomainModels;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using VOL.Entity.MappingConfiguration;
 
 namespace VOL.Framework.Entity.MappingConfiguration
 {
@@ -8,9 +8,7 @@ namespace VOL.Framework.Entity.MappingConfiguration
     {
         public override void Map(EntityTypeBuilder<vSys_Dictionary> builderTable)
         {
-          //b.Property(x => x.StorageName).HasMaxLength(45);
+            //b.Property(x => x.StorageName).HasMaxLength(45);
         }
     }
 }
-
-

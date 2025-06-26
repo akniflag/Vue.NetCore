@@ -1,20 +1,19 @@
-﻿
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
 using VOL.Core.CacheManager;
 using VOL.Core.Configuration;
 using VOL.Core.Controllers.Basic;
-using VOL.Core.DBManager;
 using VOL.Core.DbContext;
+using VOL.Core.DBManager;
 using VOL.Core.Enums;
 using VOL.Core.Extensions;
 using VOL.Core.Filters;
@@ -36,13 +35,14 @@ namespace VOL.Sys.Controllers
     {
         private ISys_UserRepository _userRepository;
         private ICacheService _cache;
+
         [ActivatorUtilitiesConstructor]
         public Sys_UserController(
-               ISys_UserService userService,
-               ISys_UserRepository userRepository,
-               ICacheService cahce
-              )
-          : base(userService)
+            ISys_UserService userService,
+            ISys_UserRepository userRepository,
+            ICacheService cahce
+        )
+            : base(userService)
         {
             _userRepository = userRepository;
             _cache = cahce;
@@ -55,7 +55,9 @@ namespace VOL.Sys.Controllers
             return Json(await Service.Login(loginInfo));
         }
 
-        private readonly ConcurrentDictionary<int, object> _lockCurrent = new ConcurrentDictionary<int, object>();
+        private readonly ConcurrentDictionary<int, object> _lockCurrent =
+            new ConcurrentDictionary<int, object>();
+
         [HttpPost, Route("replaceToken")]
         public IActionResult ReplaceToken()
         {
@@ -80,27 +82,35 @@ namespace VOL.Sys.Controllers
                     string requestToken = HttpContext.Request.Headers[AppSetting.TokenHeaderName];
                     requestToken = requestToken?.Replace("Bearer ", "");
 
-                    if (JwtHelper.IsExp(requestToken)) return Json(responseContent.Error("Token已过期!"));
+                    if (JwtHelper.IsExp(requestToken))
+                        return Json(responseContent.Error("Token已过期!"));
 
                     int userId = UserContext.Current.UserId;
 
-                    userInfo = _userRepository.FindAsIQueryable(x => x.User_Id == userId).Select(
-                             s => new UserInfo()
-                             {
-                                 User_Id = userId,
-                                 UserName = s.UserName,
-                                 UserTrueName = s.UserTrueName,
-                                 Role_Id = s.Role_Id,
-                                 RoleName = s.RoleName
-                             }).FirstOrDefault();
+                    userInfo = _userRepository
+                        .FindAsIQueryable(x => x.User_Id == userId)
+                        .Select(s => new UserInfo()
+                        {
+                            User_Id = userId,
+                            UserName = s.UserName,
+                            UserTrueName = s.UserTrueName,
+                            Role_Id = s.Role_Id,
+                            RoleName = s.RoleName,
+                        })
+                        .FirstOrDefault();
 
-                    if (userInfo == null) return Json(responseContent.Error("未查到用户信息!"));
+                    if (userInfo == null)
+                        return Json(responseContent.Error("未查到用户信息!"));
 
                     string token = JwtHelper.IssueJwt(userInfo);
                     //移除当前缓存
                     _cache.Remove(userId.GetUserIdKey());
                     //只更新的token字段
-                    _userRepository.Update(new Sys_User() { User_Id = userId, Token = token }, x => x.Token, true);
+                    _userRepository.Update(
+                        new Sys_User() { User_Id = userId, Token = token },
+                        x => x.Token,
+                        true
+                    );
                     //添加一个5秒缓存
                     _cache.Add(key, token, 5);
                     responseContent.OK(null, token);
@@ -114,12 +124,12 @@ namespace VOL.Sys.Controllers
             finally
             {
                 _lockCurrent.TryRemove(UserContext.Current.UserId, out object val);
-                string _message = $"用户{userInfo?.User_Id}_{userInfo?.UserTrueName},({(responseContent.Status ? "token替换成功": "token替换失败")})";
+                string _message =
+                    $"用户{userInfo?.User_Id}_{userInfo?.UserTrueName},({(responseContent.Status ? "token替换成功" : "token替换失败")})";
                 Logger.Info(LoggerType.ReplaceToeken, _message, null, error);
             }
             return Json(responseContent);
         }
-
 
         [HttpPost, Route("modifyPwd")]
         [ApiActionPermission]
@@ -127,8 +137,6 @@ namespace VOL.Sys.Controllers
         {
             return Json(await Service.ModifyPwd(info?["oldPwd"], info?["newPwd"]));
         }
-
-
 
         [HttpPost, Route("getCurrentUserInfo")]
         public async Task<IActionResult> GetCurrentUserInfo()
@@ -146,7 +154,8 @@ namespace VOL.Sys.Controllers
             {
                 return Json(webResponse.Error("参数不完整"));
             }
-            if (password.Length < 6) return Json(webResponse.Error("密码长度不能少于6位"));
+            if (password.Length < 6)
+                return Json(webResponse.Error("密码长度不能少于6位"));
 
             ISys_UserRepository repository = Sys_UserRepository.Instance;
             Sys_User user = repository.FindFirst(x => x.UserName == userName);
@@ -160,6 +169,7 @@ namespace VOL.Sys.Controllers
             UserContext.Current.LogOut(user.User_Id);
             return Json(webResponse.OK("密码修改成功"));
         }
+
         /// <summary>
         /// 2020.06.15增加登陆验证码
         /// </summary>
@@ -171,9 +181,11 @@ namespace VOL.Sys.Controllers
             var data = new
             {
                 img = VierificationCode.CreateBase64Imgage(code),
-                uuid = Guid.NewGuid()
+                uuid = Guid.NewGuid(),
             };
-            HttpContext.GetService<IMemoryCache>().Set(data.uuid.ToString(), code, new TimeSpan(0, 5, 0));
+            HttpContext
+                .GetService<IMemoryCache>()
+                .Set(data.uuid.ToString(), code, new TimeSpan(0, 5, 0));
             return Json(data);
         }
 
@@ -182,12 +194,23 @@ namespace VOL.Sys.Controllers
         {
             return base.Upload(fileInput);
         }
+
         [HttpPost, Route("updateUserInfo")]
         public IActionResult UpdateUserInfo([FromBody] Sys_User user)
         {
             user.User_Id = UserContext.Current.UserId;
 
-            _userRepository.Update(user, x => new { x.UserTrueName, x.Gender, x.Remark, x.HeadImageUrl }, true);
+            _userRepository.Update(
+                user,
+                x => new
+                {
+                    x.UserTrueName,
+                    x.Gender,
+                    x.Remark,
+                    x.HeadImageUrl,
+                },
+                true
+            );
             return Content("修改成功");
         }
     }

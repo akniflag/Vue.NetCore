@@ -6,38 +6,38 @@
 *用户信息、权限、角色等使用UserContext.Current操作
 *Sys_QuartzOptionsService对增、删、改查、导入、导出、审核业务代码扩展参照ServiceFunFilter
 */
-using VOL.Core.BaseProvider;
-using VOL.Core.Extensions.AutofacManager;
-using VOL.Entity.DomainModels;
-using System.Linq;
-using VOL.Core.Utilities;
-using System.Linq.Expressions;
-using VOL.Core.Extensions;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Http;
-using VOL.Sys.IRepositories;
-using VOL.Core.Quartz;
-using Quartz;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
-
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Quartz;
+using VOL.Core.BaseProvider;
+using VOL.Core.Extensions;
+using VOL.Core.Extensions.AutofacManager;
+using VOL.Core.Quartz;
+using VOL.Core.Utilities;
+using VOL.Entity.DomainModels;
+using VOL.Sys.IRepositories;
 
 namespace VOL.Sys.Services
 {
     public partial class Sys_QuartzOptionsService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly ISys_QuartzOptionsRepository _repository;//访问数据库
+        private readonly ISys_QuartzOptionsRepository _repository; //访问数据库
         private readonly ISchedulerFactory _schedulerFactory;
+
         [ActivatorUtilitiesConstructor]
         public Sys_QuartzOptionsService(
             ISys_QuartzOptionsRepository dbRepository,
             IHttpContextAccessor httpContextAccessor,
             ISchedulerFactory schedulerFactory
-            )
-        : base(dbRepository)
+        )
+            : base(dbRepository)
         {
             _httpContextAccessor = httpContextAccessor;
             _repository = dbRepository;
@@ -53,6 +53,7 @@ namespace VOL.Sys.Services
         }
 
         WebResponseContent webResponse = new WebResponseContent();
+
         public override WebResponseContent Add(SaveModel saveDataModel)
         {
             AddOnExecuting = (Sys_QuartzOptions options, object list) =>
@@ -78,18 +79,25 @@ namespace VOL.Sys.Services
         {
             var ids = keys.Select(s => (Guid)(s.GetGuid())).ToArray();
 
-            repository.FindAsIQueryable(x => ids.Contains(x.Id)).ToList().ForEach(options =>
-            {
-                _schedulerFactory.Remove(options).GetAwaiter().GetResult();
-            });
+            repository
+                .FindAsIQueryable(x => ids.Contains(x.Id))
+                .ToList()
+                .ForEach(options =>
+                {
+                    _schedulerFactory.Remove(options).GetAwaiter().GetResult();
+                });
 
             return base.Del(keys, delList);
         }
 
         public override WebResponseContent Update(SaveModel saveModel)
         {
-
-            UpdateOnExecuted = (Sys_QuartzOptions options, object addList, object updateList, List<object> delKeys) =>
+            UpdateOnExecuted = (
+                Sys_QuartzOptions options,
+                object addList,
+                object updateList,
+                List<object> delKeys
+            ) =>
             {
                 _schedulerFactory.Update(options).GetAwaiter().GetResult();
                 return webResponse.OK();
@@ -106,6 +114,7 @@ namespace VOL.Sys.Services
         {
             return await _schedulerFactory.Run(taskOptions);
         }
+
         /// <summary>
         /// 开启任务
         /// </summary>

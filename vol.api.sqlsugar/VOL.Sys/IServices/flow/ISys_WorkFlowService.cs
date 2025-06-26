@@ -6,7 +6,5 @@ using VOL.Entity.DomainModels;
 
 namespace VOL.Sys.IServices
 {
-    public partial interface ISys_WorkFlowService : IService<Sys_WorkFlow>
-    {
-    }
+    public partial interface ISys_WorkFlowService : IService<Sys_WorkFlow> { }
 }

@@ -12,6 +12,6 @@ namespace VOL.Core.Quartz
         暂停 = 4,
         停止,
         开启,
-        立即执行
+        立即执行,
     }
 }

@@ -1,15 +1,15 @@
-﻿using Autofac;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.Loader;
+using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.Loader;
 using VOL.Core.CacheManager;
 using VOL.Core.Configuration;
 using VOL.Core.Const;
@@ -27,13 +27,15 @@ namespace VOL.Core.Extensions
     public static class AutofacContainerModuleExtension
     {
         //  private static bool _isMysql = false;
-        public static IServiceCollection AddModule(this IServiceCollection services, ContainerBuilder builder, IConfiguration configuration)
+        public static IServiceCollection AddModule(
+            this IServiceCollection services,
+            ContainerBuilder builder,
+            IConfiguration configuration
+        )
         {
             Type baseType = typeof(IDependency);
-            var compilationLibrary = DependencyContext.Default
-                .RuntimeLibraries
-                .Where(x => !x.Serviceable
-                && x.Type == "project")
+            var compilationLibrary = DependencyContext
+                .Default.RuntimeLibraries.Where(x => !x.Serviceable && x.Type == "project")
                 .ToList();
             var count1 = compilationLibrary.Count;
             List<Assembly> assemblyList = new List<Assembly>();
@@ -42,17 +44,23 @@ namespace VOL.Core.Extensions
             {
                 try
                 {
-                    assemblyList.Add(AssemblyLoadContext.Default.LoadFromAssemblyName(new AssemblyName(_compilation.Name)));
+                    assemblyList.Add(
+                        AssemblyLoadContext.Default.LoadFromAssemblyName(
+                            new AssemblyName(_compilation.Name)
+                        )
+                    );
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(_compilation.Name + ex.Message);
                 }
             }
-            builder.RegisterAssemblyTypes(assemblyList.ToArray())
-             .Where(type => baseType.IsAssignableFrom(type) && !type.IsAbstract)
-             .AsSelf().AsImplementedInterfaces()
-             .InstancePerLifetimeScope();
+            builder
+                .RegisterAssemblyTypes(assemblyList.ToArray())
+                .Where(type => baseType.IsAssignableFrom(type) && !type.IsAbstract)
+                .AsSelf()
+                .AsImplementedInterfaces()
+                .InstancePerLifetimeScope();
             builder.RegisterType<UserContext>().InstancePerLifetimeScope();
             builder.RegisterType<ActionObserver>().InstancePerLifetimeScope();
             //model校验结果
@@ -74,6 +82,5 @@ namespace VOL.Core.Extensions
             //    builder.RegisterType<KafkaProducer<string, string>>().As<IKafkaProducer<string, string>>().SingleInstance();
             return services;
         }
-
     }
 }

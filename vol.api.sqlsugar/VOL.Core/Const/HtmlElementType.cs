@@ -13,8 +13,7 @@ namespace VOL.Core.Const
         public const string checkbox = "checkbox";
         public const string textarea = "textarea";
         public const string thanorequal = "thanorequal";
-        public const string lessorequal = "lessorequal"; 
-
+        public const string lessorequal = "lessorequal";
 
         public const string gt = "gt";
         public const string lt = "lt";

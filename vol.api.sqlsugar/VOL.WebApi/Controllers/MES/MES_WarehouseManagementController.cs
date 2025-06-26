@@ -6,16 +6,15 @@ using Microsoft.AspNetCore.Mvc;
 using VOL.Core.Controllers.Basic;
 using VOL.Entity.AttributeManager;
 using VOL.MES.IServices;
+
 namespace VOL.MES.Controllers
 {
     [Route("api/MES_WarehouseManagement")]
     [PermissionTable(Name = "MES_WarehouseManagement")]
-    public partial class MES_WarehouseManagementController : ApiBaseController<IMES_WarehouseManagementService>
+    public partial class MES_WarehouseManagementController
+        : ApiBaseController<IMES_WarehouseManagementService>
     {
         public MES_WarehouseManagementController(IMES_WarehouseManagementService service)
-        : base(service)
-        {
-        }
+            : base(service) { }
     }
 }
-

@@ -6,16 +6,16 @@
 *用户信息、权限、角色等使用UserContext.Current操作
 *Sys_WorkFlowTableAuditLogService对增、删、改查、导入、导出、审核业务代码扩展参照ServiceFunFilter
 */
-using VOL.Core.BaseProvider;
-using VOL.Core.Extensions.AutofacManager;
-using VOL.Entity.DomainModels;
 using System.Linq;
-using VOL.Core.Utilities;
 using System.Linq.Expressions;
-using VOL.Core.Extensions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Http;
+using VOL.Core.BaseProvider;
+using VOL.Core.Extensions;
+using VOL.Core.Extensions.AutofacManager;
+using VOL.Core.Utilities;
+using VOL.Entity.DomainModels;
 using VOL.Sys.IRepositories;
 
 namespace VOL.Sys.Services
@@ -23,19 +23,19 @@ namespace VOL.Sys.Services
     public partial class Sys_WorkFlowTableAuditLogService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly ISys_WorkFlowTableAuditLogRepository _repository;//访问数据库
+        private readonly ISys_WorkFlowTableAuditLogRepository _repository; //访问数据库
 
         [ActivatorUtilitiesConstructor]
         public Sys_WorkFlowTableAuditLogService(
             ISys_WorkFlowTableAuditLogRepository dbRepository,
             IHttpContextAccessor httpContextAccessor
-            )
-        : base(dbRepository)
+        )
+            : base(dbRepository)
         {
             _httpContextAccessor = httpContextAccessor;
             _repository = dbRepository;
             //多租户会用到这init代码，其他情况可以不用
             //base.Init(dbRepository);
         }
-  }
+    }
 }

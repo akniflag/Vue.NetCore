@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using VOL.Core.Controllers.Basic;
 using VOL.Core.Enums;
 using VOL.Core.Filters;
@@ -13,10 +13,11 @@ namespace VOL.Sys.Controllers
     public partial class Sys_MenuController : ApiBaseController<ISys_MenuService>
     {
         private ISys_MenuService _service { get; set; }
-        public Sys_MenuController(ISys_MenuService service) :
-            base("System", "System", "Sys_Menu", service)
+
+        public Sys_MenuController(ISys_MenuService service)
+            : base("System", "System", "Sys_Menu", service)
         {
             _service = service;
-        } 
+        }
     }
 }

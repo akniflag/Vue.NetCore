@@ -1,24 +1,25 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace VOL.Entity.MappingConfiguration
 {
-
     public interface IEntityMappingConfiguration
     {
         void Map(ModelBuilder b);
     }
 
-    public interface IEntityMappingConfiguration<T> : IEntityMappingConfiguration where T : class
+    public interface IEntityMappingConfiguration<T> : IEntityMappingConfiguration
+        where T : class
     {
         void Map(EntityTypeBuilder<T> builder);
     }
 
-    public abstract class EntityMappingConfiguration<T> : IEntityMappingConfiguration<T> where T : class
+    public abstract class EntityMappingConfiguration<T> : IEntityMappingConfiguration<T>
+        where T : class
     {
         public abstract void Map(EntityTypeBuilder<T> b);
 
@@ -30,15 +31,34 @@ namespace VOL.Entity.MappingConfiguration
 
     public static class ModelBuilderExtenions
     {
-        private static IEnumerable<Type> GetMappingTypes(this Assembly assembly, Type mappingInterface)
+        private static IEnumerable<Type> GetMappingTypes(
+            this Assembly assembly,
+            Type mappingInterface
+        )
         {
-            return assembly.GetTypes().Where(x => !x.IsAbstract && x.GetInterfaces().Any(y => y.GetTypeInfo().IsGenericType && y.GetGenericTypeDefinition() == mappingInterface));
+            return assembly
+                .GetTypes()
+                .Where(x =>
+                    !x.IsAbstract
+                    && x.GetInterfaces()
+                        .Any(y =>
+                            y.GetTypeInfo().IsGenericType
+                            && y.GetGenericTypeDefinition() == mappingInterface
+                        )
+                );
         }
 
-        public static void AddEntityConfigurationsFromAssembly(this ModelBuilder modelBuilder, Assembly assembly)
+        public static void AddEntityConfigurationsFromAssembly(
+            this ModelBuilder modelBuilder,
+            Assembly assembly
+        )
         {
             var mappingTypes = assembly.GetMappingTypes(typeof(IEntityMappingConfiguration<>));
-            foreach (var config in mappingTypes.Select(Activator.CreateInstance).Cast<IEntityMappingConfiguration>())
+            foreach (
+                var config in mappingTypes
+                    .Select(Activator.CreateInstance)
+                    .Cast<IEntityMappingConfiguration>()
+            )
             {
                 config.Map(modelBuilder);
             }
@@ -74,7 +94,7 @@ namespace VOL.Entity.MappingConfiguration
 //    /// <param name="scale">小数位数</param>
 //    public static PropertyBuilder<TProperty> HasPrecision<TProperty>(this PropertyBuilder<TProperty> propertyBuilder, int precision = 18, int scale = 4)
 //    {
-//        //fluntapi方式设置精度  
+//        //fluntapi方式设置精度
 //        ((IInfrastructure<InternalPropertyBuilder>)propertyBuilder).Instance.HasPrecision(precision, scale);
 
 //        return propertyBuilder;
@@ -126,4 +146,3 @@ namespace VOL.Entity.MappingConfiguration
 //        return conventionSet;
 //    }
 //}
-

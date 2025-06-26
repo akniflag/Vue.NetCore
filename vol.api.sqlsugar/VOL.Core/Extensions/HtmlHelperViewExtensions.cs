@@ -1,35 +1,50 @@
-﻿using Microsoft.AspNetCore.Html;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace VOL.Core.Extensions
 {
     public static class HtmlHelperViewExtensions
     {
-        public static IHtmlContent Action(this IHtmlHelper helper, string action, object parameters = null)
+        public static IHtmlContent Action(
+            this IHtmlHelper helper,
+            string action,
+            object parameters = null
+        )
         {
             var controller = (string)helper.ViewContext.RouteData.Values["controller"];
 
             return Action(helper, action, controller, parameters);
         }
 
-        public static IHtmlContent Action(this IHtmlHelper helper, string action, string controller, object parameters = null)
+        public static IHtmlContent Action(
+            this IHtmlHelper helper,
+            string action,
+            string controller,
+            object parameters = null
+        )
         {
             var area = (string)helper.ViewContext.RouteData.Values["area"];
 
             return Action(helper, action, controller, area, parameters);
         }
 
-        public static IHtmlContent Action(this IHtmlHelper helper, string action, string controller, string area, object parameters = null)
+        public static IHtmlContent Action(
+            this IHtmlHelper helper,
+            string action,
+            string controller,
+            string area,
+            object parameters = null
+        )
         {
             if (action == null)
                 throw new ArgumentNullException("action");
@@ -37,18 +52,25 @@ namespace VOL.Core.Extensions
             if (controller == null)
                 throw new ArgumentNullException("controller");
 
-
             var task = RenderActionAsync(helper, action, controller, area, parameters);
 
             return task.Result;
         }
 
-        private static async Task<IHtmlContent> RenderActionAsync(this IHtmlHelper helper, string action, string controller, string area, object parameters = null)
+        private static async Task<IHtmlContent> RenderActionAsync(
+            this IHtmlHelper helper,
+            string action,
+            string controller,
+            string area,
+            object parameters = null
+        )
         {
             // fetching required services for invocation
             var serviceProvider = helper.ViewContext.HttpContext.RequestServices;
-            var actionContextAccessor = helper.ViewContext.HttpContext.RequestServices.GetRequiredService<IActionContextAccessor>();
-            var httpContextAccessor = helper.ViewContext.HttpContext.RequestServices.GetRequiredService<IHttpContextAccessor>();
+            var actionContextAccessor =
+                helper.ViewContext.HttpContext.RequestServices.GetRequiredService<IActionContextAccessor>();
+            var httpContextAccessor =
+                helper.ViewContext.HttpContext.RequestServices.GetRequiredService<IHttpContextAccessor>();
             var actionSelector = serviceProvider.GetRequiredService<IActionSelector>();
 
             // creating new action invocation context
@@ -57,11 +79,25 @@ namespace VOL.Core.Extensions
             {
                 routeData.PushState(router, null, null);
             }
-            routeData.PushState(null, new RouteValueDictionary(new { controller = controller, action = action, area = area }), null);
+            routeData.PushState(
+                null,
+                new RouteValueDictionary(
+                    new
+                    {
+                        controller = controller,
+                        action = action,
+                        area = area,
+                    }
+                ),
+                null
+            );
             routeData.PushState(null, new RouteValueDictionary(parameters ?? new { }), null);
 
             //get the actiondescriptor
-            RouteContext routeContext = new RouteContext(helper.ViewContext.HttpContext) { RouteData = routeData };
+            RouteContext routeContext = new RouteContext(helper.ViewContext.HttpContext)
+            {
+                RouteData = routeData,
+            };
             var candidates = actionSelector.SelectCandidates(routeContext);
             var actionDescriptor = actionSelector.SelectBestCandidate(routeContext, candidates);
 
@@ -69,7 +105,9 @@ namespace VOL.Core.Extensions
             var originalhttpContext = httpContextAccessor.HttpContext;
             try
             {
-                var newHttpContext = serviceProvider.GetRequiredService<IHttpContextFactory>().Create(helper.ViewContext.HttpContext.Features);
+                var newHttpContext = serviceProvider
+                    .GetRequiredService<IHttpContextFactory>()
+                    .Create(helper.ViewContext.HttpContext.Features);
                 if (newHttpContext.Items.ContainsKey(typeof(IUrlHelper)))
                 {
                     newHttpContext.Items.Remove(typeof(IUrlHelper));
@@ -77,7 +115,9 @@ namespace VOL.Core.Extensions
                 newHttpContext.Response.Body = new MemoryStream();
                 var actionContext = new ActionContext(newHttpContext, routeData, actionDescriptor);
                 actionContextAccessor.ActionContext = actionContext;
-                var invoker = serviceProvider.GetRequiredService<IActionInvokerFactory>().CreateInvoker(actionContext);
+                var invoker = serviceProvider
+                    .GetRequiredService<IActionInvokerFactory>()
+                    .CreateInvoker(actionContext);
                 await invoker.InvokeAsync();
                 newHttpContext.Response.Body.Position = 0;
                 using (var reader = new StreamReader(newHttpContext.Response.Body))

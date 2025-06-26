@@ -4,7 +4,7 @@ using System.Text;
 
 namespace VOL.Core.WorkFlow
 {
-  public  class FieldFilter
+    public class FieldFilter
     {
         public string Field { get; set; }
         public string Value { get; set; }

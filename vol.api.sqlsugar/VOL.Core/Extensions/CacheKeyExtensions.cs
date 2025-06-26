@@ -1,5 +1,5 @@
-﻿using VOL.Core.Enums;
-using System;
+﻿using System;
+using VOL.Core.Enums;
 
 namespace VOL.Core.Extensions
 {

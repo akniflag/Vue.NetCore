@@ -19,7 +19,12 @@ namespace VOL.Core.Utilities
         /// <param name="pageSize">分页大小</param>
         /// <param name="seekEnd"> 是否最后一行向前读取,默认从前向后读取</param>
         /// <returns></returns>
-        public static IEnumerable<string> ReadPageLine(string fullPath, int page, int pageSize, bool seekEnd = false)
+        public static IEnumerable<string> ReadPageLine(
+            string fullPath,
+            int page,
+            int pageSize,
+            bool seekEnd = false
+        )
         {
             if (page <= 0)
             {
@@ -37,7 +42,7 @@ namespace VOL.Core.Utilities
                     page = 0;
                     pageSize = 0;
                 }
-                else if (page == linPageCount)//最后一页，取最后一页剩下所有的行
+                else if (page == linPageCount) //最后一页，取最后一页剩下所有的行
                 {
                     pageSize = lineCount - (page - 1) * pageSize;
                     if (page == 1)
@@ -69,6 +74,7 @@ namespace VOL.Core.Utilities
             }
             enumerator.Dispose();
         }
+
         public static bool FileExists(string path)
         {
             return File.Exists(path.ReplacePath());
@@ -84,11 +90,11 @@ namespace VOL.Core.Utilities
             return Directory.Exists(path.ReplacePath());
         }
 
-
         public static string Read_File(string fullpath, string filename, string suffix)
         {
             return ReadFile((fullpath + "\\" + filename + suffix).MapPath());
         }
+
         public static string ReadFile(string fullName)
         {
             //  Encoding code = Encoding.GetEncoding(); //Encoding.GetEncoding("gb2312");
@@ -110,8 +116,6 @@ namespace VOL.Core.Utilities
             return str;
         }
 
-
-
         /// <summary>
         /// 取后缀名
         /// </summary>
@@ -125,22 +129,32 @@ namespace VOL.Core.Utilities
             return postfix;
         }
 
-
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="path">路径 </param>
         /// <param name="fileName">文件名</param>
         /// <param name="content">写入的内容</param>
         /// <param name="appendToLast">是否将内容添加到未尾,默认不添加</param>
-        public static void WriteFile(string path, string fileName, string content, bool appendToLast = false)
+        public static void WriteFile(
+            string path,
+            string fileName,
+            string content,
+            bool appendToLast = false
+        )
         {
             path = path.ReplacePath();
             fileName = fileName.ReplacePath();
-            if (!Directory.Exists(path))//如果不存在就创建file文件夹
+            if (!Directory.Exists(path)) //如果不存在就创建file文件夹
                 Directory.CreateDirectory(path);
 
-            using (FileStream stream = File.Open(path + fileName, FileMode.OpenOrCreate, FileAccess.Write))
+            using (
+                FileStream stream = File.Open(
+                    path + fileName,
+                    FileMode.OpenOrCreate,
+                    FileAccess.Write
+                )
+            )
             {
                 byte[] by = Encoding.Default.GetBytes(content);
                 if (appendToLast)
@@ -154,8 +168,6 @@ namespace VOL.Core.Utilities
                 stream.Write(by, 0, by.Length);
             }
         }
-
-
 
         /// <summary>
         /// 追加文件
@@ -171,7 +183,6 @@ namespace VOL.Core.Utilities
             sw.Dispose();
         }
 
-
         /// <summary>
         /// 拷贝文件
         /// </summary>
@@ -181,7 +192,6 @@ namespace VOL.Core.Utilities
         {
             File.Copy(OrignFile.ReplacePath(), NewFile.ReplacePath(), true);
         }
-
 
         /// <summary>
         /// 删除文件
@@ -224,37 +234,36 @@ namespace VOL.Core.Utilities
                 Directory.CreateDirectory(Path.ReplacePath());
         }
 
-
         public static void FileCreate(string Path)
         {
-            FileInfo CreateFile = new FileInfo(Path.ReplacePath()); //创建文件 
+            FileInfo CreateFile = new FileInfo(Path.ReplacePath()); //创建文件
             if (!CreateFile.Exists)
             {
                 FileStream FS = CreateFile.Create();
                 FS.Close();
             }
         }
+
         /// <summary>
         /// 递归删除文件夹目录及文件
         /// </summary>
-        /// <param name="dir"></param>  
+        /// <param name="dir"></param>
         /// <returns></returns>
         public static void DeleteFolder(string dir)
         {
             dir = dir.ReplacePath();
-            if (Directory.Exists(dir)) //如果存在这个文件夹删除之 
+            if (Directory.Exists(dir)) //如果存在这个文件夹删除之
             {
                 foreach (string d in Directory.GetFileSystemEntries(dir))
                 {
                     if (File.Exists(d))
-                        File.Delete(d); //直接删除其中的文件                        
+                        File.Delete(d); //直接删除其中的文件
                     else
-                        DeleteFolder(d); //递归删除子文件夹 
+                        DeleteFolder(d); //递归删除子文件夹
                 }
-                Directory.Delete(dir, true); //删除已空文件夹                 
+                Directory.Delete(dir, true); //删除已空文件夹
             }
         }
-
 
         /// <summary>
         /// 指定文件夹下面的所有内容copy到目标文件夹下面
@@ -331,9 +340,24 @@ namespace VOL.Core.Utilities
             string str = "";
             filePath = filePath.ReplacePath();
             System.IO.FileInfo objFI = new System.IO.FileInfo(filePath);
-            str += "详细路径:" + objFI.FullName + "<br>文件名称:" + objFI.Name + "<br>文件长度:" + objFI.Length.ToString() + "字节<br>创建时间" + objFI.CreationTime.ToString() + "<br>最后访问时间:" + objFI.LastAccessTime.ToString() + "<br>修改时间:" + objFI.LastWriteTime.ToString() + "<br>所在目录:" + objFI.DirectoryName + "<br>扩展名:" + objFI.Extension;
+            str +=
+                "详细路径:"
+                + objFI.FullName
+                + "<br>文件名称:"
+                + objFI.Name
+                + "<br>文件长度:"
+                + objFI.Length.ToString()
+                + "字节<br>创建时间"
+                + objFI.CreationTime.ToString()
+                + "<br>最后访问时间:"
+                + objFI.LastAccessTime.ToString()
+                + "<br>修改时间:"
+                + objFI.LastWriteTime.ToString()
+                + "<br>所在目录:"
+                + objFI.DirectoryName
+                + "<br>扩展名:"
+                + objFI.Extension;
             return str;
         }
-
     }
 }

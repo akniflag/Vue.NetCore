@@ -19,8 +19,6 @@ namespace VOL.Sys.IServices
 
         Task<WebResponseContent> DelMenu(int menuId);
 
-
         Task<object> GetTreeItem(int menuId);
     }
 }
-

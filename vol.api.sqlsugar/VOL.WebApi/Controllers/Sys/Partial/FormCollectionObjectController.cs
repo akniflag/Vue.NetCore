@@ -3,12 +3,12 @@
 *如果接口需要做Action的权限验证，请在Action上使用属性
 *如: [ApiActionPermission("FormCollectionObject",Enums.ActionPermissionOptions.Search)]
  */
-using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using VOL.Entity.DomainModels;
 using VOL.Sys.IServices;
 
@@ -16,15 +16,15 @@ namespace VOL.Sys.Controllers
 {
     public partial class FormCollectionObjectController
     {
-        private readonly IFormCollectionObjectService _service;//访问业务代码
+        private readonly IFormCollectionObjectService _service; //访问业务代码
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         [ActivatorUtilitiesConstructor]
-        public FormCollectionObjectController( 
+        public FormCollectionObjectController(
             IFormCollectionObjectService service,
             IHttpContextAccessor httpContextAccessor
         )
-        : base(service)
+            : base(service)
         {
             _service = service;
             _httpContextAccessor = httpContextAccessor;

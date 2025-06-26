@@ -9,6 +9,6 @@ namespace VOL.Core.Enums
         IOS = 0,
         Android = 1,
         Windows = 2,
-        Linux
+        Linux,
     }
 }

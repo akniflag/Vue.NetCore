@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using VOL.Core.Enums;
 using VOL.Core.Filters;
 using VOL.Entity.DomainModels;
@@ -10,7 +10,7 @@ namespace VOL.Sys.Controllers
     public partial class Sys_MenuController
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns></returns>
         [HttpGet, HttpPost, Route("getTreeMenu")]
@@ -20,6 +20,7 @@ namespace VOL.Sys.Controllers
         {
             return Json(await _service.GetCurrentMenuActionList());
         }
+
         [HttpPost, Route("getMenu")]
         [ApiActionPermission("Sys_Menu", ActionPermissionOptions.Search)]
         public async Task<IActionResult> GetMenu()
@@ -43,7 +44,7 @@ namespace VOL.Sys.Controllers
         }
 
         /// <summary>
-        /// 限制只能超级管理员才删除菜单 
+        /// 限制只能超级管理员才删除菜单
         /// </summary>
         /// <param name="keys"></param>
         /// <returns></returns>
@@ -53,6 +54,5 @@ namespace VOL.Sys.Controllers
         {
             return Json(await Service.DelMenu(menuId));
         }
-
     }
 }

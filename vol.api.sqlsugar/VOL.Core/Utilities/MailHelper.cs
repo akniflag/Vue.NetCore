@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
+using Microsoft.Extensions.Configuration;
 using VOL.Core.Configuration;
 using VOL.Core.Extensions;
 
@@ -17,9 +17,10 @@ namespace VOL.Core.Utilities
         private static string host { get; set; }
         private static int port;
         private static bool enableSsl { get; set; }
+
         static MailHelper()
         {
-            IConfigurationSection section= AppSetting.GetSection("Mail");
+            IConfigurationSection section = AppSetting.GetSection("Mail");
             address = section["Address"];
             authPwd = section["AuthPwd"];
             name = section["Name"];
@@ -38,24 +39,24 @@ namespace VOL.Core.Utilities
         {
             MailMessage message = new MailMessage
             {
-                From = new MailAddress(address, name)//发送人邮箱
+                From = new MailAddress(address, name), //发送人邮箱
             };
             foreach (var item in list)
             {
-                message.To.Add(item);//收件人地址
+                message.To.Add(item); //收件人地址
             }
 
-            message.Subject = title;//发送邮件的标题
+            message.Subject = title; //发送邮件的标题
 
-            message.Body = content;//发送邮件的内容
+            message.Body = content; //发送邮件的内容
             //配置smtp服务地址
             SmtpClient client = new SmtpClient
             {
                 Host = host,
-                Port = port,//端口587
+                Port = port, //端口587
                 EnableSsl = enableSsl,
                 //发送人邮箱与授权密码
-                Credentials = new NetworkCredential(address, authPwd)
+                Credentials = new NetworkCredential(address, authPwd),
             };
             client.Send(message);
         }

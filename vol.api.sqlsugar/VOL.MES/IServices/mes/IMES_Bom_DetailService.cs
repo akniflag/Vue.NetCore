@@ -6,7 +6,5 @@ using VOL.Entity.DomainModels;
 
 namespace VOL.MES.IServices
 {
-    public partial interface IMES_Bom_DetailService : IService<MES_Bom_Detail>
-    {
-    }
+    public partial interface IMES_Bom_DetailService : IService<MES_Bom_Detail> { }
 }

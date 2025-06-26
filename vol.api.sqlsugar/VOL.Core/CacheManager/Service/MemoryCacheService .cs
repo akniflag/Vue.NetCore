@@ -1,19 +1,19 @@
-﻿
-using Microsoft.Extensions.Caching.Memory;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace VOL.Core.CacheManager
 {
     public class MemoryCacheService : ICacheService
     {
         protected IMemoryCache _cache;
+
         public MemoryCacheService(IMemoryCache cache)
         {
             _cache = cache;
-
         }
+
         /// <summary>
         /// 验证缓存项是否存在
         /// </summary>
@@ -48,15 +48,22 @@ namespace VOL.Core.CacheManager
             return Exists(key);
         }
 
-        public bool AddObject(string key, object value, int expireSeconds = -1, bool isSliding = false)
+        public bool AddObject(
+            string key,
+            object value,
+            int expireSeconds = -1,
+            bool isSliding = false
+        )
         {
             if (expireSeconds != -1)
             {
-                _cache.Set(key,
+                _cache.Set(
+                    key,
                     value,
-                    new MemoryCacheEntryOptions()
-                    .SetSlidingExpiration(new TimeSpan(0, 0, expireSeconds))
-                    );
+                    new MemoryCacheEntryOptions().SetSlidingExpiration(
+                        new TimeSpan(0, 0, expireSeconds)
+                    )
+                );
             }
             else
             {
@@ -65,27 +72,29 @@ namespace VOL.Core.CacheManager
 
             return true;
         }
+
         public bool Add(string key, string value, int expireSeconds = -1, bool isSliding = false)
         {
             return AddObject(key, value, expireSeconds, isSliding);
         }
-        public void LPush(string key, string val)
-        {
-        }
-        public void RPush(string key, string val)
-        {
-        }
-        public T ListDequeue<T>(string key) where T : class
+
+        public void LPush(string key, string val) { }
+
+        public void RPush(string key, string val) { }
+
+        public T ListDequeue<T>(string key)
+            where T : class
         {
             return null;
         }
+
         public object ListDequeue(string key)
         {
             return null;
         }
-        public void ListRemove(string key, int keepIndex)
-        {
-        }
+
+        public void ListRemove(string key, int keepIndex) { }
+
         /// <summary>
         /// 添加缓存
         /// </summary>
@@ -94,16 +103,24 @@ namespace VOL.Core.CacheManager
         /// <param name="expiresSliding">滑动过期时长（如果在过期时间内有操作，则以当前时间点延长过期时间）</param>
         /// <param name="expiressAbsoulte">绝对过期时长</param>
         /// <returns></returns>
-        public bool Add(string key, object value, TimeSpan expiresSliding, TimeSpan expiressAbsoulte)
+        public bool Add(
+            string key,
+            object value,
+            TimeSpan expiresSliding,
+            TimeSpan expiressAbsoulte
+        )
         {
-            _cache.Set(key, value,
-                    new MemoryCacheEntryOptions()
+            _cache.Set(
+                key,
+                value,
+                new MemoryCacheEntryOptions()
                     .SetSlidingExpiration(expiresSliding)
                     .SetAbsoluteExpiration(expiressAbsoulte)
-                    );
+            );
 
             return Exists(key);
         }
+
         /// <summary>
         /// 添加缓存
         /// </summary>
@@ -115,20 +132,20 @@ namespace VOL.Core.CacheManager
         public bool Add(string key, object value, TimeSpan expiresIn, bool isSliding = false)
         {
             if (isSliding)
-                _cache.Set(key, value,
-                    new MemoryCacheEntryOptions()
-                    .SetSlidingExpiration(expiresIn)
-                    );
+                _cache.Set(
+                    key,
+                    value,
+                    new MemoryCacheEntryOptions().SetSlidingExpiration(expiresIn)
+                );
             else
-                _cache.Set(key, value,
-                new MemoryCacheEntryOptions()
-                .SetAbsoluteExpiration(expiresIn)
+                _cache.Set(
+                    key,
+                    value,
+                    new MemoryCacheEntryOptions().SetAbsoluteExpiration(expiresIn)
                 );
 
             return Exists(key);
         }
-
-
 
         /// <summary>
         /// 删除缓存
@@ -145,6 +162,7 @@ namespace VOL.Core.CacheManager
 
             return !Exists(key);
         }
+
         /// <summary>
         /// 批量删除缓存
         /// </summary>
@@ -159,16 +177,19 @@ namespace VOL.Core.CacheManager
 
             keys.ToList().ForEach(item => _cache.Remove(item));
         }
+
         public string Get(string key)
         {
             return _cache.Get(key)?.ToString();
         }
+
         /// <summary>
         /// 获取缓存
         /// </summary>
         /// <param name="key">缓存Key</param>
         /// <returns></returns>
-        public T Get<T>(string key) where T : class
+        public T Get<T>(string key)
+            where T : class
         {
             if (key == null)
             {
@@ -183,7 +204,5 @@ namespace VOL.Core.CacheManager
                 _cache.Dispose();
             GC.SuppressFinalize(this);
         }
-
-
     }
 }

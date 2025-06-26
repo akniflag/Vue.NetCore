@@ -8,11 +8,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VOL.Core.BaseProvider;
-using VOL.Entity.DomainModels;
 using VOL.Core.Extensions.AutofacManager;
+using VOL.Entity.DomainModels;
+
 namespace VOL.MES.IRepositories
 {
-    public partial interface IMES_WarehouseManagementRepository : IDependency,IRepository<MES_WarehouseManagement>
-    {
-    }
+    public partial interface IMES_WarehouseManagementRepository
+        : IDependency,
+            IRepository<MES_WarehouseManagement> { }
 }

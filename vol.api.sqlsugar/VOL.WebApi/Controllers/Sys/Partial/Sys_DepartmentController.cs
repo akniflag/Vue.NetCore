@@ -3,45 +3,44 @@
 *如果接口需要做Action的权限验证，请在Action上使用属性
 *如: [ApiActionPermission("Sys_Department",Enums.ActionPermissionOptions.Search)]
  */
-using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Http;
-using VOL.Entity.DomainModels;
-using VOL.Sys.IServices;
-using VOL.Core.Filters;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using SqlSugar;
 using VOL.Core.Enums;
 using VOL.Core.Extensions;
-using VOL.Sys.IRepositories;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
+using VOL.Core.Filters;
 using VOL.Core.ManageUser;
 using VOL.Core.UserManager;
-using SqlSugar;
+using VOL.Entity.DomainModels;
+using VOL.Sys.IRepositories;
+using VOL.Sys.IServices;
 
 namespace VOL.Sys.Controllers
 {
     public partial class Sys_DepartmentController
     {
-        private readonly ISys_DepartmentService _service;//访问业务代码
+        private readonly ISys_DepartmentService _service; //访问业务代码
         private readonly ISys_DepartmentRepository _repository;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         [ActivatorUtilitiesConstructor]
         public Sys_DepartmentController(
             ISys_DepartmentService service,
-             ISys_DepartmentRepository repository,
+            ISys_DepartmentRepository repository,
             IHttpContextAccessor httpContextAccessor
         )
-        : base(service)
+            : base(service)
         {
             _service = service;
             _repository = repository;
             _httpContextAccessor = httpContextAccessor;
         }
-
 
         /// <summary>
         /// treetable 获取子节点数据(2021.05.02)
@@ -76,13 +75,20 @@ namespace VOL.Sys.Controllers
             else
             {
                 var deptIds = UserContext.Current.DeptIds;
-                var list = DepartmentContext.GetAllDept().Where(c => deptIds.Contains(c.id)).ToList();
-                deptIds = list.Where(c => !list.Any(x => x.id == c.parentId)).Select(x => x.id).ToList();
+                var list = DepartmentContext
+                    .GetAllDept()
+                    .Where(c => deptIds.Contains(c.id))
+                    .ToList();
+                deptIds = list.Where(c => !list.Any(x => x.id == c.parentId))
+                    .Select(x => x.id)
+                    .ToList();
                 query = query.Where(x => deptIds.Contains(x.DepartmentId));
             }
             var queryChild = _repository.FindAsIQueryable(x => true);
-            var rows = await query.TakeOrderByPage(options.Page, options.Rows)
-                .OrderBy(x => x.DepartmentName).Select(s => new
+            var rows = await query
+                .TakeOrderByPage(options.Page, options.Rows)
+                .OrderBy(x => x.DepartmentName)
+                .Select(s => new
                 {
                     s.DepartmentId,
                     s.ParentId,
@@ -94,8 +100,12 @@ namespace VOL.Sys.Controllers
                     s.Creator,
                     s.Modifier,
                     s.ModifyDate,
-                    hasChildren = SqlFunc.Subqueryable<Sys_Department>().Where(x => x.ParentId == s.DepartmentId).Any()
-                }).ToListAsync();
+                    hasChildren = SqlFunc
+                        .Subqueryable<Sys_Department>()
+                        .Where(x => x.ParentId == s.DepartmentId)
+                        .Any(),
+                })
+                .ToListAsync();
             return JsonNormal(new { total = await query.CountAsync(), rows });
         }
 
@@ -109,7 +119,8 @@ namespace VOL.Sys.Controllers
         {
             //点击节点时，加载子节点数据
             var query = _repository.FindAsIQueryable(x => true);
-            var rows = await query.Where(x => x.ParentId == departmentId)
+            var rows = await query
+                .Where(x => x.ParentId == departmentId)
                 .Select(s => new
                 {
                     s.DepartmentId,
@@ -122,10 +133,13 @@ namespace VOL.Sys.Controllers
                     s.Creator,
                     s.Modifier,
                     s.ModifyDate,
-                    hasChildren = SqlFunc.Subqueryable<Sys_Department>().Where(x => x.ParentId == s.DepartmentId).Any()
-                }).ToListAsync();
+                    hasChildren = SqlFunc
+                        .Subqueryable<Sys_Department>()
+                        .Where(x => x.ParentId == s.DepartmentId)
+                        .Any(),
+                })
+                .ToListAsync();
             return JsonNormal(new { rows });
         }
     }
 }
-

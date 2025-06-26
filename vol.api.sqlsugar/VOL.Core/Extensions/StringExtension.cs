@@ -10,6 +10,7 @@ namespace VOL.Core.Extensions
     public static class StringExtension
     {
         public static bool _windows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+
         public static string ReplacePath(this string path)
         {
             if (string.IsNullOrEmpty(path))
@@ -17,15 +18,16 @@ namespace VOL.Core.Extensions
             if (_windows)
                 return path.Replace("/", "\\");
             return path.Replace("\\", "/");
-
         }
+
         private static DateTime dateStart = new DateTime(1970, 1, 1, 8, 0, 0);
 
         private static long longTime = 621355968000000000;
 
         private static int samllTime = 10000000;
+
         /// <summary>
-        /// 获取时间戳 
+        /// 获取时间戳
         /// </summary>
         /// <param name="dateTime"></param>
         /// <returns></returns>
@@ -33,6 +35,7 @@ namespace VOL.Core.Extensions
         {
             return (dateTime.ToUniversalTime().Ticks - longTime) / samllTime;
         }
+
         /// <summary>
         /// 时间戳转换成日期
         /// </summary>
@@ -40,10 +43,15 @@ namespace VOL.Core.Extensions
         /// <returns></returns>
         public static DateTime GetTimeSpmpToDate(this object timeStamp)
         {
-            if (timeStamp == null) return dateStart;
-            DateTime dateTime = new DateTime(longTime + Convert.ToInt64(timeStamp) * samllTime, DateTimeKind.Utc).ToLocalTime();
+            if (timeStamp == null)
+                return dateStart;
+            DateTime dateTime = new DateTime(
+                longTime + Convert.ToInt64(timeStamp) * samllTime,
+                DateTimeKind.Utc
+            ).ToLocalTime();
             return dateTime;
         }
+
         public static string CreateHtmlParas(this string urlPath, int? userId = null)
         {
             if (string.IsNullOrEmpty(urlPath))
@@ -59,8 +67,8 @@ namespace VOL.Core.Extensions
                 return false;
             string Url = @"(http://)?([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)?";
             return Regex.IsMatch(str, Url);
-
         }
+
         /// <summary>
         /// 判断是不是正确的手机号码
         /// </summary>
@@ -73,10 +81,11 @@ namespace VOL.Core.Extensions
             if (input.Length != 11)
                 return false;
 
-            if (new Regex(@"^1[3578][01379]\d{8}$").IsMatch(input)
+            if (
+                new Regex(@"^1[3578][01379]\d{8}$").IsMatch(input)
                 || new Regex(@"^1[34578][01256]\d{8}").IsMatch(input)
                 || new Regex(@"^(1[012345678]\d{8}|1[345678][0123456789]\d{8})$").IsMatch(input)
-                )
+            )
                 return true;
             return false;
         }
@@ -167,12 +176,13 @@ namespace VOL.Core.Extensions
                 return false;
             bool reslut = Int32.TryParse(obj.ToString(), out int _number);
             return reslut;
-
         }
+
         public static bool IsDate(this object str)
         {
             return str.IsDate(out _);
         }
+
         public static bool IsDate(this object str, out DateTime dateTime)
         {
             dateTime = DateTime.Now;
@@ -182,6 +192,7 @@ namespace VOL.Core.Extensions
             }
             return DateTime.TryParse(str.ToString(), out dateTime);
         }
+
         /// <summary>
         /// 根据传入格式判断是否为小数
         /// </summary>
@@ -190,7 +201,8 @@ namespace VOL.Core.Extensions
         /// <returns></returns>
         public static bool IsNumber(this string str, string formatString)
         {
-            if (string.IsNullOrEmpty(str)) return false;
+            if (string.IsNullOrEmpty(str))
+                return false;
 
             return Regex.IsMatch(str, @"^[+-]?\d*[.]?\d*$");
             //int precision = 32;
@@ -212,6 +224,7 @@ namespace VOL.Core.Extensions
             //catch { };
             //return IsNumber(str, precision, scale);
         }
+
         /**/
         /// <summary>
         /// 判断一个字符串是否为合法数字(指定整数位数和小数位数)
@@ -232,9 +245,8 @@ namespace VOL.Core.Extensions
                 pattern += @"\.\d{0," + scale + "}$)|" + pattern;
             }
             pattern += "$)";
-            return  Regex.IsMatch(str, pattern);
+            return Regex.IsMatch(str, pattern);
         }
-
 
         public static bool IsNullOrEmpty(this object str)
         {
@@ -243,14 +255,12 @@ namespace VOL.Core.Extensions
             return str.ToString() == "";
         }
 
-
         public static int GetInt(this object obj)
         {
             if (obj == null)
                 return 0;
             int.TryParse(obj.ToString(), out int _number);
             return _number;
-
         }
 
         /// <summary>
@@ -279,7 +289,6 @@ namespace VOL.Core.Extensions
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>
-
         public static float GetFloat(this object obj)
         {
             if (System.DBNull.Value.Equals(obj) || null == obj)
@@ -309,6 +318,7 @@ namespace VOL.Core.Extensions
                 return 0;
             }
         }
+
         /// <summary>
         /// 获取 object 中的 decimal
         /// </summary>
@@ -344,8 +354,10 @@ namespace VOL.Core.Extensions
             try
             {
                 string str = obj.ToString();
-                if (str.IsNumber(25, 15)) return Convert.ToDecimal(obj);
-                else return str;
+                if (str.IsNumber(25, 15))
+                    return Convert.ToDecimal(obj);
+                else
+                    return str;
             }
             catch
             {
@@ -362,8 +374,6 @@ namespace VOL.Core.Extensions
                 return null;
             return dateTime;
         }
-
-
 
         public static object ParseTo(this string str, string type)
         {
@@ -398,7 +408,9 @@ namespace VOL.Core.Extensions
                 case "System.Guid":
                     return ToGuid(str);
             }
-            throw new NotSupportedException(string.Format("The string of \"{0}\" can not be parsed to {1}", str, type));
+            throw new NotSupportedException(
+                string.Format("The string of \"{0}\" can not be parsed to {1}", str, type)
+            );
         }
 
         public static sbyte? ToSByte(this string value)
@@ -510,8 +522,6 @@ namespace VOL.Core.Extensions
             return null;
         }
 
-
-
         public static Guid? ToGuid(this string str)
         {
             Guid value;
@@ -554,14 +564,77 @@ namespace VOL.Core.Extensions
         /// <returns>替换后的字符串</returns>
         public static string ReplaceWhitespace(this string input, string replacement = "")
         {
-            return string.IsNullOrEmpty(input) ? null : Regex.Replace(input, "\\s", replacement, RegexOptions.Compiled);
+            return string.IsNullOrEmpty(input)
+                ? null
+                : Regex.Replace(input, "\\s", replacement, RegexOptions.Compiled);
         }
 
-        private static char[] randomConstant ={
-        '0','1','2','3','4','5','6','7','8','9',
-        'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
-        'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'
-      };
+        private static char[] randomConstant =
+        {
+            '0',
+            '1',
+            '2',
+            '3',
+            '4',
+            '5',
+            '6',
+            '7',
+            '8',
+            '9',
+            'a',
+            'b',
+            'c',
+            'd',
+            'e',
+            'f',
+            'g',
+            'h',
+            'i',
+            'j',
+            'k',
+            'l',
+            'm',
+            'n',
+            'o',
+            'p',
+            'q',
+            'r',
+            's',
+            't',
+            'u',
+            'v',
+            'w',
+            'x',
+            'y',
+            'z',
+            'A',
+            'B',
+            'C',
+            'D',
+            'E',
+            'F',
+            'G',
+            'H',
+            'I',
+            'J',
+            'K',
+            'L',
+            'M',
+            'N',
+            'O',
+            'P',
+            'Q',
+            'R',
+            'S',
+            'T',
+            'U',
+            'V',
+            'W',
+            'X',
+            'Y',
+            'Z',
+        };
+
         /// <summary>
         /// 生成指定长度的随机数
         /// </summary>
@@ -577,6 +650,5 @@ namespace VOL.Core.Extensions
             }
             return newRandom.ToString();
         }
-
     }
 }

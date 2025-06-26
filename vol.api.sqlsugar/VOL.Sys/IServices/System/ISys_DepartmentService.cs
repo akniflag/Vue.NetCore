@@ -6,7 +6,5 @@ using VOL.Entity.DomainModels;
 
 namespace VOL.Sys.IServices
 {
-    public partial interface ISys_DepartmentService : IService<Sys_Department>
-    {
-    }
+    public partial interface ISys_DepartmentService : IService<Sys_Department> { }
 }

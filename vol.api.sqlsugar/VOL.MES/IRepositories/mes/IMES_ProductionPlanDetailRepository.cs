@@ -8,11 +8,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VOL.Core.BaseProvider;
-using VOL.Entity.DomainModels;
 using VOL.Core.Extensions.AutofacManager;
+using VOL.Entity.DomainModels;
+
 namespace VOL.MES.IRepositories
 {
-    public partial interface IMES_ProductionPlanDetailRepository : IDependency,IRepository<MES_ProductionPlanDetail>
-    {
-    }
+    public partial interface IMES_ProductionPlanDetailRepository
+        : IDependency,
+            IRepository<MES_ProductionPlanDetail> { }
 }

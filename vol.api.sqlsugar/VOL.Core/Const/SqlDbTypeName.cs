@@ -23,6 +23,5 @@ namespace VOL.Core.Const
         public const string Bit = "bit";
         public const string Bool = "bool";
         public const string UniqueIdentifier = "uniqueidentifier";
-
     }
 }

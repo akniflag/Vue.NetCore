@@ -4,7 +4,5 @@ using System.Text;
 
 namespace VOL.Entity
 {
-    public interface IBaseInterface
-    {
-    }
+    public interface IBaseInterface { }
 }

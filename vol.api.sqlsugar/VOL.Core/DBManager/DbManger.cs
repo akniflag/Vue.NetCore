@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using SqlSugar;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using SqlSugar;
 using VOL.Core.DBManager;
 using VOL.Core.Enums;
 using VOL.Core.ManageUser;
@@ -18,22 +18,25 @@ namespace VOL.Core.DbSqlSugar
         /// 获取系统库：后台异步使用
         /// </summary>
         public static SqlSugarScope SqlSugarClient = new SqlSugarScope(
-          new List<ConnectionConfig>() {
-              SqlSugarRegister.GetSysConnectionConfig()
-              //添加其他数据库链接
-          },
-         db =>
-         {
-             db.Aop.OnLogExecuting = (sql, pars) =>
+            new List<ConnectionConfig>()
             {
-                Console.WriteLine(sql);//输出sql,查看执行sql 性能无影响
+                SqlSugarRegister.GetSysConnectionConfig(),
+                //添加其他数据库链接
+            },
+            db =>
+            {
+                db.Aop.OnLogExecuting = (sql, pars) =>
+                {
+                    Console.WriteLine(sql); //输出sql,查看执行sql 性能无影响
+                };
+            }
+        );
 
-            };
-         });
         public static ISqlSugarClient GetSqlSugarClient(string dbContextName = null)
         {
             return GetConnection(dbContextName);
         }
+
         public static ISqlSugarClient GetConnection(string configId)
         {
             //其他配置文件里面的自定义数据库链接名称

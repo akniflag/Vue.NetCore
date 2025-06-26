@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using System;
+using System.IO;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
 using VOL.Core.Const;
 using VOL.Core.Enums;
 using VOL.Core.Extensions;
@@ -15,10 +15,10 @@ using VOL.Core.Services;
 
 namespace VOL.Core.Middleware
 {
-
     public class ExceptionHandlerMiddleWare
     {
         private readonly RequestDelegate next;
+
         public ExceptionHandlerMiddleWare(RequestDelegate next)
         {
             this.next = next;
@@ -29,7 +29,9 @@ namespace VOL.Core.Middleware
             try
             {
                 context.Request.EnableBuffering();
-                (context.RequestServices.GetService(typeof(ActionObserver)) as ActionObserver).RequestDate = DateTime.Now;
+                (
+                    context.RequestServices.GetService(typeof(ActionObserver)) as ActionObserver
+                ).RequestDate = DateTime.Now;
                 await next(context);
                 //app.UseMiddleware<ExceptionHandlerMiddleWare>()放在  app.UseRouting()后才可以在await next(context);前执行
                 Endpoint endpoint = context.Features.Get<IEndpointFeature>()?.Endpoint;
@@ -48,7 +50,9 @@ namespace VOL.Core.Middleware
             }
             catch (Exception exception)
             {
-                var env = context.RequestServices.GetService(typeof(IWebHostEnvironment)) as IWebHostEnvironment;
+                var env =
+                    context.RequestServices.GetService(typeof(IWebHostEnvironment))
+                    as IWebHostEnvironment;
                 string message = exception.Message + exception.InnerException;
                 Logger.Error(LoggerType.Exception, message);
                 if (!env.IsDevelopment())
@@ -61,7 +65,10 @@ namespace VOL.Core.Middleware
                 }
                 context.Response.StatusCode = 500;
                 context.Response.ContentType = ApplicationContentType.JSON;
-                await context.Response.WriteAsync(new { message, status = false }.Serialize(), Encoding.UTF8);
+                await context.Response.WriteAsync(
+                    new { message, status = false }.Serialize(),
+                    Encoding.UTF8
+                );
             }
         }
     }

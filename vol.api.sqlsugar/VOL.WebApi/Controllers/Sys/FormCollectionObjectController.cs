@@ -6,16 +6,15 @@ using Microsoft.AspNetCore.Mvc;
 using VOL.Core.Controllers.Basic;
 using VOL.Entity.AttributeManager;
 using VOL.Sys.IServices;
+
 namespace VOL.Sys.Controllers
 {
     [Route("api/FormCollectionObject")]
     [PermissionTable(Name = "FormCollectionObject")]
-    public partial class FormCollectionObjectController : ApiBaseController<IFormCollectionObjectService>
+    public partial class FormCollectionObjectController
+        : ApiBaseController<IFormCollectionObjectService>
     {
         public FormCollectionObjectController(IFormCollectionObjectService service)
-        : base(service)
-        {
-        }
+            : base(service) { }
     }
 }
-

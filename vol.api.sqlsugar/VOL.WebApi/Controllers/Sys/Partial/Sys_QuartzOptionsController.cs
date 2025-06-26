@@ -3,22 +3,22 @@
 *如果接口需要做Action的权限验证，请在Action上使用属性
 *如: [ApiActionPermission("Sys_QuartzOptions",Enums.ActionPermissionOptions.Search)]
  */
-using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using VOL.Core.Enums;
+using VOL.Core.Filters;
 using VOL.Entity.DomainModels;
 using VOL.Sys.IServices;
-using VOL.Core.Filters;
-using VOL.Core.Enums;
 
 namespace VOL.Sys.Controllers
 {
     public partial class Sys_QuartzOptionsController
     {
-        private readonly ISys_QuartzOptionsService _service;//访问业务代码
+        private readonly ISys_QuartzOptionsService _service; //访问业务代码
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         [ActivatorUtilitiesConstructor]
@@ -26,7 +26,7 @@ namespace VOL.Sys.Controllers
             ISys_QuartzOptionsService service,
             IHttpContextAccessor httpContextAccessor
         )
-        : base(service)
+            : base(service)
         {
             _service = service;
             _httpContextAccessor = httpContextAccessor;
@@ -65,6 +65,7 @@ namespace VOL.Sys.Controllers
         {
             return await Service.Run(taskOptions);
         }
+
         /// <summary>
         /// 开启任务
         /// </summary>

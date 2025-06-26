@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace VOL.Core.ModelBinder
 {
@@ -9,7 +9,7 @@ namespace VOL.Core.ModelBinder
     {
         public List<Type> types = new List<Type>();
 
-     //   public List<BinderObject> binder=new BinderObject()
+        //   public List<BinderObject> binder=new BinderObject()
         public BaseBinderProvider()
         {
             types.Add(typeof(Dictionary<string, object>));
@@ -23,6 +23,7 @@ namespace VOL.Core.ModelBinder
                 types.Add(type);
             }
         }
+
         private void InitType()
         {
             AddType(typeof(Dictionary<string, object>));
@@ -31,6 +32,7 @@ namespace VOL.Core.ModelBinder
             AddType(typeof(List<VOL.Entity.DomainModels.Sys_TableColumn>));
             AddType(typeof(VOL.Entity.DomainModels.Sys_TableInfo));
         }
+
         /// <summary>
         /// 增加一个委托用于调用 return new BaseModelBinder();时对参数进行行校验，待完..
         /// </summary>
@@ -40,6 +42,7 @@ namespace VOL.Core.ModelBinder
             this.types = types ?? throw new Exception("types初始化不能为null");
             InitType();
         }
+
         public IModelBinder GetBinder(ModelBinderProviderContext context)
         {
             if (context == null)
@@ -49,7 +52,7 @@ namespace VOL.Core.ModelBinder
 
             if (types.Any(x => x == context.Metadata.ModelType))
             {
-                return new BaseModelBinder();// new BinderTypeModelBinder(typeof(TableInfoEntityBinder));
+                return new BaseModelBinder(); // new BinderTypeModelBinder(typeof(TableInfoEntityBinder));
             }
 
             return null;

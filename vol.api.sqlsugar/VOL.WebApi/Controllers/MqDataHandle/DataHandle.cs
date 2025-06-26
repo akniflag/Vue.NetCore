@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 
 namespace VOL.WebApi.Controllers.MqDataHandle
 {
-
     /// <summary>
     /// 数据处理
     /// </summary>
@@ -14,10 +13,7 @@ namespace VOL.WebApi.Controllers.MqDataHandle
         /// <summary>
         /// 构造  可注入service服务执行db
         /// </summary>
-        public DataHandle()
-        {
-
-        }
+        public DataHandle() { }
 
         /// <summary>
         /// 报警数据处理
@@ -30,6 +26,5 @@ namespace VOL.WebApi.Controllers.MqDataHandle
 
             return true;
         }
-
     }
 }

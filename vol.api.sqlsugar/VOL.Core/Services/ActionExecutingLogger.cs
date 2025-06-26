@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.AspNetCore.Http;
 
 namespace VOL.Core.Services
 {
-   public class ActionObserver
+    public class ActionObserver
     {
         //public ActionObserver(IHttpContextAccessor httpContextAccessor)
         //{

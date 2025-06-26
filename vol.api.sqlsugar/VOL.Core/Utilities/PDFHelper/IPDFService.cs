@@ -15,6 +15,5 @@ namespace VOL.Core.Utilities.PDFHelper
         /// <param name="htmlContent">传入html字符串</param>
         /// <returns></returns>
         byte[] CreatePDF(string htmlContent);
-
     }
 }

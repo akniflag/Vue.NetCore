@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.AspNetCore.Mvc.Filters;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Mvc.Filters;
 using VOL.Core.Configuration;
 using VOL.Core.Enums;
 using VOL.Core.ManageUser;
@@ -23,14 +23,22 @@ namespace VOL.Core.Filters
         private WebResponseContent ResponseContent { get; set; }
         private ActionPermissionRequirement ActionPermission;
         private UserContext _userContext { get; set; }
+
         // private ResponseType responseType;
-        public ActionPermissionFilter(ActionPermissionRequirement actionPermissionRequirement, UserContext userContext)
+        public ActionPermissionFilter(
+            ActionPermissionRequirement actionPermissionRequirement,
+            UserContext userContext
+        )
         {
             this.ResponseContent = new WebResponseContent();
             this.ActionPermission = actionPermissionRequirement;
             _userContext = userContext;
         }
-        public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+
+        public async Task OnActionExecutionAsync(
+            ActionExecutingContext context,
+            ActionExecutionDelegate next
+        )
         {
             if (OnActionExecutionPermission(context).Status)
             {
@@ -39,6 +47,7 @@ namespace VOL.Core.Filters
             }
             FilterResponse.SetActionResult(context, ResponseContent);
         }
+
         private WebResponseContent OnActionExecutionPermission(ActionExecutingContext context)
         {
             //!context.Filters.Any(item => item is IFixedTokenFilter))固定token的是否验证权限
@@ -46,28 +55,46 @@ namespace VOL.Core.Filters
             //    && !context.Filters.Any(item => item is IFixedTokenFilter))
             //    || UserContext.Current.IsSuperAdmin
             //    )
-            if (context.Filters.Any(item => item is IAllowAnonymousFilter)
-                || UserContext.Current.IsSuperAdmin)
+            if (
+                context.Filters.Any(item => item is IAllowAnonymousFilter)
+                || UserContext.Current.IsSuperAdmin
+            )
                 return ResponseContent.OK();
 
             //演示环境除了admin帐号，其他帐号都不能增删改等操作
-            if (!_userContext.IsSuperAdmin && AppSetting.GlobalFilter.Enable
-                && AppSetting.GlobalFilter.Actions.Contains(((Microsoft.AspNetCore.Mvc.Controllers.ControllerActionDescriptor)context.ActionDescriptor).ActionName))
-            { 
+            if (
+                !_userContext.IsSuperAdmin
+                && AppSetting.GlobalFilter.Enable
+                && AppSetting.GlobalFilter.Actions.Contains(
+                    (
+                        (Microsoft.AspNetCore.Mvc.Controllers.ControllerActionDescriptor)
+                            context.ActionDescriptor
+                    ).ActionName
+                )
+            )
+            {
                 return ResponseContent.Error(AppSetting.GlobalFilter.Message);
             }
 
             //如果没有指定表的权限，则默认为代码生成的控制器，优先获取PermissionTableAttribute指定的表，如果没有数据则使用当前控制器的名作为表名权限
             if (ActionPermission.SysController)
             {
-                object[] permissionArray = ((Microsoft.AspNetCore.Mvc.Controllers.ControllerActionDescriptor)context.ActionDescriptor)?.ControllerTypeInfo.GetCustomAttributes(typeof(PermissionTableAttribute), false);
+                object[] permissionArray = (
+                    (Microsoft.AspNetCore.Mvc.Controllers.ControllerActionDescriptor)
+                        context.ActionDescriptor
+                )?.ControllerTypeInfo.GetCustomAttributes(typeof(PermissionTableAttribute), false);
                 if (permissionArray == null || permissionArray.Length == 0)
                 {
-                    ActionPermission.TableName = ((Microsoft.AspNetCore.Mvc.Controllers.ControllerActionDescriptor)context.ActionDescriptor).ControllerName;
+                    ActionPermission.TableName = (
+                        (Microsoft.AspNetCore.Mvc.Controllers.ControllerActionDescriptor)
+                            context.ActionDescriptor
+                    ).ControllerName;
                 }
                 else
                 {
-                    ActionPermission.TableName = (permissionArray[0] as PermissionTableAttribute).Name;
+                    ActionPermission.TableName = (
+                        permissionArray[0] as PermissionTableAttribute
+                    ).Name;
                 }
                 if (string.IsNullOrEmpty(ActionPermission.TableName))
                 {
@@ -77,9 +104,11 @@ namespace VOL.Core.Filters
             }
 
             //如果没有给定权限，不需要判断
-            if (string.IsNullOrEmpty(ActionPermission.TableName)
+            if (
+                string.IsNullOrEmpty(ActionPermission.TableName)
                 && string.IsNullOrEmpty(ActionPermission.TableAction)
-                && (ActionPermission.RoleIds == null || ActionPermission.RoleIds.Length == 0))
+                && (ActionPermission.RoleIds == null || ActionPermission.RoleIds.Length == 0)
+            )
             {
                 return ResponseContent.OK();
             }
@@ -88,7 +117,8 @@ namespace VOL.Core.Filters
             //权限判断角色ID,
             if (ActionPermission.RoleIds != null && ActionPermission.RoleIds.Length > 0)
             {
-                if (ActionPermission.RoleIds.Contains(_userContext.UserInfo.Role_Id)) return ResponseContent.OK();
+                if (ActionPermission.RoleIds.Contains(_userContext.UserInfo.Role_Id))
+                    return ResponseContent.OK();
                 //如果角色ID没有权限。并且也没控制器权限
                 if (string.IsNullOrEmpty(ActionPermission.TableAction))
                 {
@@ -96,23 +126,29 @@ namespace VOL.Core.Filters
                 }
             }
             //2020.05.05移除x.TableName.ToLower()转换,获取权限时已经转换成为小写
-            var actionAuth =  _userContext.GetPermissions(x => x.TableName == ActionPermission.TableName.ToLower())
-                ?.UserAuthArr?.Contains(ActionPermission.TableAction)??false;
+            var actionAuth =
+                _userContext
+                    .GetPermissions(x => x.TableName == ActionPermission.TableName.ToLower())
+                    ?.UserAuthArr?.Contains(ActionPermission.TableAction) ?? false;
 
             if (!actionAuth)
             {
                 //2023.06.30增加移动端权限二次判断
-                if (UserContext.MenuType==1)
+                if (UserContext.MenuType == 1)
                 {
-                    actionAuth= _userContext.Permissions.Where(x => x.TableName == ActionPermission.TableName.ToLower())
+                    actionAuth = _userContext
+                        .Permissions.Where(x => x.TableName == ActionPermission.TableName.ToLower())
                         .Any(c => c.UserAuthArr.Contains(ActionPermission.TableAction));
                 }
                 if (!actionAuth)
                 {
-                    Logger.Info(LoggerType.Authorzie, $"没有权限操作," +
-                   $"用户ID{_userContext.UserId}:{_userContext.UserTrueName}," +
-                   $"角色ID:{_userContext.RoleId}:{_userContext.UserInfo.RoleName}," +
-                   $"操作权限{ActionPermission.TableName}:{ActionPermission.TableAction}");
+                    Logger.Info(
+                        LoggerType.Authorzie,
+                        $"没有权限操作,"
+                            + $"用户ID{_userContext.UserId}:{_userContext.UserTrueName},"
+                            + $"角色ID:{_userContext.RoleId}:{_userContext.UserInfo.RoleName},"
+                            + $"操作权限{ActionPermission.TableName}:{ActionPermission.TableAction}"
+                    );
                     return ResponseContent.Error(ResponseType.NoPermissions);
                 }
             }

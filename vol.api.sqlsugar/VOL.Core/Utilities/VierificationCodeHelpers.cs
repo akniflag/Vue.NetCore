@@ -1,17 +1,29 @@
-﻿using SkiaSharp;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
+using SkiaSharp;
 
 namespace VOL.Core.Utilities
 {
     public static class VierificationCodeHelpers
-    {        //验证码字体集合
-        private static readonly string[] fonts = { "Verdana", "Microsoft Sans Serif", "Comic Sans MS", "Arial", "宋体" };
-        private static readonly SKColor[] colors = { SKColors.Black, SKColors.Green, SKColors.Brown };
+    { //验证码字体集合
+        private static readonly string[] fonts =
+        {
+            "Verdana",
+            "Microsoft Sans Serif",
+            "Comic Sans MS",
+            "Arial",
+            "宋体",
+        };
+        private static readonly SKColor[] colors =
+        {
+            SKColors.Black,
+            SKColors.Green,
+            SKColors.Brown,
+        };
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
@@ -27,30 +39,32 @@ namespace VOL.Core.Utilities
             using var pen = new SKPaint();
             pen.FakeBoldText = true;
             pen.Style = SKPaintStyle.Fill;
-            pen.TextSize = 20;// 0.6f * info.Width * pen.TextSize / pen.MeasureText(code);
+            pen.TextSize = 20; // 0.6f * info.Width * pen.TextSize / pen.MeasureText(code);
 
             //绘制随机字符
             for (int i = 0; i < code.Length; i++)
             {
-                pen.Color = random.GetRandom(colors);//随机颜色索引值
-                pen.Typeface = SKTypeface.FromFamilyName(random.GetRandom(fonts), 700, 20, SKFontStyleSlant.Italic);//配置字体
+                pen.Color = random.GetRandom(colors); //随机颜色索引值
+                pen.Typeface = SKTypeface.FromFamilyName(
+                    random.GetRandom(fonts),
+                    700,
+                    20,
+                    SKFontStyleSlant.Italic
+                ); //配置字体
                 var point = new SKPoint()
                 {
                     X = i * 16,
-                    Y = 22// info.Height - ((i + 1) % 2 == 0 ? 2 : 4),
-
+                    Y = 22, // info.Height - ((i + 1) % 2 == 0 ? 2 : 4),
                 };
-                canvas.DrawText(code.Substring(i, 1), point, pen);//绘制一个验证字符
+                canvas.DrawText(code.Substring(i, 1), point, pen); //绘制一个验证字符
             }
 
             //绘制噪点
-            var points = Enumerable.Range(0, 100).Select(
-                _ => new SKPoint(random.Next(bitmap.Width), random.Next(bitmap.Height))
-            ).ToArray();
-            canvas.DrawPoints(
-                SKPointMode.Points,
-                points,
-                pen);
+            var points = Enumerable
+                .Range(0, 100)
+                .Select(_ => new SKPoint(random.Next(bitmap.Width), random.Next(bitmap.Height)))
+                .ToArray();
+            canvas.DrawPoints(SKPointMode.Points, points, pen);
 
             //绘制贝塞尔线条
             for (int i = 0; i < 2; i++)
@@ -76,7 +90,8 @@ namespace VOL.Core.Utilities
 
         public static T GetRandom<T>(this Random random, T[] tArray)
         {
-            if (random == null) random = new Random();
+            if (random == null)
+                random = new Random();
             return tArray[random.Next(tArray.Length)];
         }
 

@@ -14,8 +14,6 @@ namespace VOL.Core.CacheManager
         /// <returns></returns>
         bool Exists(string key);
 
-
-
         /// <summary>
         /// List写入head
         /// </summary>
@@ -24,6 +22,7 @@ namespace VOL.Core.CacheManager
         void LPush(string key, string val);
 
         void RPush(string key, string val);
+
         /// <summary>
         /// List出队 lpop
         /// </summary>
@@ -36,7 +35,8 @@ namespace VOL.Core.CacheManager
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        T ListDequeue<T>(string key) where T : class;
+        T ListDequeue<T>(string key)
+            where T : class;
 
         /// <summary>
         /// 移除list中的数据，keepIndex为保留的位置到最后一个元素如list 元素为1.2.3.....100
@@ -65,7 +65,6 @@ namespace VOL.Core.CacheManager
         /// <returns></returns>
         bool Remove(string key);
 
-
         /// <summary>
         /// 批量删除缓存
         /// </summary>
@@ -73,17 +72,13 @@ namespace VOL.Core.CacheManager
         /// <returns></returns>
         void RemoveAll(IEnumerable<string> keys);
 
-
-
-
         /// <summary>
         /// 获取缓存
         /// </summary>
         /// <param name="key">缓存Key</param>
         /// <returns></returns>
-        T Get<T>(string key) where T : class;
-
-
+        T Get<T>(string key)
+            where T : class;
 
         /// <summary>
         /// 获取缓存

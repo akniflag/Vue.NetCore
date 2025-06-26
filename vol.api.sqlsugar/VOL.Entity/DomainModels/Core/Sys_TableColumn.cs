@@ -1,8 +1,8 @@
-﻿using VOL.Entity.SystemModels;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using SqlSugar;
+using VOL.Entity.SystemModels;
 
 namespace VOL.Entity.DomainModels
 {
@@ -40,7 +40,7 @@ namespace VOL.Entity.DomainModels
         [Display(Name = "")]
         [Editable(true)]
         [Column("ColumnCNName")]
-        [SugarColumn(ColumnName="ColumnCNName")]
+        [SugarColumn(ColumnName = "ColumnCNName")]
         public string ColumnCnName { get; set; }
 
         /// <summary>
@@ -112,6 +112,7 @@ namespace VOL.Entity.DomainModels
 
         [Editable(true)]
         public int? IsImage { get; set; }
+
         /// <summary>
         ///
         /// <summary>
@@ -134,9 +135,11 @@ namespace VOL.Entity.DomainModels
         [Display(Name = "")]
         [Editable(true)]
         public int? SearchRowNo { get; set; }
+
         [Editable(true)]
         [Column(TypeName = "int")]
         public int? SearchColNo { get; set; }
+
         /// <summary>
         ///
         /// <summary>
@@ -154,12 +157,14 @@ namespace VOL.Entity.DomainModels
 
         [Editable(true)]
         public int? EditColNo { get; set; }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         [Display(Name = "")]
         [Editable(true)]
         public string EditType { get; set; }
+
         [Editable(true)]
         [Column(TypeName = "int")]
         public int? ColSize { get; set; }
@@ -171,6 +176,7 @@ namespace VOL.Entity.DomainModels
         [Editable(true)]
         [Column(TypeName = "int")]
         public int? IsReadDataset { get; set; }
+
         /// <summary>
         ///
         /// <summary>
@@ -182,12 +188,15 @@ namespace VOL.Entity.DomainModels
         [Editable(true)]
         [Column(TypeName = "int")]
         public int? ApiInPut { get; set; }
+
         [Editable(true)]
         [Column(TypeName = "int")]
         public int? ApiIsNull { get; set; }
+
         [Editable(true)]
         [Column(TypeName = "int")]
         public int? ApiOutPut { get; set; }
+
         /// <summary>
         ///
         /// <summary>
@@ -241,8 +250,5 @@ namespace VOL.Entity.DomainModels
         [Column(TypeName = "int")]
         [Editable(true)]
         public int? IsColumnData { get; set; }
-
-   
-
     }
 }
