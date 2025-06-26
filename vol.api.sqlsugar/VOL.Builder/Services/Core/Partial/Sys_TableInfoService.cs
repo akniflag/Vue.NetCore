@@ -583,21 +583,9 @@ DISTINCT
                 FileHelper.WriteFile(apiPath, tableName + "Controller.cs", domainContent);
             }
 
-            //生成Repository类
-            domainContent = FileHelper
-                .ReadFile("Template\\Repositorys\\BaseRepository.html")
-                .Replace("{Namespace}", nameSpace)
-                .Replace("{TableName}", tableName)
-                .Replace("{StartName}", StratName);
-            FileHelper.WriteFile(
-                frameworkFolder
-                    + string.Format("\\{0}\\Repositories\\{1}\\", nameSpace, foldername),
-                tableName + "Repository.cs",
-                domainContent
-            );
             //生成IRepository类
             domainContent = FileHelper
-                .ReadFile("Template\\IRepositorys\\BaseIRepositorie.html")
+                .ReadFile("Template\\Repositories\\IRepositoryBase.html")
                 .Replace("{Namespace}", nameSpace)
                 .Replace("{TableName}", tableName)
                 .Replace("{StartName}", StratName);
@@ -607,16 +595,38 @@ DISTINCT
                 "I" + tableName + "Repository.cs",
                 domainContent
             );
+            //生成Repository类
+            domainContent = FileHelper
+                .ReadFile("Template\\Repositories\\RepositoryBase.html")
+                .Replace("{Namespace}", nameSpace)
+                .Replace("{TableName}", tableName)
+                .Replace("{StartName}", StratName);
+            FileHelper.WriteFile(
+                frameworkFolder
+                    + string.Format("\\{0}\\Repositories\\{1}\\", nameSpace, foldername),
+                tableName + "Repository.cs",
+                domainContent
+            );
+            // 生成Repository Partial类
+            var repositoryPartialContent = FileHelper
+                .ReadFile("Template\\Repositories\\RepositoryBasePartial.html")
+                .Replace("{Namespace}", nameSpace)
+                .Replace("{TableName}", tableName)
+                .Replace("{StartName}", StratName);
+            FileHelper.WriteFile(
+                frameworkFolder + $"\\{nameSpace}\\Repositories\\{foldername}\\",
+                tableName + "RepositoryPartial.cs",
+                repositoryPartialContent
+            );
 
-            string path = $"{frameworkFolder}\\{nameSpace}\\IServices\\{foldername}\\";
-
+            string path = $"{frameworkFolder}\\{nameSpace}\\Services\\{foldername}\\";
             string fileName = "I" + tableName + "Service.cs";
 
             //生成Partial  IService类
             if (!FileHelper.FileExists(path + "Partial\\" + fileName))
             {
                 domainContent = FileHelper
-                    .ReadFile("Template\\IServices\\IServiceBasePartial.html")
+                    .ReadFile("Template\\Services\\IServiceBasePartial.html")
                     .Replace("{Namespace}", nameSpace)
                     .Replace("{TableName}", tableName)
                     .Replace("{StartName}", StratName);
@@ -625,7 +635,7 @@ DISTINCT
 
             //生成IService类
             domainContent = FileHelper
-                .ReadFile("Template\\IServices\\IServiceBase.html")
+                .ReadFile("Template\\Services\\ServiceBase.html")
                 .Replace("{Namespace}", nameSpace)
                 .Replace("{TableName}", tableName)
                 .Replace("{StartName}", StratName);

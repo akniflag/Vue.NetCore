@@ -10,17 +10,16 @@ using {StartName}.Entity.DomainModels;
 
 namespace {Namespace}.Repositories
 {
-    public partial class {TableName}Repository : RepositoryBase<{TableName}>
-    , I{TableName}Repository
+    public partial class {TableName}Repository : RepositoryBase<{TableName}>, I{TableName}Repository
     {
-    public {TableName}Repository(VOLContext dbContext)
-    : base(dbContext)
-    {
+        public {TableName}Repository(VOLContext dbContext)
+        : base(dbContext)
+        {
 
+        }
+        public static I{TableName}Repository Instance
+        {
+            get {  return AutofacContainerModule.GetService<I{TableName}Repository>(); }
+        }
     }
-    public static I{TableName}Repository Instance
-    {
-    get {  return AutofacContainerModule.GetService<I{TableName}Repository>
-        (); } }
-        }
-        }
+}
