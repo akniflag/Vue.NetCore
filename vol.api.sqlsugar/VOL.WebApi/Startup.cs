@@ -69,8 +69,7 @@ namespace VOL.WebApi
                 .AddControllers()
                 .AddNewtonsoftJson(op =>
                 {
-                    op.SerializerSettings.ContractResolver =
-                        new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver();
+                    op.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver();
                     op.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
                 });
 
@@ -91,9 +90,7 @@ namespace VOL.WebApi
                         ValidateIssuerSigningKey = true, //是否验证SecurityKey
                         ValidAudience = AppSetting.Secret.Audience, //Audience
                         ValidIssuer = AppSetting.Secret.Issuer, //Issuer，这两项和前面签发jwt的设置一致
-                        IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(AppSetting.Secret.JWT)
-                        ),
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AppSetting.Secret.JWT)),
                     };
                     options.Events = new JwtBearerEvents()
                     {
@@ -125,11 +122,7 @@ namespace VOL.WebApi
             {
                 options.AddDefaultPolicy(builder =>
                 {
-                    builder
-                        .AllowAnyOrigin()
-                        .SetPreflightMaxAge(TimeSpan.FromSeconds(2520))
-                        .AllowAnyHeader()
-                        .AllowAnyMethod();
+                    builder.AllowAnyOrigin().SetPreflightMaxAge(TimeSpan.FromSeconds(2520)).AllowAnyHeader().AllowAnyMethod();
                 });
             });
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -163,16 +156,12 @@ namespace VOL.WebApi
                     //添加过滤器 可自定义添加对控制器的注释描述
                     //c.DocumentFilter<SwaggerDocTag>();
 
-                    var security = new Dictionary<string, IEnumerable<string>>
-                    {
-                        { AppSetting.Secret.Issuer, new string[] { } },
-                    };
+                    var security = new Dictionary<string, IEnumerable<string>> { { AppSetting.Secret.Issuer, new string[] { } } };
                     c.AddSecurityDefinition(
                         "Bearer",
                         new OpenApiSecurityScheme()
                         {
-                            Description =
-                                "JWT授权token前面需要加上字段Bearer与一个空格,如Bearer token",
+                            Description = "JWT授权token前面需要加上字段Bearer与一个空格,如Bearer token",
                             Name = "Authorization",
                             In = ParameterLocation.Header,
                             Type = SecuritySchemeType.ApiKey,
@@ -187,11 +176,7 @@ namespace VOL.WebApi
                             {
                                 new OpenApiSecurityScheme
                                 {
-                                    Reference = new OpenApiReference
-                                    {
-                                        Type = ReferenceType.SecurityScheme,
-                                        Id = "Bearer",
-                                    },
+                                    Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" },
                                 },
                                 new string[] { }
                             },
@@ -276,8 +261,7 @@ namespace VOL.WebApi
             }
             app.UseMiddleware<ExceptionHandlerMiddleWare>();
             app.UseDefaultFiles();
-            app.UseStaticFiles()
-                .UseStaticFiles(new StaticFileOptions { ServeUnknownFileTypes = true });
+            app.UseStaticFiles().UseStaticFiles(new StaticFileOptions { ServeUnknownFileTypes = true });
             app.Use(HttpRequestMiddleware.Context);
 
             //2021.06.27增加创建默认upload文件夹
@@ -291,14 +275,10 @@ namespace VOL.WebApi
             app.UseStaticFiles(
                 new StaticFileOptions()
                 {
-                    FileProvider = new PhysicalFileProvider(
-                        Path.Combine(Directory.GetCurrentDirectory(), @"Upload")
-                    ),
+                    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"Upload")),
                     //配置访问虚拟目录时文件夹别名
                     RequestPath = "/Upload",
-                    OnPrepareResponse = (
-                        Microsoft.AspNetCore.StaticFiles.StaticFileResponseContext staticFile
-                    ) => {
+                    OnPrepareResponse = (Microsoft.AspNetCore.StaticFiles.StaticFileResponseContext staticFile) => {
                         //可以在此处读取请求的信息进行权限认证
                         //  staticFile.File
                         //  staticFile.Context.Response.StatusCode;
@@ -328,14 +308,7 @@ namespace VOL.WebApi
                 {
                     string corsUrls = Configuration["CorsUrls"];
 
-                    endpoints
-                        .MapHub<HomePageMessageHub>("/message")
-                        .RequireCors(t =>
-                            t.WithOrigins(corsUrls.Split(','))
-                                .AllowAnyMethod()
-                                .AllowAnyHeader()
-                                .AllowCredentials()
-                        );
+                    endpoints.MapHub<HomePageMessageHub>("/message").RequireCors(t => t.WithOrigins(corsUrls.Split(',')).AllowAnyMethod().AllowAnyHeader().AllowCredentials());
                 }
             });
         }

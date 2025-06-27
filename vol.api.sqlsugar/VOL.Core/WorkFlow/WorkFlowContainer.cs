@@ -19,11 +19,9 @@ namespace VOL.Core.WorkFlow
     {
         private static WorkFlowContainer _instance;
         private static Dictionary<string, string> _container = new Dictionary<string, string>();
-        private static Dictionary<string, string[]> _filterFields =
-            new Dictionary<string, string[]>();
+        private static Dictionary<string, string[]> _filterFields = new Dictionary<string, string[]>();
 
-        private static Dictionary<string, string[]> _formFields =
-            new Dictionary<string, string[]>();
+        private static Dictionary<string, string[]> _formFields = new Dictionary<string, string[]>();
 
         private static List<Type> _types = new List<Type>();
 
@@ -48,11 +46,7 @@ namespace VOL.Core.WorkFlow
         /// <param name="filterFields">流程配置可筛选条件字段</param>
         ///<param name="formFields">审批界面要显示字段</param>
         /// <returns></returns>
-        public WorkFlowContainer Use<T>(
-            string name = null,
-            Expression<Func<T, object>> filterFields = null,
-            Expression<Func<T, object>> formFields = null
-        )
+        public WorkFlowContainer Use<T>(string name = null, Expression<Func<T, object>> filterFields = null, Expression<Func<T, object>> formFields = null)
         {
             Type type = typeof(T);
             if (_types.Contains(type))
@@ -83,10 +77,7 @@ namespace VOL.Core.WorkFlow
                     List<string> tables = _container.Select(s => s.Key).ToList();
                     var contenxt = DbManger.SqlSugarClient.Set<Sys_WorkFlow>();
 
-                    list = contenxt
-                        .Where(c => tables.Contains(c.WorkTable))
-                        .Includes(x => x.Sys_WorkFlowStep)
-                        .ToList();
+                    list = contenxt.Where(c => tables.Contains(c.WorkTable)).Includes(x => x.Sys_WorkFlowStep).ToList();
                     foreach (var item in list.GroupBy(x => x.WorkTable))
                     {
                         Type type = _types.Where(x => x.Name == item.Key).FirstOrDefault();
@@ -140,16 +131,12 @@ namespace VOL.Core.WorkFlow
             {
                 try
                 {
-                    var obj = typeof(WorkFlowContainer)
-                        .GetMethod("Add")
-                        .MakeGenericMethod(new Type[] { type });
+                    var obj = typeof(WorkFlowContainer).GetMethod("Add").MakeGenericMethod(new Type[] { type });
                     obj.Invoke(this, new object[] { workFlow, workFlow.Sys_WorkFlowStep, true });
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(
-                        $"初始化流程配置信息异常,表:【{tableName}】,异常信息{e.Message}"
-                    );
+                    Console.WriteLine($"初始化流程配置信息异常,表:【{tableName}】,异常信息{e.Message}");
                 }
             }
 
@@ -161,9 +148,7 @@ namespace VOL.Core.WorkFlow
             return _instance;
         }
 
-        public static IEnumerable<WorkFlowTableOptions> GetFlowOptions(
-            Func<WorkFlowTableOptions, bool> func
-        )
+        public static IEnumerable<WorkFlowTableOptions> GetFlowOptions(Func<WorkFlowTableOptions, bool> func)
         {
             return _workFlowTableOptions.Where(func);
         }
@@ -193,11 +178,7 @@ namespace VOL.Core.WorkFlow
                 var filter = _workFlowTableOptions
                     .Where(x =>
                         x.WorkTable == tableName
-                        && x.FilterList.Any(c =>
-                            c.StepAttrType == StepType.start.ToString()
-                            && c.Expression != null
-                            && entities.Any(((Func<T, bool>)c.Expression))
-                        )
+                        && x.FilterList.Any(c => c.StepAttrType == StepType.start.ToString() && c.Expression != null && entities.Any(((Func<T, bool>)c.Expression)))
                     )
                     .OrderByDescending(x => x.Weight)
                     .FirstOrDefault();
@@ -208,32 +189,20 @@ namespace VOL.Core.WorkFlow
                 //没有找到满足条件的用无条件的流程
 
                 return _workFlowTableOptions
-                    .Where(x =>
-                        x.WorkTable == tableName
-                        && x.FilterList.Any(c =>
-                            c.StepAttrType == StepType.start.ToString() && c.Expression == null
-                        )
-                    )
+                    .Where(x => x.WorkTable == tableName && x.FilterList.Any(c => c.StepAttrType == StepType.start.ToString() && c.Expression == null))
                     .OrderByDescending(x => x.Weight)
                     .FirstOrDefault();
             }
             return null;
         }
 
-        private static readonly List<WorkFlowTableOptions> _workFlowTableOptions =
-            new List<WorkFlowTableOptions>();
+        private static readonly List<WorkFlowTableOptions> _workFlowTableOptions = new List<WorkFlowTableOptions>();
         private static object _wk_object = new object();
 
-        public WebResponseContent AddTable(
-            Sys_WorkFlow workFlow,
-            List<Sys_WorkFlowStep> flowSteps,
-            bool showError = true
-        )
+        public WebResponseContent AddTable(Sys_WorkFlow workFlow, List<Sys_WorkFlowStep> flowSteps, bool showError = true)
         {
             WebResponseContent webResponse = new WebResponseContent();
-            Type type = _types
-                .Where(x => x.GetEntityTableName() == workFlow.WorkTable)
-                .FirstOrDefault();
+            Type type = _types.Where(x => x.GetEntityTableName() == workFlow.WorkTable).FirstOrDefault();
             if (type == null)
             {
                 return webResponse.Error($"{workFlow.WorkTableName}未注册");
@@ -241,11 +210,8 @@ namespace VOL.Core.WorkFlow
 
             Del(workFlow.WorkFlow_Id);
 
-            var obj = typeof(WorkFlowContainer)
-                .GetMethod("Add")
-                .MakeGenericMethod(new Type[] { type });
-            webResponse =
-                obj.Invoke(this, new object[] { workFlow, flowSteps, true }) as WebResponseContent;
+            var obj = typeof(WorkFlowContainer).GetMethod("Add").MakeGenericMethod(new Type[] { type });
+            webResponse = obj.Invoke(this, new object[] { workFlow, flowSteps, true }) as WebResponseContent;
             if (webResponse.Status && string.IsNullOrEmpty(webResponse.Message))
             {
                 webResponse.Message = "流程创建成功";
@@ -253,11 +219,7 @@ namespace VOL.Core.WorkFlow
             return webResponse;
         }
 
-        public static WebResponseContent Add<T>(
-            Sys_WorkFlow workFlow,
-            List<Sys_WorkFlowStep> flowSteps,
-            bool showError = true
-        )
+        public static WebResponseContent Add<T>(Sys_WorkFlow workFlow, List<Sys_WorkFlowStep> flowSteps, bool showError = true)
             where T : class
         {
             WebResponseContent webResponse = new WebResponseContent();
@@ -273,9 +235,7 @@ namespace VOL.Core.WorkFlow
                 };
                 bool success = true;
                 //结束节点不生成条件
-                foreach (
-                    var item in flowSteps.Where(c => c.StepAttrType != StepType.end.ToString())
-                )
+                foreach (var item in flowSteps.Where(c => c.StepAttrType != StepType.end.ToString()))
                 {
                     var filters = item.Filters.DeserializeObject<List<FieldFilter>>();
                     try
@@ -302,8 +262,7 @@ namespace VOL.Core.WorkFlow
                     }
                     catch (Exception ex)
                     {
-                        string message =
-                            $"流程:【{workFlow.WorkName}】,节点:【{item.StepName}】条件异常,请检查【值】与【字段的类型】是否匹配,节点配置：{item.Filters}";
+                        string message = $"流程:【{workFlow.WorkName}】,节点:【{item.StepName}】条件异常,请检查【值】与【字段的类型】是否匹配,节点配置：{item.Filters}";
 
                         Console.WriteLine(message + ex.Message);
                         if (showError)
@@ -321,9 +280,7 @@ namespace VOL.Core.WorkFlow
                         options.Sys_WorkFlowStep = flowSteps;
                     }
 
-                    var data = _workFlowTableOptions
-                        .Where(x => x.WorkFlow_Id == workFlow.WorkFlow_Id)
-                        .FirstOrDefault();
+                    var data = _workFlowTableOptions.Where(x => x.WorkFlow_Id == workFlow.WorkFlow_Id).FirstOrDefault();
                     if (data != null)
                     {
                         data.WorkTable = options.WorkTable;

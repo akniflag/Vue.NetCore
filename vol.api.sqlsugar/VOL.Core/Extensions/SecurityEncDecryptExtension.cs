@@ -7,25 +7,7 @@ namespace VOL.Core.Extensions
 {
     public static class SecurityEncDecryptExtensions
     {
-        private static byte[] Keys =
-        {
-            0x00,
-            0x01,
-            0x02,
-            0x03,
-            0x04,
-            0x05,
-            0x06,
-            0x07,
-            0x08,
-            0x09,
-            0x0A,
-            0x0B,
-            0x0C,
-            0x0D,
-            0x0E,
-            0x0F,
-        };
+        private static byte[] Keys = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F };
 
         /// <summary>
         /// DES加密字符串
@@ -45,20 +27,11 @@ namespace VOL.Core.Extensions
                 {
                     using (MemoryStream mStream = new MemoryStream())
                     {
-                        using (
-                            CryptoStream cStream = new CryptoStream(
-                                mStream,
-                                DCSP.CreateEncryptor(rgbKey, rgbIV),
-                                CryptoStreamMode.Write
-                            )
-                        )
+                        using (CryptoStream cStream = new CryptoStream(mStream, DCSP.CreateEncryptor(rgbKey, rgbIV), CryptoStreamMode.Write))
                         {
                             cStream.Write(inputByteArray, 0, inputByteArray.Length);
                             cStream.FlushFinalBlock();
-                            return Convert
-                                .ToBase64String(mStream.ToArray())
-                                .Replace('+', '_')
-                                .Replace('/', '~');
+                            return Convert.ToBase64String(mStream.ToArray()).Replace('+', '_').Replace('/', '~');
                         }
                     }
                 }
@@ -79,20 +52,12 @@ namespace VOL.Core.Extensions
         {
             byte[] rgbKey = Encoding.UTF8.GetBytes(decryptKey.Substring(0, 16));
             byte[] rgbIV = Keys;
-            byte[] inputByteArray = Convert.FromBase64String(
-                decryptString.Replace('_', '+').Replace('~', '/')
-            );
+            byte[] inputByteArray = Convert.FromBase64String(decryptString.Replace('_', '+').Replace('~', '/'));
             using (var DCSP = Aes.Create())
             {
                 using (MemoryStream mStream = new MemoryStream())
                 {
-                    using (
-                        CryptoStream cStream = new CryptoStream(
-                            mStream,
-                            DCSP.CreateDecryptor(rgbKey, rgbIV),
-                            CryptoStreamMode.Write
-                        )
-                    )
+                    using (CryptoStream cStream = new CryptoStream(mStream, DCSP.CreateDecryptor(rgbKey, rgbIV), CryptoStreamMode.Write))
                     {
                         byte[] inputByteArrays = new byte[inputByteArray.Length];
                         cStream.Write(inputByteArray, 0, inputByteArray.Length);
@@ -103,11 +68,7 @@ namespace VOL.Core.Extensions
             }
         }
 
-        public static bool TryDecryptDES(
-            this string decryptString,
-            string decryptKey,
-            out string result
-        )
+        public static bool TryDecryptDES(this string decryptString, string decryptKey, out string result)
         {
             result = "";
             try

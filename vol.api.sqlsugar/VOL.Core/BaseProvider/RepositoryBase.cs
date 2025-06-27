@@ -76,50 +76,33 @@ namespace VOL.Core.BaseProvider
             catch (Exception ex)
             {
                 DbContext.Ado.RollbackTran();
-                return new WebResponseContent().Error(
-                    ex.Message + ex.InnerException + ex.StackTrace
-                );
+                return new WebResponseContent().Error(ex.Message + ex.InnerException + ex.StackTrace);
             }
         }
 
-        public virtual bool Exists<TExists>(
-            Expression<Func<TExists, bool>> predicate,
-            bool filterDeleted = true
-        )
+        public virtual bool Exists<TExists>(Expression<Func<TExists, bool>> predicate, bool filterDeleted = true)
             where TExists : class
         {
             return VOLContext.Set<TExists>(filterDeleted).Any(predicate);
         }
 
-        public virtual Task<bool> ExistsAsync<TExists>(
-            Expression<Func<TExists, bool>> predicate,
-            bool filterDeleted = true
-        )
+        public virtual Task<bool> ExistsAsync<TExists>(Expression<Func<TExists, bool>> predicate, bool filterDeleted = true)
             where TExists : class
         {
             return VOLContext.Set<TExists>(filterDeleted).AnyAsync(predicate);
         }
 
-        public virtual bool Exists(
-            Expression<Func<TEntity, bool>> predicate,
-            bool filterDeleted = true
-        )
+        public virtual bool Exists(Expression<Func<TEntity, bool>> predicate, bool filterDeleted = true)
         {
             return VOLContext.Set<TEntity>(filterDeleted).Any(predicate);
         }
 
-        public virtual Task<bool> ExistsAsync(
-            Expression<Func<TEntity, bool>> predicate,
-            bool filterDeleted = true
-        )
+        public virtual Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> predicate, bool filterDeleted = true)
         {
             return VOLContext.Set<TEntity>(filterDeleted).AnyAsync(predicate);
         }
 
-        public virtual ISugarQueryable<TEntity> WhereIF(
-            bool checkCondition,
-            Expression<Func<TEntity, bool>> predicate
-        )
+        public virtual ISugarQueryable<TEntity> WhereIF(bool checkCondition, Expression<Func<TEntity, bool>> predicate)
         {
             if (checkCondition)
             {
@@ -128,10 +111,7 @@ namespace VOL.Core.BaseProvider
             return VOLContext.Set<TEntity>();
         }
 
-        public virtual ISugarQueryable<T> WhereIF<T>(
-            bool checkCondition,
-            Expression<Func<T, bool>> predicate
-        )
+        public virtual ISugarQueryable<T> WhereIF<T>(bool checkCondition, Expression<Func<T, bool>> predicate)
             where T : class
         {
             if (checkCondition)
@@ -141,97 +121,58 @@ namespace VOL.Core.BaseProvider
             return VOLContext.Set<T>();
         }
 
-        public virtual List<TFind> Find<TFind>(
-            Expression<Func<TFind, bool>> predicate,
-            bool filterDeleted = true
-        )
+        public virtual List<TFind> Find<TFind>(Expression<Func<TFind, bool>> predicate, bool filterDeleted = true)
             where TFind : class
         {
             return VOLContext.Set<TFind>(filterDeleted).Where(predicate).ToList();
         }
 
-        public virtual Task<TFind> FindAsyncFirst<TFind>(
-            Expression<Func<TFind, bool>> predicate,
-            bool filterDeleted = true
-        )
+        public virtual Task<TFind> FindAsyncFirst<TFind>(Expression<Func<TFind, bool>> predicate, bool filterDeleted = true)
             where TFind : class
         {
             return FindAsISugarQueryable(predicate, filterDeleted).FirstOrDefaultAsync();
         }
 
-        public virtual Task<TEntity> FindAsyncFirst(
-            Expression<Func<TEntity, bool>> predicate,
-            bool filterDeleted = true
-        )
+        public virtual Task<TEntity> FindAsyncFirst(Expression<Func<TEntity, bool>> predicate, bool filterDeleted = true)
         {
             return FindAsISugarQueryable<TEntity>(predicate, filterDeleted).FirstOrDefaultAsync();
         }
 
-        public virtual Task<List<TFind>> FindAsync<TFind>(
-            Expression<Func<TFind, bool>> predicate,
-            bool filterDeleted = true
-        )
+        public virtual Task<List<TFind>> FindAsync<TFind>(Expression<Func<TFind, bool>> predicate, bool filterDeleted = true)
             where TFind : class
         {
             return FindAsISugarQueryable<TFind>(predicate, filterDeleted).ToListAsync();
         }
 
-        public virtual Task<List<TEntity>> FindAsync(
-            Expression<Func<TEntity, bool>> predicate,
-            bool filterDeleted = true
-        )
+        public virtual Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate, bool filterDeleted = true)
         {
             return FindAsISugarQueryable(predicate, filterDeleted).ToListAsync();
         }
 
-        public virtual Task<TEntity> FindFirstAsync(
-            Expression<Func<TEntity, bool>> predicate,
-            bool filterDeleted = true
-        )
+        public virtual Task<TEntity> FindFirstAsync(Expression<Func<TEntity, bool>> predicate, bool filterDeleted = true)
         {
             return FindAsISugarQueryable(predicate, filterDeleted).FirstOrDefaultAsync();
         }
 
-        public virtual Task<List<T>> FindAsync<T>(
-            Expression<Func<TEntity, bool>> predicate,
-            Expression<Func<TEntity, T>> selector,
-            bool filterDeleted = true
-        )
+        public virtual Task<List<T>> FindAsync<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector, bool filterDeleted = true)
         {
             return FindAsISugarQueryable(predicate, filterDeleted).Select(selector).ToListAsync();
         }
 
-        public virtual Task<T> FindFirstAsync<T>(
-            Expression<Func<TEntity, bool>> predicate,
-            Expression<Func<TEntity, T>> selector,
-            bool filterDeleted = true
-        )
+        public virtual Task<T> FindFirstAsync<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector, bool filterDeleted = true)
         {
-            return FindAsISugarQueryable(predicate, filterDeleted)
-                .Select(selector)
-                .FirstOrDefaultAsync();
+            return FindAsISugarQueryable(predicate, filterDeleted).Select(selector).FirstOrDefaultAsync();
         }
 
-        private ISugarQueryable<TFind> FindAsISugarQueryable<TFind>(
-            Expression<Func<TFind, bool>> predicate,
-            bool filterDeleted = true
-        )
+        private ISugarQueryable<TFind> FindAsISugarQueryable<TFind>(Expression<Func<TFind, bool>> predicate, bool filterDeleted = true)
             where TFind : class
         {
             return VOLContext.Set<TFind>(filterDeleted).Where(predicate);
         }
 
-        public virtual List<T> Find<T>(
-            Expression<Func<TEntity, bool>> predicate,
-            Expression<Func<TEntity, T>> selector,
-            bool filterDeleted = true
-        )
+        public virtual List<T> Find<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector, bool filterDeleted = true)
         {
-            return VOLContext
-                .Set<TEntity>(filterDeleted)
-                .Where(predicate)
-                .Select(selector)
-                .ToList();
+            return VOLContext.Set<TEntity>(filterDeleted).Where(predicate).Select(selector).ToList();
         }
 
         /// <summary>
@@ -239,10 +180,7 @@ namespace VOL.Core.BaseProvider
         /// </summary>
         /// <param name="predicate"></param>
         /// <returns></returns>
-        public virtual List<TEntity> Find(
-            Expression<Func<TEntity, bool>> predicate,
-            bool filterDeleted = true
-        )
+        public virtual List<TEntity> Find(Expression<Func<TEntity, bool>> predicate, bool filterDeleted = true)
         {
             return FindAsISugarQueryable(predicate, filterDeleted).ToList();
         }
@@ -254,27 +192,19 @@ namespace VOL.Core.BaseProvider
         /// <param name=""></param>
         /// <param name="orderBy">排序字段</param>
         /// <returns></returns>
-        public virtual TEntity FindFirst(
-            Expression<Func<TEntity, bool>> predicate,
-            bool filterDeleted = true
-        )
+        public virtual TEntity FindFirst(Expression<Func<TEntity, bool>> predicate, bool filterDeleted = true)
         {
             return VOLContext.Set<TEntity>(filterDeleted).Where(predicate).FirstOrDefault();
         }
 
-        public ISugarQueryable<TEntity> FindAsIQueryable(
-            Expression<Func<TEntity, bool>> predicate,
-            Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy = null
-        )
+        public ISugarQueryable<TEntity> FindAsIQueryable(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy = null)
         {
             //if (orderBy != null)
             //    return DbContext.Set<TEntity>().Where(predicate).GetISugarQueryableOrderBy(orderBy.GetExpressionToDic());
             return DbContext.Set<TEntity>().Where(predicate);
         }
 
-        public ISugarQueryable<TEntity> Include<TProperty>(
-            Expression<Func<TEntity, TProperty>> incluedProperty
-        )
+        public ISugarQueryable<TEntity> Include<TProperty>(Expression<Func<TEntity, TProperty>> incluedProperty)
         {
             return DbContext.Set<TEntity>().Includes(incluedProperty);
         }
@@ -310,12 +240,7 @@ namespace VOL.Core.BaseProvider
             }
             var _db = DbContext.Set<TFind>();
             rowcount = returnRowCount ? _db.Count(predicate) : 0;
-            return DbContext
-                .Set<TFind>()
-                .Where(predicate)
-                .GetISugarQueryableOrderBy(orderBy.GetExpressionToDic())
-                .Skip((pageIndex - 1) * pagesize)
-                .Take(pagesize);
+            return DbContext.Set<TFind>().Where(predicate).GetISugarQueryableOrderBy(orderBy.GetExpressionToDic()).Skip((pageIndex - 1) * pagesize).Take(pagesize);
         }
 
         /// <summary>
@@ -339,10 +264,7 @@ namespace VOL.Core.BaseProvider
             pageIndex = pageIndex <= 0 ? 1 : pageIndex;
             pagesize = pagesize <= 0 ? 10 : pagesize;
             rowcount = returnRowCount ? queryable.Count() : 0;
-            return queryable
-                .GetISugarQueryableOrderBy<TEntity>(orderBy)
-                .Skip((pageIndex - 1) * pagesize)
-                .Take(pagesize);
+            return queryable.GetISugarQueryableOrderBy<TEntity>(orderBy).Skip((pageIndex - 1) * pagesize).Take(pagesize);
         }
 
         /// <summary>
@@ -351,30 +273,18 @@ namespace VOL.Core.BaseProvider
         /// <param name="entity"></param>
         /// <param name="saveChanges">是否保存</param>
         /// <param name="properties">格式 Expression<Func<entityt, object>> expTree = x => new { x.字段1, x.字段2 };</param>
-        public virtual int Update(
-            TEntity entity,
-            Expression<Func<TEntity, object>> properties,
-            bool saveChanges = false
-        )
+        public virtual int Update(TEntity entity, Expression<Func<TEntity, object>> properties, bool saveChanges = false)
         {
             return Update<TEntity>(entity, properties, saveChanges);
         }
 
-        public virtual int Update<TSource>(
-            TSource entity,
-            Expression<Func<TSource, object>> properties,
-            bool saveChanges = false
-        )
+        public virtual int Update<TSource>(TSource entity, Expression<Func<TSource, object>> properties, bool saveChanges = false)
             where TSource : class, new()
         {
             return UpdateRange<TSource>(new List<TSource> { entity }, properties, saveChanges);
         }
 
-        public virtual int Update<TSource>(
-            TSource entity,
-            string[] properties,
-            bool saveChanges = false
-        )
+        public virtual int Update<TSource>(TSource entity, string[] properties, bool saveChanges = false)
             where TSource : class, new()
         {
             return UpdateRange<TSource>(new List<TSource>() { entity }, properties, saveChanges);
@@ -386,20 +296,13 @@ namespace VOL.Core.BaseProvider
             return UpdateRange<TSource>(new List<TSource>() { entity }, new string[0], saveChanges);
         }
 
-        public virtual int UpdateRange<TSource>(
-            IEnumerable<TSource> entities,
-            Expression<Func<TSource, object>> properties,
-            bool saveChanges = false
-        )
+        public virtual int UpdateRange<TSource>(IEnumerable<TSource> entities, Expression<Func<TSource, object>> properties, bool saveChanges = false)
             where TSource : class, new()
         {
             return UpdateRange<TSource>(entities, properties?.GetExpressionProperty(), saveChanges);
         }
 
-        public virtual int UpdateRange<TSource>(
-            IEnumerable<TSource> entities,
-            bool saveChanges = false
-        )
+        public virtual int UpdateRange<TSource>(IEnumerable<TSource> entities, bool saveChanges = false)
             where TSource : class, new()
         {
             return UpdateRange<TSource>(entities, new string[0], saveChanges);
@@ -410,11 +313,7 @@ namespace VOL.Core.BaseProvider
         /// </summary>
         /// <param name="models"></param>
         /// <param name="properties">格式 Expression<Func<entityt, object>> expTree = x => new { x.字段1, x.字段2 };</param>
-        public int UpdateRange<TSource>(
-            IEnumerable<TSource> entities,
-            string[] properties,
-            bool saveChanges = false
-        )
+        public int UpdateRange<TSource>(IEnumerable<TSource> entities, string[] properties, bool saveChanges = false)
             where TSource : class, new()
         {
             return DbContext.UpdateRange(entities, properties, saveChanges);
@@ -446,24 +345,13 @@ namespace VOL.Core.BaseProvider
             if (updateDetail)
             {
                 PropertyInfo[] properties = typeof(TEntity).GetProperties();
-                PropertyInfo detail = properties
-                    .Where(x => x.PropertyType.Name == "List`1")
-                    .ToList()
-                    .FirstOrDefault();
+                PropertyInfo detail = properties.Where(x => x.PropertyType.Name == "List`1").ToList().FirstOrDefault();
                 if (detail != null)
                 {
                     PropertyInfo key = properties.GetKeyProperty();
                     object obj = detail.GetValue(entity);
-                    Type detailType = typeof(TEntity)
-                        .GetCustomAttribute<EntityAttribute>()
-                        .DetailTable[0];
-                    message = UpdateDetail<Detail>(
-                        obj as List<Detail>,
-                        key.Name,
-                        key.GetValue(entity),
-                        updateDetailFields,
-                        delNotExist
-                    );
+                    Type detailType = typeof(TEntity).GetCustomAttribute<EntityAttribute>().DetailTable[0];
+                    message = UpdateDetail<Detail>(obj as List<Detail>, key.Name, key.GetValue(entity), updateDetailFields, delNotExist);
                 }
             }
             if (!saveChange)
@@ -487,26 +375,14 @@ namespace VOL.Core.BaseProvider
             PropertyInfo property = typeof(TDetail).GetKeyProperty();
             string detailKeyName = property.Name;
             var details = DbContext.Set<TDetail>();
-            Expression<Func<TDetail, object>> selectExpression = detailKeyName.GetExpression<
-                TDetail,
-                object
-            >();
-            Expression<Func<TDetail, bool>> whereExpression = keyName.CreateExpression<TDetail>(
-                keyValue,
-                LinqExpressionType.Equal
-            );
+            Expression<Func<TDetail, object>> selectExpression = detailKeyName.GetExpression<TDetail, object>();
+            Expression<Func<TDetail, bool>> whereExpression = keyName.CreateExpression<TDetail>(keyValue, LinqExpressionType.Equal);
             //这里有问题， Expression<Func<TDetail, object>>会转换为查询所有字段20231020
             //List<object> detailKeys = details.Where(whereExpression).Select(selectExpression).ToList();
 
-            List<object> detailKeys = details
-                .Where(whereExpression)
-                .ToList()
-                .Select(selectExpression.Compile())
-                .ToList();
+            List<object> detailKeys = details.Where(whereExpression).ToList().Select(selectExpression.Compile()).ToList();
             //获取主键默认值
-            string keyDefaultVal = property
-                .PropertyType.Assembly.CreateInstance(property.PropertyType.FullName)
-                .ToString();
+            string keyDefaultVal = property.PropertyType.Assembly.CreateInstance(property.PropertyType.FullName).ToString();
             int addCount = 0;
             int editCount = 0;
             int delCount = 0;

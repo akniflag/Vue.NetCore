@@ -65,10 +65,7 @@ namespace VOL.Core.BaseProvider
         /// <param name="checkCondition"></param>
         /// <param name="predicate"></param>
         /// <returns></returns>
-        ISugarQueryable<TEntity> WhereIF(
-            bool checkCondition,
-            Expression<Func<TEntity, bool>> predicate
-        );
+        ISugarQueryable<TEntity> WhereIF(bool checkCondition, Expression<Func<TEntity, bool>> predicate);
 
         /// <summary>
         ///  if判断查询
@@ -93,10 +90,7 @@ namespace VOL.Core.BaseProvider
         ///         };
         /// </param>
         /// <returns></returns>
-        ISugarQueryable<TEntity> FindAsIQueryable(
-            Expression<Func<TEntity, bool>> predicate,
-            Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy = null
-        );
+        ISugarQueryable<TEntity> FindAsIQueryable(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy = null);
 
         /// <summary>
         /// 通过条件查询数据
@@ -105,11 +99,7 @@ namespace VOL.Core.BaseProvider
         /// <param name="predicate">查询条件</param>
         /// <param name="selector">返回类型如:Find(x => x.UserName == loginInfo.userName, p => new { uname = p.UserName });</param>
         /// <returns></returns>
-        List<T> Find<T>(
-            Expression<Func<TEntity, bool>> predicate,
-            Expression<Func<TEntity, T>> selector,
-            bool filterDeleted = true
-        );
+        List<T> Find<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector, bool filterDeleted = true);
 
         /// <summary>
         /// 根据条件，返回查询的类
@@ -128,10 +118,7 @@ namespace VOL.Core.BaseProvider
         /// <param name="predicate"></param>
         /// <param name="filterDeleted">是否过滤逻辑删除的数据，默认过</param>
         /// <returns></returns>
-        Task<TFind> FindAsyncFirst<TFind>(
-            Expression<Func<TFind, bool>> predicate,
-            bool filterDeleted = true
-        )
+        Task<TFind> FindAsyncFirst<TFind>(Expression<Func<TFind, bool>> predicate, bool filterDeleted = true)
             where TFind : class;
 
         /// <summary>
@@ -140,10 +127,7 @@ namespace VOL.Core.BaseProvider
         /// <param name="predicate"></param>
         ///<param name="filterDeleted">是否过滤逻辑删除的数据，默认过</param>
         /// <returns></returns>
-        Task<TEntity> FindAsyncFirst(
-            Expression<Func<TEntity, bool>> predicate,
-            bool filterDeleted = true
-        );
+        Task<TEntity> FindAsyncFirst(Expression<Func<TEntity, bool>> predicate, bool filterDeleted = true);
 
         /// <summary>
         ///
@@ -152,10 +136,7 @@ namespace VOL.Core.BaseProvider
         /// <param name="predicate"></param>
         /// <param name="filterDeleted">是否过滤逻辑删除的数据，默认过</param>
         /// <returns></returns>
-        Task<List<TFind>> FindAsync<TFind>(
-            Expression<Func<TFind, bool>> predicate,
-            bool filterDeleted = true
-        )
+        Task<List<TFind>> FindAsync<TFind>(Expression<Func<TFind, bool>> predicate, bool filterDeleted = true)
             where TFind : class;
 
         /// <summary>
@@ -164,10 +145,7 @@ namespace VOL.Core.BaseProvider
         /// <param name="predicate"></param>
         ///<param name="filterDeleted">是否过滤逻辑删除的数据，默认过</param>
         /// <returns></returns>
-        Task<TEntity> FindFirstAsync(
-            Expression<Func<TEntity, bool>> predicate,
-            bool filterDeleted = true
-        );
+        Task<TEntity> FindFirstAsync(Expression<Func<TEntity, bool>> predicate, bool filterDeleted = true);
 
         /// <summary>
         ///
@@ -175,10 +153,7 @@ namespace VOL.Core.BaseProvider
         /// <param name="predicate"></param>
         /// <param name="filterDeleted">是否过滤逻辑删除的数据，默认过</param>
         /// <returns></returns>
-        Task<List<TEntity>> FindAsync(
-            Expression<Func<TEntity, bool>> predicate,
-            bool filterDeleted = true
-        );
+        Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate, bool filterDeleted = true);
 
         /// <summary>
         ///
@@ -188,11 +163,7 @@ namespace VOL.Core.BaseProvider
         /// <param name="selector"></param>
         ///<param name="filterDeleted">是否过滤逻辑删除的数据，默认过</param>
         /// <returns></returns>
-        Task<List<T>> FindAsync<T>(
-            Expression<Func<TEntity, bool>> predicate,
-            Expression<Func<TEntity, T>> selector,
-            bool filterDeleted = true
-        );
+        Task<List<T>> FindAsync<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector, bool filterDeleted = true);
 
         /// <summary>
         ///
@@ -202,11 +173,7 @@ namespace VOL.Core.BaseProvider
         /// <param name="selector"></param>
         /// <param name="filterDeleted">是否过滤逻辑删除的数据，默认过</param>
         /// <returns></returns>
-        Task<T> FindFirstAsync<T>(
-            Expression<Func<TEntity, bool>> predicate,
-            Expression<Func<TEntity, T>> selector,
-            bool filterDeleted = true
-        );
+        Task<T> FindFirstAsync<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector, bool filterDeleted = true);
 
         /// <summary>
         ///
@@ -214,10 +181,7 @@ namespace VOL.Core.BaseProvider
         /// <param name="predicate"></param>
         /// <param name="filterDeleted">是否过滤逻辑删除的数据，默认过</param>
         /// <returns></returns>
-        Task<bool> ExistsAsync(
-            Expression<Func<TEntity, bool>> predicate,
-            bool filterDeleted = true
-        );
+        Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> predicate, bool filterDeleted = true);
 
         /// <summary>
         ///
@@ -244,15 +208,10 @@ namespace VOL.Core.BaseProvider
         /// <param name="predicate"></param>
         /// <param name="filterDeleted">是否过滤逻辑删除的数据，默认过</param>
         /// <returns></returns>
-        Task<bool> ExistsAsync<TExists>(
-            Expression<Func<TExists, bool>> predicate,
-            bool filterDeleted = true
-        )
+        Task<bool> ExistsAsync<TExists>(Expression<Func<TExists, bool>> predicate, bool filterDeleted = true)
             where TExists : class;
 
-        ISugarQueryable<TEntity> Include<TProperty>(
-            Expression<Func<TEntity, TProperty>> incluedProperty
-        );
+        ISugarQueryable<TEntity> Include<TProperty>(Expression<Func<TEntity, TProperty>> incluedProperty);
 
         ISugarQueryable<TFind> IQueryablePage<TFind>(
             int pageIndex,
@@ -280,11 +239,7 @@ namespace VOL.Core.BaseProvider
         /// <param name="properties">指定更新字段:x=>new {x.Name,x.Enable}</param>
         /// <param name="saveChanges">是否保存</param>
         /// <returns></returns>
-        int Update(
-            TEntity entity,
-            Expression<Func<TEntity, object>> properties,
-            bool saveChanges = false
-        );
+        int Update(TEntity entity, Expression<Func<TEntity, object>> properties, bool saveChanges = false);
 
         /// <summary>
         ///
@@ -293,11 +248,7 @@ namespace VOL.Core.BaseProvider
         /// <param name="properties">指定更新字段:x=>new {x.Name,x.Enable}</param>
         /// <param name="saveChanges">是否保存</param>
         /// <returns></returns>
-        int Update<TSource>(
-            TSource entity,
-            Expression<Func<TSource, object>> properties,
-            bool saveChanges = false
-        )
+        int Update<TSource>(TSource entity, Expression<Func<TSource, object>> properties, bool saveChanges = false)
             where TSource : class, new();
 
         int Update<TSource>(TSource entity, bool saveChanges = false)
@@ -316,18 +267,10 @@ namespace VOL.Core.BaseProvider
         /// <param name="properties">指定更新字段:x=>new {x.Name,x.Enable}</param>
         /// <param name="saveChanges">是否保存</param>
         /// <returns></returns>
-        int UpdateRange<TSource>(
-            IEnumerable<TSource> models,
-            Expression<Func<TSource, object>> properties,
-            bool saveChanges = false
-        )
+        int UpdateRange<TSource>(IEnumerable<TSource> models, Expression<Func<TSource, object>> properties, bool saveChanges = false)
             where TSource : class, new();
 
-        int UpdateRange<TSource>(
-            IEnumerable<TSource> entities,
-            string[] properties,
-            bool saveChanges = false
-        )
+        int UpdateRange<TSource>(IEnumerable<TSource> entities, string[] properties, bool saveChanges = false)
             where TSource : class, new();
 
         /// <summary>

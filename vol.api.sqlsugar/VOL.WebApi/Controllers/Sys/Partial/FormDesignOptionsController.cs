@@ -50,10 +50,7 @@ namespace VOL.Sys.Controllers
         [Route("getFormOptions"), HttpGet]
         public async Task<IActionResult> GetFormOptions(Guid id)
         {
-            var options = await _formDesignOptionsRepository
-                .FindAsIQueryable(x => x.FormId == id)
-                .Select(s => new { s.Title, s.FormOptions })
-                .FirstOrDefaultAsync();
+            var options = await _formDesignOptionsRepository.FindAsIQueryable(x => x.FormId == id).Select(s => new { s.Title, s.FormOptions }).FirstOrDefaultAsync();
             return Json(new { data = options });
         }
 
@@ -78,12 +75,7 @@ namespace VOL.Sys.Controllers
         {
             var query = _formCollectionRepository.FindAsIQueryable(x => true);
             var data = _formDesignOptionsRepository
-                .FindAsIQueryable(x =>
-                    SqlFunc
-                        .Subqueryable<FormCollectionObject>()
-                        .Where(c => c.FormId == x.FormId)
-                        .Any()
-                )
+                .FindAsIQueryable(x => SqlFunc.Subqueryable<FormCollectionObject>().Where(c => c.FormId == x.FormId).Any())
                 .Select(s => new
                 {
                     s.FormId,

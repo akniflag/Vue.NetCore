@@ -25,20 +25,14 @@ namespace VOL.Core.Filters
         private UserContext _userContext { get; set; }
 
         // private ResponseType responseType;
-        public ActionPermissionFilter(
-            ActionPermissionRequirement actionPermissionRequirement,
-            UserContext userContext
-        )
+        public ActionPermissionFilter(ActionPermissionRequirement actionPermissionRequirement, UserContext userContext)
         {
             this.ResponseContent = new WebResponseContent();
             this.ActionPermission = actionPermissionRequirement;
             _userContext = userContext;
         }
 
-        public async Task OnActionExecutionAsync(
-            ActionExecutingContext context,
-            ActionExecutionDelegate next
-        )
+        public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             if (OnActionExecutionPermission(context).Status)
             {
@@ -55,22 +49,14 @@ namespace VOL.Core.Filters
             //    && !context.Filters.Any(item => item is IFixedTokenFilter))
             //    || UserContext.Current.IsSuperAdmin
             //    )
-            if (
-                context.Filters.Any(item => item is IAllowAnonymousFilter)
-                || UserContext.Current.IsSuperAdmin
-            )
+            if (context.Filters.Any(item => item is IAllowAnonymousFilter) || UserContext.Current.IsSuperAdmin)
                 return ResponseContent.OK();
 
             //演示环境除了admin帐号，其他帐号都不能增删改等操作
             if (
                 !_userContext.IsSuperAdmin
                 && AppSetting.GlobalFilter.Enable
-                && AppSetting.GlobalFilter.Actions.Contains(
-                    (
-                        (Microsoft.AspNetCore.Mvc.Controllers.ControllerActionDescriptor)
-                            context.ActionDescriptor
-                    ).ActionName
-                )
+                && AppSetting.GlobalFilter.Actions.Contains(((Microsoft.AspNetCore.Mvc.Controllers.ControllerActionDescriptor)context.ActionDescriptor).ActionName)
             )
             {
                 return ResponseContent.Error(AppSetting.GlobalFilter.Message);
@@ -79,22 +65,17 @@ namespace VOL.Core.Filters
             //如果没有指定表的权限，则默认为代码生成的控制器，优先获取PermissionTableAttribute指定的表，如果没有数据则使用当前控制器的名作为表名权限
             if (ActionPermission.SysController)
             {
-                object[] permissionArray = (
-                    (Microsoft.AspNetCore.Mvc.Controllers.ControllerActionDescriptor)
-                        context.ActionDescriptor
-                )?.ControllerTypeInfo.GetCustomAttributes(typeof(PermissionTableAttribute), false);
+                object[] permissionArray = ((Microsoft.AspNetCore.Mvc.Controllers.ControllerActionDescriptor)context.ActionDescriptor)?.ControllerTypeInfo.GetCustomAttributes(
+                    typeof(PermissionTableAttribute),
+                    false
+                );
                 if (permissionArray == null || permissionArray.Length == 0)
                 {
-                    ActionPermission.TableName = (
-                        (Microsoft.AspNetCore.Mvc.Controllers.ControllerActionDescriptor)
-                            context.ActionDescriptor
-                    ).ControllerName;
+                    ActionPermission.TableName = ((Microsoft.AspNetCore.Mvc.Controllers.ControllerActionDescriptor)context.ActionDescriptor).ControllerName;
                 }
                 else
                 {
-                    ActionPermission.TableName = (
-                        permissionArray[0] as PermissionTableAttribute
-                    ).Name;
+                    ActionPermission.TableName = (permissionArray[0] as PermissionTableAttribute).Name;
                 }
                 if (string.IsNullOrEmpty(ActionPermission.TableName))
                 {
@@ -126,10 +107,7 @@ namespace VOL.Core.Filters
                 }
             }
             //2020.05.05移除x.TableName.ToLower()转换,获取权限时已经转换成为小写
-            var actionAuth =
-                _userContext
-                    .GetPermissions(x => x.TableName == ActionPermission.TableName.ToLower())
-                    ?.UserAuthArr?.Contains(ActionPermission.TableAction) ?? false;
+            var actionAuth = _userContext.GetPermissions(x => x.TableName == ActionPermission.TableName.ToLower())?.UserAuthArr?.Contains(ActionPermission.TableAction) ?? false;
 
             if (!actionAuth)
             {

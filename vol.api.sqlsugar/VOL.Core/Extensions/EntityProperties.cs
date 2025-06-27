@@ -25,28 +25,16 @@ namespace VOL.Core.Extensions
 {
     public static class EntityProperties
     {
-        public static ISugarQueryable<T> Where<T>(
-            this ISugarQueryable<T> queryable,
-            [NotNull] Expression<Func<T, object>> field,
-            string value
-        )
+        public static ISugarQueryable<T> Where<T>(this ISugarQueryable<T> queryable, [NotNull] Expression<Func<T, object>> field, string value)
         {
             if (value == null)
             {
                 value = "";
             }
-            return queryable.Where(
-                field
-                    .GetExpressionPropertyFirst<T>()
-                    .CreateExpression<T>(value, LinqExpressionType.Equal)
-            );
+            return queryable.Where(field.GetExpressionPropertyFirst<T>().CreateExpression<T>(value, LinqExpressionType.Equal));
         }
 
-        public static ISugarQueryable<T> Where<T>(
-            this ISugarQueryable<T> queryable,
-            string field,
-            string value
-        )
+        public static ISugarQueryable<T> Where<T>(this ISugarQueryable<T> queryable, string field, string value)
         {
             if (value == null)
             {
@@ -55,11 +43,7 @@ namespace VOL.Core.Extensions
             return queryable.Where(field.CreateExpression<T>(value, LinqExpressionType.Equal));
         }
 
-        public static ISugarQueryable<T> Where<T>(
-            this ISugarQueryable<T> queryable,
-            string field,
-            string[] values
-        )
+        public static ISugarQueryable<T> Where<T>(this ISugarQueryable<T> queryable, string field, string[] values)
         {
             if (values == null || values.Length == 0)
             {
@@ -68,11 +52,7 @@ namespace VOL.Core.Extensions
             return queryable.Where(field.CreateExpression<T>(values, LinqExpressionType.In));
         }
 
-        public static ISugarQueryable<T> WhereIF<T>(
-            this ISugarQueryable<T> queryable,
-            bool checkCondition,
-            Expression<Func<T, bool>> predicate
-        )
+        public static ISugarQueryable<T> WhereIF<T>(this ISugarQueryable<T> queryable, bool checkCondition, Expression<Func<T, bool>> predicate)
         {
             if (checkCondition)
             {
@@ -111,14 +91,10 @@ namespace VOL.Core.Extensions
         {
             if (string.IsNullOrEmpty(value))
                 return queryable;
-            return queryable.Where(
-                field.GetExpressionPropertyFirst<T>().CreateExpression<T>(value, linqExpression)
-            );
+            return queryable.Where(field.GetExpressionPropertyFirst<T>().CreateExpression<T>(value, linqExpression));
         }
 
-        public static string GetExpressionPropertyFirst<TEntity>(
-            this Expression<Func<TEntity, object>> properties
-        )
+        public static string GetExpressionPropertyFirst<TEntity>(this Expression<Func<TEntity, object>> properties)
         {
             string[] arr = properties.GetExpressionProperty();
             if (arr.Length > 0)
@@ -132,9 +108,7 @@ namespace VOL.Core.Extensions
         /// <typeparam name="TEntity"></typeparam>
         /// <param name="properties"> 格式 Expression<Func<entityt, object>> exp = x => new { x.字段1, x.字段2 };或x=>x.Name</param>
         /// <returns></returns>
-        public static string[] GetExpressionProperty<TEntity>(
-            this Expression<Func<TEntity, object>> properties
-        )
+        public static string[] GetExpressionProperty<TEntity>(this Expression<Func<TEntity, object>> properties)
         {
             if (properties == null)
                 return new string[] { };
@@ -143,17 +117,11 @@ namespace VOL.Core.Extensions
             if (properties.Body is MemberExpression)
                 return new string[] { ((MemberExpression)properties.Body).Member.Name };
             if (properties.Body is UnaryExpression)
-                return new string[]
-                {
-                    ((properties.Body as UnaryExpression).Operand as MemberExpression).Member.Name,
-                };
+                return new string[] { ((properties.Body as UnaryExpression).Operand as MemberExpression).Member.Name };
             throw new Exception("未实现的表达式");
         }
 
-        public static string ValidateHashInEntity(
-            this Type typeinfo,
-            Dictionary<string, object> dic
-        )
+        public static string ValidateHashInEntity(this Type typeinfo, Dictionary<string, object> dic)
         {
             return typeinfo.ValidateDicInEntity(dic, false);
         }
@@ -177,10 +145,7 @@ namespace VOL.Core.Extensions
             return properties.GetColumType(false);
         }
 
-        public static Dictionary<string, string> GetColumType(
-            this PropertyInfo[] properties,
-            bool containsKey
-        )
+        public static Dictionary<string, string> GetColumType(this PropertyInfo[] properties, bool containsKey)
         {
             Dictionary<string, string> dictionary = new Dictionary<string, string>();
             foreach (PropertyInfo property in properties)
@@ -195,10 +160,7 @@ namespace VOL.Core.Extensions
             return dictionary;
         }
 
-        private static readonly Dictionary<Type, string> entityMapDbColumnType = new Dictionary<
-            Type,
-            string
-        >()
+        private static readonly Dictionary<Type, string> entityMapDbColumnType = new Dictionary<Type, string>()
         {
             { typeof(int), SqlDbTypeName.Int },
             { typeof(int?), SqlDbTypeName.Int },
@@ -223,16 +185,10 @@ namespace VOL.Core.Extensions
         /// <param name="property"></param>
         /// <param name="lenght">是否包括后字段具体长度:nvarchar(100)</param>
         /// <returns></returns>
-        public static KeyValuePair<string, string> GetColumnType(
-            this PropertyInfo property,
-            bool lenght = false
-        )
+        public static KeyValuePair<string, string> GetColumnType(this PropertyInfo property, bool lenght = false)
         {
             string colType = "";
-            object objAtrr = property.GetTypeCustomAttributes(
-                typeof(ColumnAttribute),
-                out bool asType
-            );
+            object objAtrr = property.GetTypeCustomAttributes(typeof(ColumnAttribute), out bool asType);
             if (asType)
             {
                 colType = ((ColumnAttribute)objAtrr).TypeName.ToLower();
@@ -245,34 +201,18 @@ namespace VOL.Core.Extensions
                     }
                     if (colType == "decimal" || colType == "double" || colType == "float")
                     {
-                        objAtrr = property.GetTypeCustomAttributes(
-                            typeof(DisplayFormatAttribute),
-                            out asType
-                        );
-                        colType +=
-                            "("
-                            + (asType ? ((DisplayFormatAttribute)objAtrr).DataFormatString : "18,5")
-                            + ")";
+                        objAtrr = property.GetTypeCustomAttributes(typeof(DisplayFormatAttribute), out asType);
+                        colType += "(" + (asType ? ((DisplayFormatAttribute)objAtrr).DataFormatString : "18,5") + ")";
                     }
                     ///如果是string,根据 varchar或nvarchar判断最大长度
                     if (property.PropertyType.ToString() == "System.String")
                     {
                         colType = colType.Split("(")[0];
-                        objAtrr = property.GetTypeCustomAttributes(
-                            typeof(MaxLengthAttribute),
-                            out asType
-                        );
+                        objAtrr = property.GetTypeCustomAttributes(typeof(MaxLengthAttribute), out asType);
                         if (asType)
                         {
                             int length = ((MaxLengthAttribute)objAtrr).Length;
-                            colType +=
-                                "("
-                                + (
-                                    length < 1 || length > (colType.StartsWith("n") ? 8000 : 4000)
-                                        ? "max"
-                                        : length.ToString()
-                                )
-                                + ")";
+                            colType += "(" + (length < 1 || length > (colType.StartsWith("n") ? 8000 : 4000) ? "max" : length.ToString()) + ")";
                         }
                         else
                         {
@@ -311,9 +251,7 @@ namespace VOL.Core.Extensions
                 return string.Empty;
             }
             string columnType = string.Empty;
-            List<ArrayEntity> arrrayEntityList = array
-                .Select(x => new ArrayEntity { column1 = x.ToString() })
-                .ToList();
+            List<ArrayEntity> arrrayEntityList = array.Select(x => new ArrayEntity { column1 = x.ToString() }).ToList();
             return arrrayEntityList.GetEntitySql(false, null, null, null, fieldType);
         }
 
@@ -334,9 +272,7 @@ namespace VOL.Core.Extensions
                 return string.Empty;
             }
             string columnType = string.Empty;
-            List<ArrayEntity> arrrayEntityList = array
-                .Select(x => new ArrayEntity { column1 = x.ToString() })
-                .ToList();
+            List<ArrayEntity> arrrayEntityList = array.Select(x => new ArrayEntity { column1 = x.ToString() }).ToList();
             return arrrayEntityList.GetEntitySql(false, sql, null, null, fieldType);
         }
 
@@ -353,12 +289,7 @@ namespace VOL.Core.Extensions
         public static FieldType GetFieldType(this Type typeEntity)
         {
             FieldType fieldType;
-            string columnType = typeEntity
-                .GetProperties()
-                .Where(x => x.Name == typeEntity.GetKeyName())
-                .ToList()[0]
-                .GetColumnType(false)
-                .Value;
+            string columnType = typeEntity.GetProperties().Where(x => x.Name == typeEntity.GetKeyName()).ToList()[0].GetColumnType(false).Value;
             switch (columnType)
             {
                 case SqlDbTypeName.Int:
@@ -403,9 +334,7 @@ namespace VOL.Core.Extensions
             {
                 arr = fixedColumns.GetExpressionToArray();
                 PropertyInfo keyProperty = typeof(T).GetKeyProperty();
-                propertyInfo = propertyInfo
-                    .Where(x => (containsKey && x.Name == keyProperty.Name) || arr.Contains(x.Name))
-                    .ToArray();
+                propertyInfo = propertyInfo.Where(x => (containsKey && x.Name == keyProperty.Name) || arr.Contains(x.Name)).ToArray();
             }
             if (ignoreFileds != null)
             {
@@ -421,20 +350,14 @@ namespace VOL.Core.Extensions
                 {
                     realType += "(max)";
                 }
-                dictProperties = new Dictionary<string, string>
-                {
-                    { dictProperties.Select(x => x.Key).ToList()[0], realType },
-                };
+                dictProperties = new Dictionary<string, string> { { dictProperties.Select(x => x.Key).ToList()[0], realType } };
             }
             if (dictProperties.Keys.Count * entityList.Count() > 50 * 3000)
             {
                 throw new Exception("写入数据太多,请分开写入。");
             }
 
-            string cols = string.Join(
-                ",",
-                dictProperties.Select(c => "[" + c.Key + "]" + " " + c.Value)
-            );
+            string cols = string.Join(",", dictProperties.Select(c => "[" + c.Key + "]" + " " + c.Value));
             StringBuilder declareTable = new StringBuilder();
 
             string tempTablbe = "#" + EntityToSqlTempName.TempInsert.ToString();
@@ -467,10 +390,7 @@ namespace VOL.Core.Extensions
                     {
                         declareTable.AppendLine(
                             stringLeft.Remove(stringLeft.Length - 2, 2).Append("',").ToString()
-                                + stringCenter
-                                    .Remove(stringCenter.Length - 1, 1)
-                                    .Append("',")
-                                    .ToString()
+                                + stringCenter.Remove(stringCenter.Length - 1, 1).Append("',").ToString()
                                 + stringRight.Remove(stringRight.Length - 1, 1).ToString()
                         );
 
@@ -530,17 +450,7 @@ namespace VOL.Core.Extensions
             }
             else
             {
-                declareTable.AppendLine(
-                    " SELECT "
-                        + (
-                            string.Join(
-                                ",",
-                                fixedColumns?.GetExpressionToArray() ?? new string[] { "*" }
-                            )
-                        )
-                        + " FROM "
-                        + tempTablbe
-                );
+                declareTable.AppendLine(" SELECT " + (string.Join(",", fixedColumns?.GetExpressionToArray() ?? new string[] { "*" })) + " FROM " + tempTablbe);
             }
 
             if (tempTablbe.Substring(0, 1) == "#")
@@ -580,10 +490,7 @@ namespace VOL.Core.Extensions
                 throw new Exception("写入数据太多,请分开写入。");
             }
 
-            string cols = string.Join(
-                ",",
-                dictCloumn.Select(c => "[" + c.Key + "]" + " " + c.Value)
-            );
+            string cols = string.Join(",", dictCloumn.Select(c => "[" + c.Key + "]" + " " + c.Value));
             StringBuilder declareTable = new StringBuilder();
 
             string tempTablbe = "#Temp_Insert0";
@@ -605,10 +512,7 @@ namespace VOL.Core.Extensions
                     {
                         declareTable.AppendLine(
                             stringLeft.Remove(stringLeft.Length - 2, 2).Append("',").ToString()
-                                + stringCenter
-                                    .Remove(stringCenter.Length - 1, 1)
-                                    .Append("',")
-                                    .ToString()
+                                + stringCenter.Remove(stringCenter.Length - 1, 1).Append("',").ToString()
                                 + stringRight.Remove(stringRight.Length - 1, 1).ToString()
                         );
 
@@ -712,9 +616,7 @@ namespace VOL.Core.Extensions
                 if (attributes.Length > 0)
                     return ((ColumnAttribute)attributes[0]).TypeName.ToLower();
                 else
-                    return GetColumType(new PropertyInfo[] { propertyInfo }, true)[
-                        propertyInfo.Name
-                    ];
+                    return GetColumType(new PropertyInfo[] { propertyInfo }, true)[propertyInfo.Name];
             }
             return keyName;
         }
@@ -770,16 +672,7 @@ namespace VOL.Core.Extensions
             Type editType = typeof(EditableAttribute);
             PropertyInfo[] propertyInfo = type.GetProperties();
             string keyName = propertyInfo.GetKeyName();
-            return propertyInfo
-                .Where(x =>
-                    x.Name != keyName
-                    && (
-                        UserEditFields.Contains(x.Name.ToLower())
-                        || x.ContainsCustomAttributes(editType)
-                    )
-                )
-                .Select(s => s.Name)
-                .ToArray();
+            return propertyInfo.Where(x => x.Name != keyName && (UserEditFields.Contains(x.Name.ToLower()) || x.ContainsCustomAttributes(editType))).Select(s => s.Name).ToArray();
         }
 
         /// <summary>
@@ -815,11 +708,7 @@ namespace VOL.Core.Extensions
         /// <param name="propertyInfo"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static object GetTypeCustomAttributes(
-            this PropertyInfo propertyInfo,
-            Type type,
-            out bool asType
-        )
+        public static object GetTypeCustomAttributes(this PropertyInfo propertyInfo, Type type, out bool asType)
         {
             object[] attributes = propertyInfo.GetCustomAttributes(type, false);
             if (attributes.Length == 0)
@@ -838,10 +727,7 @@ namespace VOL.Core.Extensions
         /// <param name="entityList"></param>
         /// <param name="expression"></param>
         /// <returns></returns>
-        public static WebResponseContent ValidationEntityList<T>(
-            this List<T> entityList,
-            Expression<Func<T, object>> expression = null
-        )
+        public static WebResponseContent ValidationEntityList<T>(this List<T> entityList, Expression<Func<T, object>> expression = null)
         {
             WebResponseContent responseData = new WebResponseContent();
             foreach (T entity in entityList)
@@ -863,17 +749,9 @@ namespace VOL.Core.Extensions
         /// <param name="entity"></param>
         /// <param name="expression">对指定属性进行验证x=>{x.Name,x.Size}</param>
         /// <returns></returns>
-        public static WebResponseContent ValidationEntity<T>(
-            this T entity,
-            Expression<Func<T, object>> expression = null,
-            Expression<Func<T, object>> validateProperties = null
-        )
+        public static WebResponseContent ValidationEntity<T>(this T entity, Expression<Func<T, object>> expression = null, Expression<Func<T, object>> validateProperties = null)
         {
-            return ValidationEntity<T>(
-                entity,
-                expression?.GetExpressionProperty<T>(),
-                validateProperties?.GetExpressionProperty<T>()
-            );
+            return ValidationEntity<T>(entity, expression?.GetExpressionProperty<T>(), validateProperties?.GetExpressionProperty<T>());
         }
 
         /// <summary>
@@ -886,11 +764,7 @@ namespace VOL.Core.Extensions
         /// <param name="specificProperties">验证指定的属性，并且非空判断</param>
         /// <param name="validateProperties">验证指定属性，只对字段合法性判断，不验证是否为空</param>
         /// <returns></returns>
-        public static WebResponseContent ValidationEntity<T>(
-            this T entity,
-            string[] specificProperties,
-            string[] validateProperties = null
-        )
+        public static WebResponseContent ValidationEntity<T>(this T entity, string[] specificProperties, string[] validateProperties = null)
         {
             WebResponseContent responseData = new WebResponseContent();
             if (entity == null)
@@ -907,17 +781,13 @@ namespace VOL.Core.Extensions
             //只验证数据合法性，验证非空
             if (specificProperties != null && specificProperties.Length > 0)
             {
-                compareProper.AddRange(
-                    propertyArray.Where(x => specificProperties.Contains(x.Name))
-                );
+                compareProper.AddRange(propertyArray.Where(x => specificProperties.Contains(x.Name)));
             }
 
             //只验证数据合法性，不验证非空
             if (validateProperties != null && validateProperties.Length > 0)
             {
-                compareProper.AddRange(
-                    propertyArray.Where(x => validateProperties.Contains(x.Name))
-                );
+                compareProper.AddRange(propertyArray.Where(x => validateProperties.Contains(x.Name)));
             }
             if (compareProper.Count() > 0)
             {
@@ -936,12 +806,7 @@ namespace VOL.Core.Extensions
                     }
                 }
                 //若存在specificProperties并且属性为数组specificProperties中的值，校验时就需要判断是否为空
-                var reslut = propertyInfo.ValidationProperty(
-                    value,
-                    specificProperties != null && specificProperties.Contains(propertyInfo.Name)
-                        ? true
-                        : false
-                );
+                var reslut = propertyInfo.ValidationProperty(value, specificProperties != null && specificProperties.Contains(propertyInfo.Name) ? true : false);
                 if (!reslut.Item1)
                     return responseData.Error(reslut.Item2);
             }
@@ -955,10 +820,7 @@ namespace VOL.Core.Extensions
         /// <returns></returns>
         public static string GetSqlDbType(this PropertyInfo propertyInfo)
         {
-            string dbType = propertyInfo.GetTypeCustomValue<ColumnAttribute>(x => new
-            {
-                x.TypeName,
-            });
+            string dbType = propertyInfo.GetTypeCustomValue<ColumnAttribute>(x => new { x.TypeName });
 
             if (string.IsNullOrEmpty(dbType))
             {
@@ -994,10 +856,7 @@ namespace VOL.Core.Extensions
         /// </param>
         /// <param name="value"></param>
         /// <returns>IEnumerable<(bool, string, object)> bool成否校验成功,string校验失败信息,object,当前校验的值</returns>
-        public static IEnumerable<(bool, string, object)> ValidationValueForDbType(
-            this PropertyInfo propertyInfo,
-            params object[] values
-        )
+        public static IEnumerable<(bool, string, object)> ValidationValueForDbType(this PropertyInfo propertyInfo, params object[] values)
         {
             string dbTypeName = propertyInfo.GetTypeCustomValue<ColumnAttribute>(c => c.TypeName);
             foreach (object value in values)
@@ -1006,11 +865,7 @@ namespace VOL.Core.Extensions
             }
         }
 
-        public static bool ValidationRquiredValueForDbType(
-            this PropertyInfo propertyInfo,
-            object value,
-            out string message
-        )
+        public static bool ValidationRquiredValueForDbType(this PropertyInfo propertyInfo, object value, out string message)
         {
             if (value == null || value?.ToString()?.Trim() == "")
             {
@@ -1022,10 +877,7 @@ namespace VOL.Core.Extensions
             return result.Item1;
         }
 
-        private static readonly Dictionary<Type, string> ProperWithDbType = new Dictionary<
-            Type,
-            string
-        >()
+        private static readonly Dictionary<Type, string> ProperWithDbType = new Dictionary<Type, string>()
         {
             { typeof(string), SqlDbTypeName.NVarChar },
             { typeof(DateTime), SqlDbTypeName.DateTime },
@@ -1055,18 +907,11 @@ namespace VOL.Core.Extensions
         /// <param name="value">值</param>
         /// <param name="propertyInfo">要验证的类的属性，若不为null，则会判断字符串的长度是否正确</param>
         /// <returns>(bool, string, object)bool成否校验成功,string校验失败信息,object,当前校验的值</returns>
-        public static (bool, string, object) ValidationVal(
-            this string dbType,
-            object value,
-            PropertyInfo propertyInfo = null
-        )
+        public static (bool, string, object) ValidationVal(this string dbType, object value, PropertyInfo propertyInfo = null)
         {
             if (string.IsNullOrEmpty(dbType))
             {
-                dbType =
-                    propertyInfo != null
-                        ? propertyInfo.GetProperWithDbType()
-                        : SqlDbTypeName.NVarChar;
+                dbType = propertyInfo != null ? propertyInfo.GetProperWithDbType() : SqlDbTypeName.NVarChar;
             }
             dbType = dbType.ToLower();
             string val = value?.ToString();
@@ -1084,21 +929,12 @@ namespace VOL.Core.Extensions
                     reslutMsg = "只能为有效整数";
                 }
             }
-            else if (
-                dbType == SqlDbTypeName.DateTime
-                || dbType == SqlDbTypeName.Date
-                || dbType == SqlDbTypeName.SmallDateTime
-                || dbType == SqlDbTypeName.SmallDate
-            )
+            else if (dbType == SqlDbTypeName.DateTime || dbType == SqlDbTypeName.Date || dbType == SqlDbTypeName.SmallDateTime || dbType == SqlDbTypeName.SmallDate)
             {
                 if (!value.IsDate())
                     reslutMsg = "必须为日期格式";
             }
-            else if (
-                dbType == SqlDbTypeName.Float
-                || dbType == SqlDbTypeName.Decimal
-                || dbType == SqlDbTypeName.Double
-            )
+            else if (dbType == SqlDbTypeName.Float || dbType == SqlDbTypeName.Decimal || dbType == SqlDbTypeName.Double)
             {
                 //string formatString = string.Empty;
                 //if (propertyInfo != null)
@@ -1138,24 +974,13 @@ namespace VOL.Core.Extensions
                 }
                 else
                 {
-                    int length = propertyInfo
-                        .GetTypeCustomValue<MaxLengthAttribute>(x => new { x.Length })
-                        .GetInt();
+                    int length = propertyInfo.GetTypeCustomValue<MaxLengthAttribute>(x => new { x.Length }).GetInt();
                     if (length == 0)
                     {
                         return (true, null, null);
                     }
                     //判断双字节与单字段
-                    else if (
-                        length < 8000
-                        && (
-                            (
-                                dbType.Substring(0, 1) != "n"
-                                && Encoding.UTF8.GetBytes(val.ToCharArray()).Length > length
-                            )
-                            || val.Length > length
-                        )
-                    )
+                    else if (length < 8000 && ((dbType.Substring(0, 1) != "n" && Encoding.UTF8.GetBytes(val.ToCharArray()).Length > length) || val.Length > length))
                     {
                         reslutMsg = $"最多只能【{length}】个字符。";
                     }
@@ -1185,11 +1010,7 @@ namespace VOL.Core.Extensions
         /// <param name="objectVal">属性的值</param>
         /// <param name="required">是否指定当前属性必须有值</param>
         /// <returns></returns>
-        public static (bool, string, object) ValidationProperty(
-            this PropertyInfo propertyInfo,
-            object objectVal,
-            bool required
-        )
+        public static (bool, string, object) ValidationProperty(this PropertyInfo propertyInfo, object objectVal, bool required)
         {
             if (propertyInfo.IsKey())
             {
@@ -1201,11 +1022,7 @@ namespace VOL.Core.Extensions
             string requiredMsg = string.Empty;
             if (!required)
             {
-                var reuireVal = propertyInfo.GetTypeCustomValues<RequiredAttribute>(x => new
-                {
-                    x.AllowEmptyStrings,
-                    x.ErrorMessage,
-                });
+                var reuireVal = propertyInfo.GetTypeCustomValues<RequiredAttribute>(x => new { x.AllowEmptyStrings, x.ErrorMessage });
                 if (reuireVal != null && !Convert.ToBoolean(reuireVal["AllowEmptyStrings"]))
                 {
                     required = true;
@@ -1220,17 +1037,8 @@ namespace VOL.Core.Extensions
             {
                 if (requiredMsg != "")
                     return (false, requiredMsg, objectVal);
-                string propertyName = propertyInfo.GetTypeCustomValue<DisplayAttribute>(x => new
-                {
-                    x.Name,
-                });
-                return (
-                    false,
-                    requiredMsg
-                        + (string.IsNullOrEmpty(propertyName) ? propertyInfo.Name : propertyName)
-                        + "不能为空",
-                    objectVal
-                );
+                string propertyName = propertyInfo.GetTypeCustomValue<DisplayAttribute>(x => new { x.Name });
+                return (false, requiredMsg + (string.IsNullOrEmpty(propertyName) ? propertyInfo.Name : propertyName) + "不能为空", objectVal);
             }
             //列名
             string typeName = propertyInfo.GetSqlDbType();
@@ -1279,10 +1087,7 @@ namespace VOL.Core.Extensions
         /// <param name="type">指定的类</param>
         /// <param name="expression">指定属性的值 格式 Expression<Func<entityt, object>> exp = x => new { x.字段1, x.字段2 };</param>
         /// <returns>返回的是字段+value</returns>
-        public static Dictionary<string, string> GetTypeCustomValues<TEntity>(
-            this MemberInfo member,
-            Expression<Func<TEntity, object>> expression
-        )
+        public static Dictionary<string, string> GetTypeCustomValues<TEntity>(this MemberInfo member, Expression<Func<TEntity, object>> expression)
         {
             var attr = member.GetTypeCustomAttributes(typeof(TEntity));
             if (attr == null)
@@ -1297,9 +1102,7 @@ namespace VOL.Core.Extensions
             {
                 if (propertyName.Contains(property.Name))
                 {
-                    propertyKeyValues[property.Name] = (
-                        property.GetValue(attr) ?? string.Empty
-                    ).ToString();
+                    propertyKeyValues[property.Name] = (property.GetValue(attr) ?? string.Empty).ToString();
                 }
             }
             return propertyKeyValues;
@@ -1312,10 +1115,7 @@ namespace VOL.Core.Extensions
         /// <param name="type">指定的类</param>
         /// <param name="expression">指定属性的值 格式 Expression<Func<entityt, object>> exp = x => new { x.字段1, x.字段2 };</param>
         /// <returns></returns>
-        public static string GetTypeCustomValue<TEntity>(
-            this MemberInfo member,
-            Expression<Func<TEntity, object>> expression
-        )
+        public static string GetTypeCustomValue<TEntity>(this MemberInfo member, Expression<Func<TEntity, object>> expression)
         {
             var propertyKeyValues = member.GetTypeCustomValues(expression);
             if (propertyKeyValues == null || propertyKeyValues.Count == 0)
@@ -1332,48 +1132,25 @@ namespace VOL.Core.Extensions
         /// <param name="dic"></param>
         /// <param name="removeNotContains">移除不存在字段</param>
         /// <returns></returns>
-        public static string ValidateDicInEntity(
-            this Type typeinfo,
-            Dictionary<string, object> dic,
-            bool removeNotContains,
-            string[] ignoreFields = null
-        )
+        public static string ValidateDicInEntity(this Type typeinfo, Dictionary<string, object> dic, bool removeNotContains, string[] ignoreFields = null)
         {
             return typeinfo.ValidateDicInEntity(dic, removeNotContains, true, ignoreFields);
         }
 
-        public static string ValidateDicInEntity(
-            this Type type,
-            List<Dictionary<string, object>> dicList,
-            bool removeNotContains,
-            bool removerKey,
-            string[] ignoreFields = null
-        )
+        public static string ValidateDicInEntity(this Type type, List<Dictionary<string, object>> dicList, bool removeNotContains, bool removerKey, string[] ignoreFields = null)
         {
             PropertyInfo[] propertyInfo = type.GetProperties();
             string reslutMsg = string.Empty;
             foreach (Dictionary<string, object> dic in dicList)
             {
-                reslutMsg = type.ValidateDicInEntity(
-                    dic,
-                    propertyInfo,
-                    removeNotContains,
-                    removerKey,
-                    ignoreFields
-                );
+                reslutMsg = type.ValidateDicInEntity(dic, propertyInfo, removeNotContains, removerKey, ignoreFields);
                 if (!string.IsNullOrEmpty(reslutMsg))
                     return reslutMsg;
             }
             return reslutMsg;
         }
 
-        public static string ValidateDicInEntity(
-            this Type type,
-            Dictionary<string, object> dic,
-            bool removeNotContains,
-            bool removerKey,
-            string[] ignoreFields = null
-        )
+        public static string ValidateDicInEntity(this Type type, Dictionary<string, object> dic, bool removeNotContains, bool removerKey, string[] ignoreFields = null)
         {
             return type.ValidateDicInEntity(dic, null, removeNotContains, removerKey, ignoreFields);
         }
@@ -1400,10 +1177,7 @@ namespace VOL.Core.Extensions
                 return "参数无效";
             }
             if (propertyInfo == null)
-                propertyInfo = typeinfo
-                    .GetProperties()
-                    .Where(x => x.PropertyType.Name != "List`1")
-                    .ToArray();
+                propertyInfo = typeinfo.GetProperties().Where(x => x.PropertyType.Name != "List`1").ToArray();
             if (removeNotContains)
             {
                 // 不存在的字段直接移除
@@ -1424,10 +1198,7 @@ namespace VOL.Core.Extensions
             foreach (PropertyInfo property in propertyInfo)
             {
                 //忽略与主键的字段不做验证
-                if (
-                    property.Name == keyName
-                    || (ignoreFields != null && ignoreFields.Contains(property.Name))
-                )
+                if (property.Name == keyName || (ignoreFields != null && ignoreFields.Contains(property.Name)))
                     continue;
 
                 //不在编辑中的列，是否也要必填
@@ -1443,8 +1214,7 @@ namespace VOL.Core.Extensions
                         && property.PropertyType != typeof(decimal)
                     )
                     {
-                        return property.GetTypeCustomValue<DisplayAttribute>(x => x.Name)
-                            + "为必须提交项";
+                        return property.GetTypeCustomValue<DisplayAttribute>(x => x.Name) + "为必须提交项";
                     }
                     continue;
                 }
@@ -1457,8 +1227,7 @@ namespace VOL.Core.Extensions
                 {
                     if (property.GetCustomAttributes(typeof(RequiredAttribute)).Count() > 0)
                     {
-                        return property.GetTypeCustomValue<DisplayAttribute>(x => x.Name)
-                            + "没有配置好Model为编辑列";
+                        return property.GetTypeCustomValue<DisplayAttribute>(x => x.Name) + "没有配置好Model为编辑列";
                     }
                     dic.Remove(property.Name);
                     continue;
@@ -1579,10 +1348,7 @@ namespace VOL.Core.Extensions
                 }
                 foreach (var property in sourcePro)
                 {
-                    (newObj as System.Collections.IDictionary).Add(
-                        property.Name,
-                        property.GetValue(sourceEntity)
-                    );
+                    (newObj as System.Collections.IDictionary).Add(property.Name, property.GetValue(sourceEntity));
                 }
                 return newObj;
             }
@@ -1626,20 +1392,10 @@ namespace VOL.Core.Extensions
         {
             if (source == null)
                 return null;
-            string[] sourceFilterField =
-                sourceExpression == null
-                    ? typeof(TSource).GetProperties().Select(x => x.Name).ToArray()
-                    : sourceExpression.GetExpressionProperty();
+            string[] sourceFilterField = sourceExpression == null ? typeof(TSource).GetProperties().Select(x => x.Name).ToArray() : sourceExpression.GetExpressionProperty();
             string[] reslutFilterField = resultExpression?.GetExpressionProperty();
             if (!(source is System.Collections.IList))
-                return MapToInstance(
-                        typeof(TResult),
-                        source,
-                        null,
-                        null,
-                        sourceFilterField,
-                        reslutFilterField
-                    ) as TResult;
+                return MapToInstance(typeof(TResult), source, null, null, sourceFilterField, reslutFilterField) as TResult;
 
             Type sourceType = null;
             Type resultType = null;
@@ -1647,23 +1403,14 @@ namespace VOL.Core.Extensions
             sourceType = sourceList[0].GetType();
             resultType = (typeof(TResult)).GenericTypeArguments[0];
 
-            System.Collections.IList reslutList =
-                Activator.CreateInstance(typeof(TResult)) as System.Collections.IList;
+            System.Collections.IList reslutList = Activator.CreateInstance(typeof(TResult)) as System.Collections.IList;
             PropertyInfo[] sourcePro = sourceType.GetProperties();
             PropertyInfo[] resultPro = resultType.GetProperties();
 
             string mapType = GetMapType(resultType);
             for (int i = 0; i < sourceList.Count; i++)
             {
-                var reslutobj = MapToInstance(
-                    resultType,
-                    sourceList[i],
-                    sourcePro,
-                    resultPro,
-                    sourceFilterField,
-                    reslutFilterField,
-                    mapType
-                );
+                var reslutobj = MapToInstance(resultType, sourceList[i], sourcePro, resultPro, sourceFilterField, reslutFilterField, mapType);
                 reslutList.Add(reslutobj);
             }
             return reslutList as TResult;
@@ -1678,24 +1425,13 @@ namespace VOL.Core.Extensions
         /// <param name="source"></param>
         /// <param name="result"></param>
         /// <param name="expression">指定对需要的字段赋值,格式x=>new {x.Name,x.P},返回的结果只会对Name与P赋值</param>
-        public static void MapValueToEntity<TSource, TResult>(
-            this TSource source,
-            TResult result,
-            Expression<Func<TResult, object>> expression = null
-        )
+        public static void MapValueToEntity<TSource, TResult>(this TSource source, TResult result, Expression<Func<TResult, object>> expression = null)
             where TResult : class
         {
             if (source == null)
                 return;
             string[] fields = expression?.GetExpressionToArray();
-            PropertyInfo[] reslutPro =
-                fields == null
-                    ? result.GetType().GetProperties()
-                    : result
-                        .GetType()
-                        .GetProperties()
-                        .Where(x => fields.Contains(x.Name))
-                        .ToArray();
+            PropertyInfo[] reslutPro = fields == null ? result.GetType().GetProperties() : result.GetType().GetProperties().Where(x => fields.Contains(x.Name)).ToArray();
             PropertyInfo[] sourcePro = source.GetType().GetProperties();
             foreach (var property in reslutPro)
             {
@@ -1714,11 +1450,7 @@ namespace VOL.Core.Extensions
         /// <param name="setType">true=新增设置"CreateID", "Creator", "CreateDate"值
         /// false=编辑设置"ModifyID", "Modifier", "ModifyDate"值
         /// </param>
-        public static SaveModel SetDefaultVal(
-            this SaveModel saveDataModel,
-            TableDefaultColumns defaultColumns,
-            UserInfo userInfo = null
-        )
+        public static SaveModel SetDefaultVal(this SaveModel saveDataModel, TableDefaultColumns defaultColumns, UserInfo userInfo = null)
         {
             SetDefaultVal(saveDataModel.MainData, defaultColumns, userInfo);
             if (saveDataModel.DetailData != null && saveDataModel.DetailData.Count > 0)
@@ -1733,18 +1465,12 @@ namespace VOL.Core.Extensions
             return saveDataModel;
         }
 
-        public static TSource SetCreateDefaultVal<TSource>(
-            this TSource source,
-            UserInfo userInfo = null
-        )
+        public static TSource SetCreateDefaultVal<TSource>(this TSource source, UserInfo userInfo = null)
         {
             return SetDefaultVal(source, AppSetting.CreateMember, userInfo);
         }
 
-        public static TSource SetModifyDefaultVal<TSource>(
-            this TSource source,
-            UserInfo userInfo = null
-        )
+        public static TSource SetModifyDefaultVal<TSource>(this TSource source, UserInfo userInfo = null)
         {
             return SetDefaultVal(source, AppSetting.ModifyMember, userInfo);
         }
@@ -1757,11 +1483,7 @@ namespace VOL.Core.Extensions
         /// <param name="setType">true=新增设置"CreateID", "Creator", "CreateDate"值
         /// false=编辑设置"ModifyID", "Modifier", "ModifyDate"值
         /// </param>
-        private static TSource SetDefaultVal<TSource>(
-            this TSource source,
-            TableDefaultColumns defaultColumns,
-            UserInfo userInfo = null
-        )
+        private static TSource SetDefaultVal<TSource>(this TSource source, TableDefaultColumns defaultColumns, UserInfo userInfo = null)
         {
             userInfo = userInfo ?? ManageUser.UserContext.Current.UserInfo;
             foreach (PropertyInfo property in typeof(TSource).GetProperties())
@@ -1779,33 +1501,24 @@ namespace VOL.Core.Extensions
             return source;
         }
 
-        private static Dictionary<string, object> SetDefaultVal(
-            this Dictionary<string, object> dic,
-            TableDefaultColumns defaultColumns,
-            UserInfo userInfo = null
-        )
+        private static Dictionary<string, object> SetDefaultVal(this Dictionary<string, object> dic, TableDefaultColumns defaultColumns, UserInfo userInfo = null)
         {
             userInfo = userInfo ?? ManageUser.UserContext.Current.UserInfo;
 
-            KeyValuePair<string, object> valuePair = dic.Where(x =>
-                    x.Key.ToLower() == defaultColumns.UserIdField?.ToLower()
-                )
-                .FirstOrDefault();
+            KeyValuePair<string, object> valuePair = dic.Where(x => x.Key.ToLower() == defaultColumns.UserIdField?.ToLower()).FirstOrDefault();
 
             if (valuePair.Key != null || defaultColumns.UserIdField != null)
             {
                 dic[valuePair.Key ?? defaultColumns.UserIdField] = userInfo.User_Id;
             }
 
-            valuePair = dic.Where(x => x.Key.ToLower() == defaultColumns.UserNameField?.ToLower())
-                .FirstOrDefault();
+            valuePair = dic.Where(x => x.Key.ToLower() == defaultColumns.UserNameField?.ToLower()).FirstOrDefault();
             if (valuePair.Key != null || defaultColumns.UserNameField != null)
             {
                 dic[valuePair.Key ?? defaultColumns.UserNameField] = userInfo.UserTrueName;
             }
 
-            valuePair = dic.Where(x => x.Key.ToLower() == defaultColumns.DateField?.ToLower())
-                .FirstOrDefault();
+            valuePair = dic.Where(x => x.Key.ToLower() == defaultColumns.DateField?.ToLower()).FirstOrDefault();
             if (valuePair.Key != null || defaultColumns.DateField != null)
             {
                 dic[valuePair.Key ?? defaultColumns.DateField] = DateTime.Now;
@@ -1814,16 +1527,12 @@ namespace VOL.Core.Extensions
             return dic;
         }
 
-        public static Dictionary<string, object> SetCreateDefaultVal(
-            this Dictionary<string, object> dic
-        )
+        public static Dictionary<string, object> SetCreateDefaultVal(this Dictionary<string, object> dic)
         {
             return SetDefaultVal(dic, AppSetting.CreateMember);
         }
 
-        public static Dictionary<string, object> SetModifyDefaultVal(
-            this Dictionary<string, object> dic
-        )
+        public static Dictionary<string, object> SetModifyDefaultVal(this Dictionary<string, object> dic)
         {
             return SetDefaultVal(dic, AppSetting.ModifyMember);
         }

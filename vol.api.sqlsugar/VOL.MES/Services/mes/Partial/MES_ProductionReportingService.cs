@@ -29,10 +29,7 @@ namespace VOL.MES.Services
         private readonly IMES_ProductionReportingRepository _repository; //访问数据库
 
         [ActivatorUtilitiesConstructor]
-        public MES_ProductionReportingService(
-            IMES_ProductionReportingRepository dbRepository,
-            IHttpContextAccessor httpContextAccessor
-        )
+        public MES_ProductionReportingService(IMES_ProductionReportingRepository dbRepository, IHttpContextAccessor httpContextAccessor)
             : base(dbRepository)
         {
             _httpContextAccessor = httpContextAccessor;

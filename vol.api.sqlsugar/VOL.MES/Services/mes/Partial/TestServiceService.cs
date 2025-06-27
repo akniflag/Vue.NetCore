@@ -26,10 +26,7 @@ namespace VOL.MES.Services
         private readonly ITestServiceRepository _repository; //访问数据库
 
         [ActivatorUtilitiesConstructor]
-        public TestServiceService(
-            ITestServiceRepository dbRepository,
-            IHttpContextAccessor httpContextAccessor
-        )
+        public TestServiceService(ITestServiceRepository dbRepository, IHttpContextAccessor httpContextAccessor)
             : base(dbRepository)
         {
             _httpContextAccessor = httpContextAccessor;

@@ -10,9 +10,7 @@ using VOL.MES.IRepositories;
 
 namespace VOL.MES.Repositories
 {
-    public partial class MES_EquipmentFaultRecordRepository
-        : RepositoryBase<MES_EquipmentFaultRecord>,
-            IMES_EquipmentFaultRecordRepository
+    public partial class MES_EquipmentFaultRecordRepository : RepositoryBase<MES_EquipmentFaultRecord>, IMES_EquipmentFaultRecordRepository
     {
         public MES_EquipmentFaultRecordRepository(VOLContext dbContext)
             : base(dbContext) { }

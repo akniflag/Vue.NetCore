@@ -11,8 +11,7 @@ namespace VOL.MES.Controllers
 {
     [Route("api/MES_ProductionLineDevice")]
     [PermissionTable(Name = "MES_ProductionLineDevice")]
-    public partial class MES_ProductionLineDeviceController
-        : ApiBaseController<IMES_ProductionLineDeviceService>
+    public partial class MES_ProductionLineDeviceController : ApiBaseController<IMES_ProductionLineDeviceService>
     {
         public MES_ProductionLineDeviceController(IMES_ProductionLineDeviceService service)
             : base(service) { }

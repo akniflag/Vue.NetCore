@@ -31,11 +31,7 @@ namespace VOL.Sys.Services
         private readonly ISys_WorkFlowTableStepRepository _stepRepository; //访问数据库
 
         [ActivatorUtilitiesConstructor]
-        public Sys_WorkFlowTableService(
-            ISys_WorkFlowTableRepository dbRepository,
-            IHttpContextAccessor httpContextAccessor,
-            ISys_WorkFlowTableStepRepository stepRepository
-        )
+        public Sys_WorkFlowTableService(ISys_WorkFlowTableRepository dbRepository, IHttpContextAccessor httpContextAccessor, ISys_WorkFlowTableStepRepository stepRepository)
             : base(dbRepository)
         {
             _httpContextAccessor = httpContextAccessor;
@@ -55,16 +51,12 @@ namespace VOL.Sys.Services
                 //待审批
                 if (value == 0)
                 {
-                    expression = x =>
-                        x.AuditStatus == (int)AuditStatus.审核中
-                        || x.AuditStatus == (int)AuditStatus.待审核;
+                    expression = x => x.AuditStatus == (int)AuditStatus.审核中 || x.AuditStatus == (int)AuditStatus.待审核;
                 }
                 //已审批
                 else if (value == 1)
                 {
-                    expression = x =>
-                        x.AuditStatus != (int)AuditStatus.审核中
-                        && x.AuditStatus != (int)AuditStatus.待审核;
+                    expression = x => x.AuditStatus != (int)AuditStatus.审核中 && x.AuditStatus != (int)AuditStatus.待审核;
                 } //我的提交
                 else if (value == 2)
                 {
@@ -85,18 +77,9 @@ namespace VOL.Sys.Services
                             .Where(x =>
                                 c.WorkFlowTable_Id == x.WorkFlowTable_Id
                                 && (
-                                    (
-                                        x.StepType == (int)AuditType.用户审批
-                                        && x.StepValue == user.User_Id.ToString()
-                                    )
-                                    || (
-                                        x.StepType == (int)AuditType.角色审批
-                                        && user.Role_Id.ToString().Contains(x.StepValue)
-                                    )
-                                    || (
-                                        x.StepType == (int)AuditType.部门审批
-                                        && deptIds.Contains(x.StepValue)
-                                    )
+                                    (x.StepType == (int)AuditType.用户审批 && x.StepValue == user.User_Id.ToString())
+                                    || (x.StepType == (int)AuditType.角色审批 && user.Role_Id.ToString().Contains(x.StepValue))
+                                    || (x.StepType == (int)AuditType.部门审批 && deptIds.Contains(x.StepValue))
                                 )
                             )
                             .Any()

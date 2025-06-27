@@ -29,9 +29,7 @@ namespace VOL.Core.WorkFlow
 
         public static bool Exists<T>(T entity)
         {
-            return WorkFlowContainer.Exists<T>()
-                && GetAuditFlowTable<T>(typeof(T).GetKeyProperty().GetValue(entity).ToString())
-                    != null;
+            return WorkFlowContainer.Exists<T>() && GetAuditFlowTable<T>(typeof(T).GetKeyProperty().GetValue(entity).ToString()) != null;
         }
 
         public static bool Exists(string table)
@@ -50,11 +48,7 @@ namespace VOL.Core.WorkFlow
                 return Array.Empty<object>();
             }
 
-            var obj =
-                typeof(WorkFlowManager)
-                    .GetMethod("GetFormDataAsync")
-                    .MakeGenericMethod(new Type[] { type })
-                    .Invoke(null, new object[] { tableKey, table }) as Task<object>;
+            var obj = typeof(WorkFlowManager).GetMethod("GetFormDataAsync").MakeGenericMethod(new Type[] { type }).Invoke(null, new object[] { tableKey, table }) as Task<object>;
             return await obj;
         }
 
@@ -85,14 +79,9 @@ namespace VOL.Core.WorkFlow
                 })
                 .ToListAsync();
 
-            var condition = typeof(T)
-                .GetKeyName()
-                .CreateExpression<T>(tableKey, Enums.LinqExpressionType.Equal);
+            var condition = typeof(T).GetKeyName().CreateExpression<T>(tableKey, Enums.LinqExpressionType.Equal);
             //动态分库应该查询对应的数据库
-            var data = await DBServerProvider
-                .DbContext.Set<T>()
-                .Where(condition)
-                .FirstOrDefaultAsync();
+            var data = await DBServerProvider.DbContext.Set<T>().Where(condition).FirstOrDefaultAsync();
             if (data == null)
             {
                 Console.WriteLine($"未查到数据,表：{table},id:{tableKey}");
@@ -158,9 +147,7 @@ namespace VOL.Core.WorkFlow
         {
             var table = DBServerProvider
                 .DbContext.Set<Sys_WorkFlowTable>()
-                .Where(x =>
-                    x.WorkTable == typeof(T).GetEntityTableName() && x.WorkTableKey == workTableKey
-                )
+                .Where(x => x.WorkTable == typeof(T).GetEntityTableName() && x.WorkTableKey == workTableKey)
                 // .Select(s => new { s.CurrentStepId,s.AuditStatus})
                 .FirstOrDefault();
             return table;
@@ -169,10 +156,7 @@ namespace VOL.Core.WorkFlow
         private static void Rewrite<T>(T entity, Sys_WorkFlow workFlow, bool changeTableStatus)
             where T : class, new()
         {
-            var autditProperty = typeof(T)
-                .GetProperties()
-                .Where(x => x.Name.ToLower() == "auditstatus")
-                .FirstOrDefault();
+            var autditProperty = typeof(T).GetProperties().Where(x => x.Name.ToLower() == "auditstatus").FirstOrDefault();
             if (autditProperty == null)
             {
                 return;
@@ -187,11 +171,7 @@ namespace VOL.Core.WorkFlow
                 .Where(x => x.WorkTableKey == value && x.WorkFlow_Id == workFlow.WorkFlow_Id)
                 .Includes(x => x.Sys_WorkFlowTableStep)
                 .FirstOrDefault();
-            if (
-                workTable == null
-                || workFlow.Sys_WorkFlowStep == null
-                || workFlow.Sys_WorkFlowStep.Count == 0
-            )
+            if (workTable == null || workFlow.Sys_WorkFlowStep == null || workFlow.Sys_WorkFlowStep.Count == 0)
             {
                 Console.WriteLine($"未查到流程数据，id：{workFlow.WorkFlow_Id}");
                 return;
@@ -201,15 +181,9 @@ namespace VOL.Core.WorkFlow
             //这里还未处理回退到上一个节点
 
             //重新设置第一个节点(有可能是返回上一个节点)
-            string startStepId = workTable
-                .Sys_WorkFlowTableStep.Where(x => x.StepAttrType == StepType.start.ToString())
-                .Select(s => s.StepId)
-                .FirstOrDefault();
+            string startStepId = workTable.Sys_WorkFlowTableStep.Where(x => x.StepAttrType == StepType.start.ToString()).Select(s => s.StepId).FirstOrDefault();
 
-            workTable.CurrentStepId = workTable
-                .Sys_WorkFlowTableStep.Where(x => x.ParentId == startStepId)
-                .Select(s => s.StepId)
-                .FirstOrDefault();
+            workTable.CurrentStepId = workTable.Sys_WorkFlowTableStep.Where(x => x.ParentId == startStepId).Select(s => s.StepId).FirstOrDefault();
 
             workTable.AuditStatus = (int)AuditStatus.待审核;
             workTable.Sys_WorkFlowTableStep.ForEach(item =>
@@ -237,12 +211,7 @@ namespace VOL.Core.WorkFlow
         /// <param name="entity"></param>
         /// <param name="rewrite">是否重新生成流程</param>
         /// <param name="changeTableStatus">是否修改原表的审批状态</param>
-        public static void AddProcese<T>(
-            T entity,
-            bool rewrite = false,
-            bool changeTableStatus = true,
-            Action<T, List<int>> addWorkFlowExecuted = null
-        )
+        public static void AddProcese<T>(T entity, bool rewrite = false, bool changeTableStatus = true, Action<T, List<int>> addWorkFlowExecuted = null)
             where T : class, new()
         {
             WorkFlowTableOptions workFlow = WorkFlowContainer.GetFlowOptions(entity);
@@ -306,20 +275,12 @@ namespace VOL.Core.WorkFlow
                 var item = steps[i];
                 //查找下一个满足条件的节点数据
                 FilterOptions filter = workFlow
-                    .FilterList.Where(c =>
-                        c.ParentIds.Contains(item.StepId)
-                        && c.Expression != null
-                        && entities.Any(((Func<T, bool>)c.Expression))
-                    )
+                    .FilterList.Where(c => c.ParentIds.Contains(item.StepId) && c.Expression != null && entities.Any(((Func<T, bool>)c.Expression)))
                     .FirstOrDefault();
                 //未找到满足条件的找无条件的节点
                 if (filter == null)
                 {
-                    filter = workFlow
-                        .FilterList.Where(c =>
-                            c.ParentIds.Contains(item.StepId) && c.Expression == null
-                        )
-                        .FirstOrDefault();
+                    filter = workFlow.FilterList.Where(c => c.ParentIds.Contains(item.StepId) && c.Expression == null).FirstOrDefault();
                 }
                 if (filter != null)
                 {
@@ -356,9 +317,7 @@ namespace VOL.Core.WorkFlow
                 else
                 {
                     //找不到满足条件的节点，直接结束流程
-                    var end = workFlow
-                        .Sys_WorkFlowStep.Where(c => c.StepAttrType == StepType.end.ToString())
-                        .ToList();
+                    var end = workFlow.Sys_WorkFlowStep.Where(c => c.StepAttrType == StepType.end.ToString()).ToList();
 
                     if (end.Count > 0)
                     {
@@ -396,12 +355,7 @@ namespace VOL.Core.WorkFlow
             //}
 
             //没有满足流程的数据不走流程
-            int count = steps
-                .Where(x =>
-                    x.StepAttrType != StepType.start.ToString()
-                    && x.StepAttrType != StepType.end.ToString()
-                )
-                .Count();
+            int count = steps.Where(x => x.StepAttrType != StepType.start.ToString() && x.StepAttrType != StepType.end.ToString()).Count();
             if (count == 0)
             {
                 return;
@@ -433,10 +387,7 @@ namespace VOL.Core.WorkFlow
                 Remark = $"[{userInfo.UserTrueName}]提交了数据",
             };
             var dbContext = DBServerProvider.DbContext;
-            dbContext
-                .SqlSugarClient.InsertNav(workFlowTable)
-                .Include(x => x.Sys_WorkFlowTableStep)
-                .ExecuteCommand();
+            dbContext.SqlSugarClient.InsertNav(workFlowTable).Include(x => x.Sys_WorkFlowTableStep).ExecuteCommand();
             dbContext.Add(log);
             dbContext.SaveChanges();
 
@@ -500,23 +451,17 @@ namespace VOL.Core.WorkFlow
 
             workFlow.AuditStatus = (int)status;
 
-            var currentStep = workFlow
-                .Sys_WorkFlowTableStep.Where(x => x.StepId == workFlow.CurrentStepId)
-                .FirstOrDefault();
+            var currentStep = workFlow.Sys_WorkFlowTableStep.Where(x => x.StepId == workFlow.CurrentStepId).FirstOrDefault();
 
             if (currentStep == null)
             {
-                return webResponse.Error(
-                    $"未查到流程陈点[workFlow.CurrentStepId]信息,请检查数据是否被删除"
-                );
+                return webResponse.Error($"未查到流程陈点[workFlow.CurrentStepId]信息,请检查数据是否被删除");
             }
             Sys_WorkFlowTableStep nextStep = null;
             //获取下一步审核id
             var nextStepId = currentStep.NextStepId;
 
-            nextStep = workFlow
-                .Sys_WorkFlowTableStep.Where(x => x.StepId == nextStepId)
-                .FirstOrDefault();
+            nextStep = workFlow.Sys_WorkFlowTableStep.Where(x => x.StepId == nextStepId).FirstOrDefault();
 
             var user = UserContext.Current.UserInfo;
             //生成审核记录
@@ -602,12 +547,7 @@ namespace VOL.Core.WorkFlow
 
                     if (workFlowExecuted != null)
                     {
-                        webResponse = workFlowExecuted.Invoke(
-                            entity,
-                            status,
-                            GetAuditUserIds(nextStep?.StepType ?? 0, nextStep?.StepValue),
-                            false
-                        );
+                        webResponse = workFlowExecuted.Invoke(entity, status, GetAuditUserIds(nextStep?.StepType ?? 0, nextStep?.StepValue), false);
                     }
                     return webResponse;
                 }
@@ -615,10 +555,7 @@ namespace VOL.Core.WorkFlow
 
             if (autditProperty == null)
             {
-                autditProperty = typeof(T)
-                    .GetProperties()
-                    .Where(s => s.Name.ToLower() == "auditstatus")
-                    .FirstOrDefault();
+                autditProperty = typeof(T).GetProperties().Where(s => s.Name.ToLower() == "auditstatus").FirstOrDefault();
             }
             bool isLast = false;
 
@@ -662,12 +599,7 @@ namespace VOL.Core.WorkFlow
 
                 if (workFlowExecuted != null)
                 {
-                    webResponse = workFlowExecuted.Invoke(
-                        entity,
-                        status,
-                        GetAuditUserIds(nextStep?.StepType ?? 0, nextStep?.StepValue),
-                        true
-                    );
+                    webResponse = workFlowExecuted.Invoke(entity, status, GetAuditUserIds(nextStep?.StepType ?? 0, nextStep?.StepValue), true);
                 }
 
                 return webResponse;
@@ -688,12 +620,7 @@ namespace VOL.Core.WorkFlow
             }
 
             //下一个节点=null或节下一个节点为结束节点，流程结束
-            if (
-                nextStep == null
-                || workFlow.Sys_WorkFlowTableStep.Exists(c =>
-                    c.StepId == nextStep.StepId && c.StepAttrType == StepType.end.ToString()
-                )
-            )
+            if (nextStep == null || workFlow.Sys_WorkFlowTableStep.Exists(c => c.StepId == nextStep.StepId && c.StepAttrType == StepType.end.ToString()))
             {
                 isLast = true;
             }
@@ -714,24 +641,13 @@ namespace VOL.Core.WorkFlow
             dbContext.SaveChanges();
             if (workFlowExecuted != null)
             {
-                webResponse = workFlowExecuted.Invoke(
-                    entity,
-                    status,
-                    GetAuditUserIds(nextStep?.StepType ?? 0, nextStep?.StepValue),
-                    isLast
-                );
+                webResponse = workFlowExecuted.Invoke(entity, status, GetAuditUserIds(nextStep?.StepType ?? 0, nextStep?.StepValue), isLast);
             }
             SendMail(workFlow, filterOptions, nextStep, dbContext);
             return webResponse;
         }
 
-        private static bool CheckAuditStatus(
-            Sys_WorkFlowTable workFlow,
-            FilterOptions filterOptions,
-            Sys_WorkFlowTableStep currentStep,
-            AuditStatus status,
-            string remark
-        )
+        private static bool CheckAuditStatus(Sys_WorkFlowTable workFlow, FilterOptions filterOptions, Sys_WorkFlowTableStep currentStep, AuditStatus status, string remark)
         {
             //如果审核拒绝或驳回并退回上一步，待完
             //重新配置流程待完
@@ -739,17 +655,9 @@ namespace VOL.Core.WorkFlow
             {
                 return true;
             }
-            if (
-                filterOptions.AuditRefuse == (int)AuditRefuse.返回上一节点
-                || filterOptions.AuditBack == (int)AuditBack.返回上一节点
-            )
+            if (filterOptions.AuditRefuse == (int)AuditRefuse.返回上一节点 || filterOptions.AuditBack == (int)AuditBack.返回上一节点)
             {
-                var preStep = workFlow
-                    .Sys_WorkFlowTableStep.Where(x =>
-                        x.NextStepId == currentStep.StepId
-                        && x.StepAttrType == StepType.node.ToString()
-                    )
-                    .FirstOrDefault();
+                var preStep = workFlow.Sys_WorkFlowTableStep.Where(x => x.NextStepId == currentStep.StepId && x.StepAttrType == StepType.node.ToString()).FirstOrDefault();
                 if (preStep != null)
                 {
                     preStep.AuditStatus = null;
@@ -766,17 +674,10 @@ namespace VOL.Core.WorkFlow
 
                 return false;
             }
-            else if (
-                filterOptions.AuditRefuse == (int)AuditRefuse.流程重新开始
-                || filterOptions.AuditBack == (int)AuditBack.流程重新开始
-            )
+            else if (filterOptions.AuditRefuse == (int)AuditRefuse.流程重新开始 || filterOptions.AuditBack == (int)AuditBack.流程重新开始)
             {
                 //重新开始
-                var steps = workFlow
-                    .Sys_WorkFlowTableStep.Where(x =>
-                        x.StepAttrType == StepType.node.ToString() && (x.AuditStatus >= 0)
-                    )
-                    .ToList();
+                var steps = workFlow.Sys_WorkFlowTableStep.Where(x => x.StepAttrType == StepType.node.ToString() && (x.AuditStatus >= 0)).ToList();
                 if (steps.Count > 0)
                 {
                     foreach (var item in steps)
@@ -787,14 +688,8 @@ namespace VOL.Core.WorkFlow
                         item.Auditor = null;
                     }
                     //重新指向第一个节点
-                    workFlow.CurrentStepId = steps
-                        .OrderBy(c => c.OrderId)
-                        .Select(c => c.StepId)
-                        .FirstOrDefault();
-                    workFlow.StepName = steps
-                        .OrderBy(c => c.OrderId)
-                        .Select(c => c.StepName)
-                        .FirstOrDefault();
+                    workFlow.CurrentStepId = steps.OrderBy(c => c.OrderId).Select(c => c.StepId).FirstOrDefault();
+                    workFlow.StepName = steps.OrderBy(c => c.OrderId).Select(c => c.StepName).FirstOrDefault();
                     workFlow.AuditStatus = (int)AuditStatus.审核中;
 
                     DBServerProvider.DbContext.UpdateRange(steps);
@@ -823,12 +718,7 @@ namespace VOL.Core.WorkFlow
             return true;
         }
 
-        private static void SendMail(
-            Sys_WorkFlowTable workFlow,
-            FilterOptions filterOptions,
-            Sys_WorkFlowTableStep nextStep,
-            VOLContext dbContext
-        )
+        private static void SendMail(Sys_WorkFlowTable workFlow, FilterOptions filterOptions, Sys_WorkFlowTableStep nextStep, VOLContext dbContext)
         {
             if (filterOptions == null || filterOptions.SendMail != 1)
             {
@@ -844,18 +734,13 @@ namespace VOL.Core.WorkFlow
             {
                 return;
             }
-            var emails = dbContext
-                .Set<Sys_User>()
-                .Where(x => userIds.Contains(x.User_Id) && x.Email != null & x.Email != "")
-                .Select(s => s.Email)
-                .ToList();
+            var emails = dbContext.Set<Sys_User>().Where(x => userIds.Contains(x.User_Id) && x.Email != null & x.Email != "").Select(s => s.Email).ToList();
             Task.Run(() =>
             {
                 string msg = "";
                 try
                 {
-                    string title =
-                        $"有新的任务待审批：流程【{workFlow.WorkName}】,任务【{nextStep.StepName}】";
+                    string title = $"有新的任务待审批：流程【{workFlow.WorkName}】,任务【{nextStep.StepName}】";
                     MailHelper.Send(title, title, string.Join(";", emails));
                     msg =
                         $"审批流程发送邮件,流程名称：{workFlow.WorkName},流程id:{workFlow.WorkFlow_Id},步骤:{nextStep.StepName},步骤Id:{nextStep.StepId},收件人:{string.Join(";", emails)}";
@@ -884,22 +769,12 @@ namespace VOL.Core.WorkFlow
             if (stepType == (int)AuditType.角色审批)
             {
                 int roleId = nextId.GetInt();
-                userIds = DBServerProvider
-                    .DbContext.Set<Sys_User>()
-                    .Where(s => s.Role_Id == roleId)
-                    .Take(50)
-                    .Select(s => s.User_Id)
-                    .ToList();
+                userIds = DBServerProvider.DbContext.Set<Sys_User>().Where(s => s.Role_Id == roleId).Take(50).Select(s => s.User_Id).ToList();
             }
             else if (stepType == (int)AuditType.部门审批)
             {
                 Guid departmentId = nextId.GetGuid() ?? Guid.Empty;
-                userIds = DBServerProvider
-                    .DbContext.Set<Sys_UserDepartment>()
-                    .Where(s => s.DepartmentId == departmentId && s.Enable == 1)
-                    .Take(50)
-                    .Select(s => s.UserId)
-                    .ToList();
+                userIds = DBServerProvider.DbContext.Set<Sys_UserDepartment>().Where(s => s.DepartmentId == departmentId && s.Enable == 1).Take(50).Select(s => s.UserId).ToList();
             }
             else
             {

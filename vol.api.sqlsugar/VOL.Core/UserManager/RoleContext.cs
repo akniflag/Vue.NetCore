@@ -101,10 +101,7 @@ namespace VOL.Core.UserManager
             for (int i = 0; i < rolesChildren.Count; i++)
             {
                 RoleNodes node = rolesChildren[i];
-                var children = roles
-                    .Where(x => x.ParentId == node.Id && !rolesChildren.Any(c => c.Id == x.Id))
-                    .Distinct()
-                    .ToList();
+                var children = roles.Where(x => x.ParentId == node.Id && !rolesChildren.Any(c => c.Id == x.Id)).Distinct().ToList();
                 rolesChildren.AddRange(children);
             }
             return rolesChildren;
@@ -121,10 +118,7 @@ namespace VOL.Core.UserManager
             {
                 throw new Exception("未获取到当前角色");
             }
-            return DBServerProvider
-                .DbContext.Set<Sys_User>()
-                .Where(u => roles.Contains(u.Role_Id))
-                .Select(s => s.User_Id);
+            return DBServerProvider.DbContext.Set<Sys_User>().Where(u => roles.Contains(u.Role_Id)).Select(s => s.User_Id);
         }
     }
 

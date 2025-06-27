@@ -80,11 +80,7 @@ namespace VOL.Core.UserManager
             for (int i = 0; i < ids.Count(); i++)
             {
                 Guid id = ids[i];
-                var list = _depts
-                    .Where(x => x.parentId == id && !ids.Contains(x.id))
-                    .Select(s => s.id)
-                    .Distinct()
-                    .ToList();
+                var list = _depts.Where(x => x.parentId == id && !ids.Contains(x.id)).Select(s => s.id).Distinct().ToList();
                 if (list.Count > 0)
                 {
                     ids.AddRange(list);

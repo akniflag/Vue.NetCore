@@ -12,10 +12,7 @@ using VOL.MES.IServices;
 
 namespace VOL.MES.Services
 {
-    public partial class MES_LocationManagementService
-        : ServiceBase<MES_LocationManagement, IMES_LocationManagementRepository>,
-            IMES_LocationManagementService,
-            IDependency
+    public partial class MES_LocationManagementService : ServiceBase<MES_LocationManagement, IMES_LocationManagementRepository>, IMES_LocationManagementService, IDependency
     {
         public static IMES_LocationManagementService Instance
         {

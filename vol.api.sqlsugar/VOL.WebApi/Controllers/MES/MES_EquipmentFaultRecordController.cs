@@ -11,8 +11,7 @@ namespace VOL.MES.Controllers
 {
     [Route("api/MES_EquipmentFaultRecord")]
     [PermissionTable(Name = "MES_EquipmentFaultRecord")]
-    public partial class MES_EquipmentFaultRecordController
-        : ApiBaseController<IMES_EquipmentFaultRecordService>
+    public partial class MES_EquipmentFaultRecordController : ApiBaseController<IMES_EquipmentFaultRecordService>
     {
         public MES_EquipmentFaultRecordController(IMES_EquipmentFaultRecordService service)
             : base(service) { }

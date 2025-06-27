@@ -10,19 +10,14 @@ using VOL.MES.IRepositories;
 
 namespace VOL.MES.Repositories
 {
-    public partial class MES_ProductionReportingDetailRepository
-        : RepositoryBase<MES_ProductionReportingDetail>,
-            IMES_ProductionReportingDetailRepository
+    public partial class MES_ProductionReportingDetailRepository : RepositoryBase<MES_ProductionReportingDetail>, IMES_ProductionReportingDetailRepository
     {
         public MES_ProductionReportingDetailRepository(VOLContext dbContext)
             : base(dbContext) { }
 
         public static IMES_ProductionReportingDetailRepository Instance
         {
-            get
-            {
-                return AutofacContainerModule.GetService<IMES_ProductionReportingDetailRepository>();
-            }
+            get { return AutofacContainerModule.GetService<IMES_ProductionReportingDetailRepository>(); }
         }
     }
 }

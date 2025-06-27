@@ -31,34 +31,15 @@ namespace VOL.Entity.MappingConfiguration
 
     public static class ModelBuilderExtenions
     {
-        private static IEnumerable<Type> GetMappingTypes(
-            this Assembly assembly,
-            Type mappingInterface
-        )
+        private static IEnumerable<Type> GetMappingTypes(this Assembly assembly, Type mappingInterface)
         {
-            return assembly
-                .GetTypes()
-                .Where(x =>
-                    !x.IsAbstract
-                    && x.GetInterfaces()
-                        .Any(y =>
-                            y.GetTypeInfo().IsGenericType
-                            && y.GetGenericTypeDefinition() == mappingInterface
-                        )
-                );
+            return assembly.GetTypes().Where(x => !x.IsAbstract && x.GetInterfaces().Any(y => y.GetTypeInfo().IsGenericType && y.GetGenericTypeDefinition() == mappingInterface));
         }
 
-        public static void AddEntityConfigurationsFromAssembly(
-            this ModelBuilder modelBuilder,
-            Assembly assembly
-        )
+        public static void AddEntityConfigurationsFromAssembly(this ModelBuilder modelBuilder, Assembly assembly)
         {
             var mappingTypes = assembly.GetMappingTypes(typeof(IEntityMappingConfiguration<>));
-            foreach (
-                var config in mappingTypes
-                    .Select(Activator.CreateInstance)
-                    .Cast<IEntityMappingConfiguration>()
-            )
+            foreach (var config in mappingTypes.Select(Activator.CreateInstance).Cast<IEntityMappingConfiguration>())
             {
                 config.Map(modelBuilder);
             }

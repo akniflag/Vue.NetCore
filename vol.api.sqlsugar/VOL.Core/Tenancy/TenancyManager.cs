@@ -49,10 +49,7 @@ namespace VOL.Core.Tenancy
             switch (tableName)
             {
                 default:
-                    multiTenancyString =
-                        $"select count(*) FROM {tableName} "
-                        + $" where CreateID='{UserContext.Current.UserId}'"
-                        + $" and  {tableKey} in ({ids}) ";
+                    multiTenancyString = $"select count(*) FROM {tableName} " + $" where CreateID='{UserContext.Current.UserId}'" + $" and  {tableKey} in ({ids}) ";
                     break;
             }
             return multiTenancyString;

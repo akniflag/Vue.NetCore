@@ -30,13 +30,7 @@ namespace VOL.WebApi.Controllers.Builder
             }
             catch (Exception ex)
             {
-                return Json(
-                    new
-                    {
-                        list = ex.Message + ex.StackTrace + ex.Source,
-                        nameSpace = ex.InnerException?.Message,
-                    }
-                );
+                return Json(new { list = ex.Message + ex.StackTrace + ex.Source, nameSpace = ex.InnerException?.Message });
             }
         }
 
@@ -67,40 +61,16 @@ namespace VOL.WebApi.Controllers.Builder
         [Route("CreateServices")]
         [ApiActionPermission(ActionRolePermission.SuperAdmin)]
         [HttpPost]
-        public ActionResult CreateServices(
-            string tableName,
-            string nameSpace,
-            string foldername,
-            bool? partial,
-            bool? api
-        )
+        public ActionResult CreateServices(string tableName, string nameSpace, string foldername, bool? partial, bool? api)
         {
             return Content(Service.CreateServices(tableName, nameSpace, foldername, false, true));
         }
 
         [Route("LoadTableInfo")]
         [HttpPost]
-        public ActionResult LoadTable(
-            int parentId,
-            string tableName,
-            string columnCNName,
-            string nameSpace,
-            string foldername,
-            int table_Id,
-            bool isTreeLoad
-        )
+        public ActionResult LoadTable(int parentId, string tableName, string columnCNName, string nameSpace, string foldername, int table_Id, bool isTreeLoad)
         {
-            return Json(
-                Service.LoadTable(
-                    parentId,
-                    tableName,
-                    columnCNName,
-                    nameSpace,
-                    foldername,
-                    table_Id,
-                    isTreeLoad
-                )
-            );
+            return Json(Service.LoadTable(parentId, tableName, columnCNName, nameSpace, foldername, table_Id, isTreeLoad));
         }
 
         [Route("delTree")]

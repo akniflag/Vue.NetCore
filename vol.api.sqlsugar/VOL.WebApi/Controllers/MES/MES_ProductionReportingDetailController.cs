@@ -11,12 +11,9 @@ namespace VOL.MES.Controllers
 {
     [Route("api/MES_ProductionReportingDetail")]
     [PermissionTable(Name = "MES_ProductionReportingDetail")]
-    public partial class MES_ProductionReportingDetailController
-        : ApiBaseController<IMES_ProductionReportingDetailService>
+    public partial class MES_ProductionReportingDetailController : ApiBaseController<IMES_ProductionReportingDetailService>
     {
-        public MES_ProductionReportingDetailController(
-            IMES_ProductionReportingDetailService service
-        )
+        public MES_ProductionReportingDetailController(IMES_ProductionReportingDetailService service)
             : base(service) { }
     }
 }

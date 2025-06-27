@@ -66,11 +66,7 @@ namespace VOL.Sys.Services
                 if (_menuVersionn != "" && _menus != null && _menuVersionn == _cacheVersion)
                     return _menus;
                 //2020.12.27增加菜单界面上不显示，但可以分配权限
-                _menus = repository
-                    .FindAsIQueryable(x => x.Enable == 1 || x.Enable == 2)
-                    .OrderByDescending(a => a.OrderNo)
-                    .ThenByDescending(q => q.ParentId)
-                    .ToList();
+                _menus = repository.FindAsIQueryable(x => x.Enable == 1 || x.Enable == 2).OrderByDescending(a => a.OrderNo).ThenByDescending(q => q.ParentId).ToList();
 
                 _menus.ForEach(x =>
                 {
@@ -118,10 +114,7 @@ namespace VOL.Sys.Services
             {
                 return GetAllMenu();
             }
-            List<int> menuIds = UserContext
-                .Current.GetPermissions(roleId)
-                .Select(x => x.Menu_Id)
-                .ToList();
+            List<int> menuIds = UserContext.Current.GetPermissions(roleId).Select(x => x.Menu_Id).ToList();
             return GetAllMenu().Where(x => menuIds.Contains(x.Menu_Id)).ToList();
         }
 
@@ -164,8 +157,7 @@ namespace VOL.Sys.Services
 
             var menu =
                 from a in UserContext.Current.Permissions
-                join b in GetAllMenu().Where(c => c.MenuType == UserContext.MenuType)
-                    on a.Menu_Id equals b.Menu_Id
+                join b in GetAllMenu().Where(c => c.MenuType == UserContext.MenuType) on a.Menu_Id equals b.Menu_Id
                 orderby b.OrderNo descending
                 select new
                 {
@@ -201,22 +193,15 @@ namespace VOL.Sys.Services
                 if (menu.TableName != "/" && menu.TableName != ".")
                 {
                     // 2022.03.26增移动端加菜单类型判断
-                    Sys_Menu sysMenu = await repository.FindAsyncFirst(x =>
-                        x.TableName == menu.TableName
-                    );
+                    Sys_Menu sysMenu = await repository.FindAsyncFirst(x => x.TableName == menu.TableName);
                     if (sysMenu != null)
                     {
                         sysMenu.MenuType ??= 0;
                         if (sysMenu.MenuType == menu.MenuType)
                         {
-                            if (
-                                (menu.Menu_Id > 0 && sysMenu.Menu_Id != menu.Menu_Id)
-                                || menu.Menu_Id <= 0
-                            )
+                            if ((menu.Menu_Id > 0 && sysMenu.Menu_Id != menu.Menu_Id) || menu.Menu_Id <= 0)
                             {
-                                return webResponse.Error(
-                                    $"视图/表名【{menu.TableName}】已被其他菜单使用"
-                                );
+                                return webResponse.Error($"视图/表名【{menu.TableName}】已被其他菜单使用");
                             }
                         }
                     }
@@ -233,22 +218,12 @@ namespace VOL.Sys.Services
                     {
                         return webResponse.Error($"父级id不能为自己");
                     }
-                    if (
-                        repository.Exists(x =>
-                            x.ParentId == menu.Menu_Id && menu.ParentId == x.Menu_Id
-                        )
-                    )
+                    if (repository.Exists(x => x.ParentId == menu.Menu_Id && menu.ParentId == x.Menu_Id))
                     {
-                        return webResponse.Error(
-                            $"不能选择此父级id，选择的父级id与当前菜单形成依赖关系"
-                        );
+                        return webResponse.Error($"不能选择此父级id，选择的父级id与当前菜单形成依赖关系");
                     }
 
-                    _changed =
-                        repository
-                            .FindAsIQueryable(c => c.Menu_Id == menu.Menu_Id)
-                            .Select(s => s.Auth)
-                            .FirstOrDefault() != menu.Auth;
+                    _changed = repository.FindAsIQueryable(c => c.Menu_Id == menu.Menu_Id).Select(s => s.Auth).FirstOrDefault() != menu.Auth;
 
                     repository.Update(
                         menu.SetModifyDefaultVal(),
@@ -284,9 +259,7 @@ namespace VOL.Sys.Services
             }
             finally
             {
-                Logger.Info(
-                    $"表:{menu.TableName},菜单：{menu.MenuName},权限{menu.Auth},{(webResponse.Status ? "成功" : "失败")}{webResponse.Message}"
-                );
+                Logger.Info($"表:{menu.TableName},菜单：{menu.MenuName},权限{menu.Auth},{(webResponse.Status ? "成功" : "失败")}{webResponse.Message}");
             }
             return webResponse;
         }

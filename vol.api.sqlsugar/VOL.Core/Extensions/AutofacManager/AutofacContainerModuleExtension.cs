@@ -27,16 +27,10 @@ namespace VOL.Core.Extensions
     public static class AutofacContainerModuleExtension
     {
         //  private static bool _isMysql = false;
-        public static IServiceCollection AddModule(
-            this IServiceCollection services,
-            ContainerBuilder builder,
-            IConfiguration configuration
-        )
+        public static IServiceCollection AddModule(this IServiceCollection services, ContainerBuilder builder, IConfiguration configuration)
         {
             Type baseType = typeof(IDependency);
-            var compilationLibrary = DependencyContext
-                .Default.RuntimeLibraries.Where(x => !x.Serviceable && x.Type == "project")
-                .ToList();
+            var compilationLibrary = DependencyContext.Default.RuntimeLibraries.Where(x => !x.Serviceable && x.Type == "project").ToList();
             var count1 = compilationLibrary.Count;
             List<Assembly> assemblyList = new List<Assembly>();
 
@@ -44,11 +38,7 @@ namespace VOL.Core.Extensions
             {
                 try
                 {
-                    assemblyList.Add(
-                        AssemblyLoadContext.Default.LoadFromAssemblyName(
-                            new AssemblyName(_compilation.Name)
-                        )
-                    );
+                    assemblyList.Add(AssemblyLoadContext.Default.LoadFromAssemblyName(new AssemblyName(_compilation.Name)));
                 }
                 catch (Exception ex)
                 {

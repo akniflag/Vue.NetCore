@@ -28,10 +28,7 @@ namespace VOL.Core.Filters
             };
         }
 
-        public ActionPermissionAttribute(
-            ActionRolePermission actionRolePermission,
-            bool isApi = false
-        )
+        public ActionPermissionAttribute(ActionRolePermission actionRolePermission, bool isApi = false)
             : base(typeof(ActionPermissionFilter))
         {
             Array array = Enum.GetValues(typeof(ActionRolePermission));
@@ -62,33 +59,16 @@ namespace VOL.Core.Filters
             };
         }
 
-        public ActionPermissionAttribute(
-            string tableName,
-            ActionPermissionOptions tableAction,
-            bool sysController = false,
-            bool isApi = false
-        )
+        public ActionPermissionAttribute(string tableName, ActionPermissionOptions tableAction, bool sysController = false, bool isApi = false)
             : base(typeof(ActionPermissionFilter))
         {
             this.SetActionPermissionRequirement(tableName, tableAction, sysController, isApi);
         }
 
-        public ActionPermissionAttribute(
-            string tableName,
-            string roleIds,
-            ActionPermissionOptions tableAction,
-            bool sysController = false,
-            bool isApi = false
-        )
+        public ActionPermissionAttribute(string tableName, string roleIds, ActionPermissionOptions tableAction, bool sysController = false, bool isApi = false)
             : base(typeof(ActionPermissionFilter))
         {
-            this.SetActionPermissionRequirement(
-                tableName,
-                tableAction,
-                (roleIds ?? "").Split(",").Select(x => x.GetInt()).ToArray(),
-                sysController,
-                isApi
-            );
+            this.SetActionPermissionRequirement(tableName, tableAction, (roleIds ?? "").Split(",").Select(x => x.GetInt()).ToArray(), sysController, isApi);
         }
 
         public ActionPermissionAttribute(ActionPermissionOptions tableAction, bool isApi = false)
@@ -97,13 +77,7 @@ namespace VOL.Core.Filters
             this.SetActionPermissionRequirement("", tableAction, true, isApi);
         }
 
-        private void SetActionPermissionRequirement(
-            string tableName,
-            ActionPermissionOptions tableAction,
-            int[] roleId,
-            bool sysController = false,
-            bool isApi = false
-        )
+        private void SetActionPermissionRequirement(string tableName, ActionPermissionOptions tableAction, int[] roleId, bool sysController = false, bool isApi = false)
         {
             Arguments = new object[]
             {
@@ -118,21 +92,9 @@ namespace VOL.Core.Filters
             };
         }
 
-        private void SetActionPermissionRequirement(
-            string tableName,
-            ActionPermissionOptions tableAction,
-            bool sysController = false,
-            bool isApi = false,
-            int? roleId = null
-        )
+        private void SetActionPermissionRequirement(string tableName, ActionPermissionOptions tableAction, bool sysController = false, bool isApi = false, int? roleId = null)
         {
-            SetActionPermissionRequirement(
-                tableName,
-                tableAction,
-                roleId == null ? null : new int[] { (int)roleId },
-                sysController,
-                isApi
-            );
+            SetActionPermissionRequirement(tableName, tableAction, roleId == null ? null : new int[] { (int)roleId }, sysController, isApi);
         }
     }
 }

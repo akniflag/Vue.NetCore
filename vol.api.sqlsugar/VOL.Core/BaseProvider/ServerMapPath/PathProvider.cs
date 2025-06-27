@@ -43,8 +43,7 @@ namespace VOL.Core.BaseProvider.ServerMapPath
             {
                 if (_hostingEnvironment.WebRootPath == null)
                 {
-                    _hostingEnvironment.WebRootPath =
-                        _hostingEnvironment.ContentRootPath + "/wwwroot".ReplacePath();
+                    _hostingEnvironment.WebRootPath = _hostingEnvironment.ContentRootPath + "/wwwroot".ReplacePath();
                 }
                 return Path.Combine(_hostingEnvironment.WebRootPath, path).ReplacePath();
             }

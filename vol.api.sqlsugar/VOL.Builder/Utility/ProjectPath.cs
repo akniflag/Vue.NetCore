@@ -62,18 +62,10 @@ namespace VOL.Builder.Utility
         /// <returns></returns>
         public static string GetLastIndexOfDirectoryName(string lastIndexOfName)
         {
-            string projectName = GetProjectDirectoryInfo()
-                ?.GetDirectories()
-                .Where(c => c.Name.LastIndexOf(lastIndexOfName) != -1)
-                .Select(x => x.Name)
-                .FirstOrDefault();
+            string projectName = GetProjectDirectoryInfo()?.GetDirectories().Where(c => c.Name.LastIndexOf(lastIndexOfName) != -1).Select(x => x.Name).FirstOrDefault();
             if (string.IsNullOrEmpty(projectName))
             {
-                projectName = new DirectoryInfo("".MapPath())
-                    .GetFiles()
-                    .Where(x => x.Name.LastIndexOf(lastIndexOfName + ".dll") != -1)
-                    .FirstOrDefault()
-                    .Name;
+                projectName = new DirectoryInfo("".MapPath()).GetFiles().Where(x => x.Name.LastIndexOf(lastIndexOfName + ".dll") != -1).FirstOrDefault().Name;
                 if (!string.IsNullOrEmpty(projectName))
                 {
                     projectName = projectName.Replace(".dll", "");
@@ -87,22 +79,13 @@ namespace VOL.Builder.Utility
         /// </summary>
         /// <param name="directoryInfo"></param>
         /// <returns></returns>
-        private static DirectoryInfo GetProjectDirectoryInfo(
-            DirectoryInfo directoryInfo,
-            int findCount
-        )
+        private static DirectoryInfo GetProjectDirectoryInfo(DirectoryInfo directoryInfo, int findCount)
         {
             if (directoryInfo == null)
             {
                 return null;
             }
-            if (
-                directoryInfo.Exists
-                && directoryInfo
-                    .GetDirectories()
-                    .Where(x => x.Name.LastIndexOf(".Web") != -1)
-                    .FirstOrDefault() != null
-            )
+            if (directoryInfo.Exists && directoryInfo.GetDirectories().Where(x => x.Name.LastIndexOf(".Web") != -1).FirstOrDefault() != null)
             {
                 return directoryInfo;
             }

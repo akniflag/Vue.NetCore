@@ -11,8 +11,7 @@ namespace VOL.MES.Controllers
 {
     [Route("api/MES_QualityInspectionPlan")]
     [PermissionTable(Name = "MES_QualityInspectionPlan")]
-    public partial class MES_QualityInspectionPlanController
-        : ApiBaseController<IMES_QualityInspectionPlanService>
+    public partial class MES_QualityInspectionPlanController : ApiBaseController<IMES_QualityInspectionPlanService>
     {
         public MES_QualityInspectionPlanController(IMES_QualityInspectionPlanService service)
             : base(service) { }

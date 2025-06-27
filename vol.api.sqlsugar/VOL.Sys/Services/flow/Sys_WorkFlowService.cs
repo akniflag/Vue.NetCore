@@ -12,10 +12,7 @@ using VOL.Sys.IServices;
 
 namespace VOL.Sys.Services
 {
-    public partial class Sys_WorkFlowService
-        : ServiceBase<Sys_WorkFlow, ISys_WorkFlowRepository>,
-            ISys_WorkFlowService,
-            IDependency
+    public partial class Sys_WorkFlowService : ServiceBase<Sys_WorkFlow, ISys_WorkFlowRepository>, ISys_WorkFlowService, IDependency
     {
         public Sys_WorkFlowService(ISys_WorkFlowRepository repository)
             : base(repository)

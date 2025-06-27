@@ -26,10 +26,7 @@ namespace VOL.Sys.Services
         private readonly ISys_WorkFlowStepRepository _repository; //访问数据库
 
         [ActivatorUtilitiesConstructor]
-        public Sys_WorkFlowStepService(
-            ISys_WorkFlowStepRepository dbRepository,
-            IHttpContextAccessor httpContextAccessor
-        )
+        public Sys_WorkFlowStepService(ISys_WorkFlowStepRepository dbRepository, IHttpContextAccessor httpContextAccessor)
             : base(dbRepository)
         {
             _httpContextAccessor = httpContextAccessor;

@@ -11,8 +11,7 @@ namespace VOL.MES.Controllers
 {
     [Route("api/MES_DefectiveProductRecord")]
     [PermissionTable(Name = "MES_DefectiveProductRecord")]
-    public partial class MES_DefectiveProductRecordController
-        : ApiBaseController<IMES_DefectiveProductRecordService>
+    public partial class MES_DefectiveProductRecordController : ApiBaseController<IMES_DefectiveProductRecordService>
     {
         public MES_DefectiveProductRecordController(IMES_DefectiveProductRecordService service)
             : base(service) { }

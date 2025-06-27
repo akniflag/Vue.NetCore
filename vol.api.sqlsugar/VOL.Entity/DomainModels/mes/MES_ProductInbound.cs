@@ -14,11 +14,7 @@ using VOL.Entity.SystemModels;
 
 namespace VOL.Entity.DomainModels
 {
-    [Entity(
-        TableCnName = "产品入库",
-        TableName = "MES_ProductInbound",
-        DBServer = "ServiceDbContext"
-    )]
+    [Entity(TableCnName = "产品入库", TableName = "MES_ProductInbound", DBServer = "ServiceDbContext")]
     public partial class MES_ProductInbound : BaseEntity
     {
         /// <summary>

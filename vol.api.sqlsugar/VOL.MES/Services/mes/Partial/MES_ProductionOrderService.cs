@@ -29,10 +29,7 @@ namespace VOL.MES.Services
         private readonly IMES_ProductionOrderRepository _repository; //访问数据库
 
         [ActivatorUtilitiesConstructor]
-        public MES_ProductionOrderService(
-            IMES_ProductionOrderRepository dbRepository,
-            IHttpContextAccessor httpContextAccessor
-        )
+        public MES_ProductionOrderService(IMES_ProductionOrderRepository dbRepository, IHttpContextAccessor httpContextAccessor)
             : base(dbRepository)
         {
             _httpContextAccessor = httpContextAccessor;
@@ -45,9 +42,7 @@ namespace VOL.MES.Services
         {
             SummaryExpress = (ISugarQueryable<MES_ProductionOrder> queryable) =>
             {
-                return queryable
-                    .Select(x => new { OrderQty = SqlFunc.AggregateSum(x.OrderQty) })
-                    .FirstOrDefault();
+                return queryable.Select(x => new { OrderQty = SqlFunc.AggregateSum(x.OrderQty) }).FirstOrDefault();
             };
             return base.GetPageData(options);
         }
@@ -55,9 +50,7 @@ namespace VOL.MES.Services
         protected override object GetDetailSummary<Detail>(ISugarQueryable<Detail> queryeable)
         {
             //ef写法（需要与前端开发文档上的【table显示合计】一起使用）
-            return ((ISugarQueryable<MES_ProductionPlanDetail>)queryeable)
-                .Select(x => new { PlanQuantity = SqlFunc.AggregateSum(x.PlanQuantity) })
-                .FirstOrDefault();
+            return ((ISugarQueryable<MES_ProductionPlanDetail>)queryeable).Select(x => new { PlanQuantity = SqlFunc.AggregateSum(x.PlanQuantity) }).FirstOrDefault();
         }
     }
 }

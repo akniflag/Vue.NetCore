@@ -29,30 +29,19 @@ namespace VOL.Core.Filters
             //if (context.Filters.Any(item => item is IAllowAnonymousFilter))
             if (context.ActionDescriptor.EndpointMetadata.Any(item => item is IAllowAnonymous))
             {
-                if (
-                    context.Filters.Where(item => item is IApiTaskFilter).FirstOrDefault()
-                    is IApiTaskFilter apiTaskFilter
-                )
+                if (context.Filters.Where(item => item is IApiTaskFilter).FirstOrDefault() is IApiTaskFilter apiTaskFilter)
                 {
                     apiTaskFilter.OnAuthorization(context);
                     return;
                 }
                 //如果使用了固定Token不过期，直接对token的合法性及token是否存在进行验证
-                else if (
-                    context.Filters.Where(item => item is IFixedTokenFilter).FirstOrDefault()
-                    is IFixedTokenFilter tokenFilter
-                )
+                else if (context.Filters.Where(item => item is IFixedTokenFilter).FirstOrDefault() is IFixedTokenFilter tokenFilter)
                 {
                     tokenFilter.OnAuthorization(context);
                     return;
                 }
                 //匿名并传入了token，需要将用户的ID缓存起来，保证UserHelper里能正确获取到用户信息
-                if (
-                    !context.HttpContext.User.Identity.IsAuthenticated
-                    && !string.IsNullOrEmpty(
-                        context.HttpContext.Request.Headers[AppSetting.TokenHeaderName]
-                    )
-                )
+                if (!context.HttpContext.User.Identity.IsAuthenticated && !string.IsNullOrEmpty(context.HttpContext.Request.Headers[AppSetting.TokenHeaderName]))
                 {
                     context.AddIdentity();
                 }
@@ -75,16 +64,9 @@ namespace VOL.Core.Filters
             //    return;
             //}
 
-            DateTime expDate = context
-                .HttpContext.User.Claims.Where(x => x.Type == JwtRegisteredClaimNames.Exp)
-                .Select(x => x.Value)
-                .FirstOrDefault()
-                .GetTimeSpmpToDate();
+            DateTime expDate = context.HttpContext.User.Claims.Where(x => x.Type == JwtRegisteredClaimNames.Exp).Select(x => x.Value).FirstOrDefault().GetTimeSpmpToDate();
             //动态标识刷新token(2021.05.01)
-            if (
-                (expDate - DateTime.Now).TotalMinutes < AppSetting.ExpMinutes / 3
-                && context.HttpContext.Request.Path != replaceTokenPath
-            )
+            if ((expDate - DateTime.Now).TotalMinutes < AppSetting.ExpMinutes / 3 && context.HttpContext.Request.Path != replaceTokenPath)
             {
                 context.HttpContext.Response.Headers["vol_exp"] = "1";
             }

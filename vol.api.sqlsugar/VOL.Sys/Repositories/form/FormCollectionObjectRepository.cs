@@ -10,9 +10,7 @@ using VOL.Sys.IRepositories;
 
 namespace VOL.Sys.Repositories
 {
-    public partial class FormCollectionObjectRepository
-        : RepositoryBase<FormCollectionObject>,
-            IFormCollectionObjectRepository
+    public partial class FormCollectionObjectRepository : RepositoryBase<FormCollectionObject>, IFormCollectionObjectRepository
     {
         public FormCollectionObjectRepository(VOLContext dbContext)
             : base(dbContext) { }

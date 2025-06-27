@@ -13,7 +13,5 @@ using VOL.Entity.DomainModels;
 
 namespace VOL.MES.IRepositories
 {
-    public partial interface IMES_DefectiveProductDisposalRecordRepository
-        : IDependency,
-            IRepository<MES_DefectiveProductDisposalRecord> { }
+    public partial interface IMES_DefectiveProductDisposalRecordRepository : IDependency, IRepository<MES_DefectiveProductDisposalRecord> { }
 }

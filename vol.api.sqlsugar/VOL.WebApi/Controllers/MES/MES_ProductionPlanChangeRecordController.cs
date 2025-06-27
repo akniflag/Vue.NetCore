@@ -11,12 +11,9 @@ namespace VOL.MES.Controllers
 {
     [Route("api/MES_ProductionPlanChangeRecord")]
     [PermissionTable(Name = "MES_ProductionPlanChangeRecord")]
-    public partial class MES_ProductionPlanChangeRecordController
-        : ApiBaseController<IMES_ProductionPlanChangeRecordService>
+    public partial class MES_ProductionPlanChangeRecordController : ApiBaseController<IMES_ProductionPlanChangeRecordService>
     {
-        public MES_ProductionPlanChangeRecordController(
-            IMES_ProductionPlanChangeRecordService service
-        )
+        public MES_ProductionPlanChangeRecordController(IMES_ProductionPlanChangeRecordService service)
             : base(service) { }
     }
 }

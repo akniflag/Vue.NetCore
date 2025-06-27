@@ -14,11 +14,7 @@ using VOL.Entity.SystemModels;
 
 namespace VOL.Entity.DomainModels
 {
-    [Entity(
-        TableCnName = "设备故障",
-        TableName = "MES_EquipmentFaultRecord",
-        DBServer = "ServiceDbContext"
-    )]
+    [Entity(TableCnName = "设备故障", TableName = "MES_EquipmentFaultRecord", DBServer = "ServiceDbContext")]
     public partial class MES_EquipmentFaultRecord : BaseEntity
     {
         /// <summary>

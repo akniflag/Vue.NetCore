@@ -26,10 +26,7 @@ namespace VOL.Sys.Services
         private readonly ISys_QuartzLogRepository _repository; //访问数据库
 
         [ActivatorUtilitiesConstructor]
-        public Sys_QuartzLogService(
-            ISys_QuartzLogRepository dbRepository,
-            IHttpContextAccessor httpContextAccessor
-        )
+        public Sys_QuartzLogService(ISys_QuartzLogRepository dbRepository, IHttpContextAccessor httpContextAccessor)
             : base(dbRepository)
         {
             _httpContextAccessor = httpContextAccessor;

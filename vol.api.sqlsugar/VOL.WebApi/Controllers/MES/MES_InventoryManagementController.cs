@@ -11,8 +11,7 @@ namespace VOL.MES.Controllers
 {
     [Route("api/MES_InventoryManagement")]
     [PermissionTable(Name = "MES_InventoryManagement")]
-    public partial class MES_InventoryManagementController
-        : ApiBaseController<IMES_InventoryManagementService>
+    public partial class MES_InventoryManagementController : ApiBaseController<IMES_InventoryManagementService>
     {
         public MES_InventoryManagementController(IMES_InventoryManagementService service)
             : base(service) { }

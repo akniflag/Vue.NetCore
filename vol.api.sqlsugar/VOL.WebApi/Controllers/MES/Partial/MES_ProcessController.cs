@@ -20,10 +20,7 @@ namespace VOL.MES.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         [ActivatorUtilitiesConstructor]
-        public MES_ProcessController(
-            IMES_ProcessService service,
-            IHttpContextAccessor httpContextAccessor
-        )
+        public MES_ProcessController(IMES_ProcessService service, IHttpContextAccessor httpContextAccessor)
             : base(service)
         {
             _service = service;

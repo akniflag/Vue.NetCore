@@ -10,19 +10,14 @@ using VOL.Sys.IRepositories;
 
 namespace VOL.Sys.Repositories
 {
-    public partial class Sys_WorkFlowTableAuditLogRepository
-        : RepositoryBase<Sys_WorkFlowTableAuditLog>,
-            ISys_WorkFlowTableAuditLogRepository
+    public partial class Sys_WorkFlowTableAuditLogRepository : RepositoryBase<Sys_WorkFlowTableAuditLog>, ISys_WorkFlowTableAuditLogRepository
     {
         public Sys_WorkFlowTableAuditLogRepository(VOLContext dbContext)
             : base(dbContext) { }
 
         public static ISys_WorkFlowTableAuditLogRepository Instance
         {
-            get
-            {
-                return AutofacContainerModule.GetService<ISys_WorkFlowTableAuditLogRepository>();
-            }
+            get { return AutofacContainerModule.GetService<ISys_WorkFlowTableAuditLogRepository>(); }
         }
     }
 }

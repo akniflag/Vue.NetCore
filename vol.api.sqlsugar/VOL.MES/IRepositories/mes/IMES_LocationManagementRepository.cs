@@ -13,7 +13,5 @@ using VOL.Entity.DomainModels;
 
 namespace VOL.MES.IRepositories
 {
-    public partial interface IMES_LocationManagementRepository
-        : IDependency,
-            IRepository<MES_LocationManagement> { }
+    public partial interface IMES_LocationManagementRepository : IDependency, IRepository<MES_LocationManagement> { }
 }

@@ -29,10 +29,7 @@ namespace VOL.MES.Services
         private readonly IMES_ProductInboundRepository _repository; //访问数据库
 
         [ActivatorUtilitiesConstructor]
-        public MES_ProductInboundService(
-            IMES_ProductInboundRepository dbRepository,
-            IHttpContextAccessor httpContextAccessor
-        )
+        public MES_ProductInboundService(IMES_ProductInboundRepository dbRepository, IHttpContextAccessor httpContextAccessor)
             : base(dbRepository)
         {
             _httpContextAccessor = httpContextAccessor;
@@ -45,12 +42,7 @@ namespace VOL.MES.Services
         {
             SummaryExpress = (ISugarQueryable<MES_ProductInbound> queryable) =>
             {
-                return queryable
-                    .Select(x => new
-                    {
-                        InboundQuantity = SqlFunc.AggregateSum(x.InboundQuantity).ToString("f2"),
-                    })
-                    .FirstOrDefault();
+                return queryable.Select(x => new { InboundQuantity = SqlFunc.AggregateSum(x.InboundQuantity).ToString("f2") }).FirstOrDefault();
             };
             return base.GetPageData(options);
         }

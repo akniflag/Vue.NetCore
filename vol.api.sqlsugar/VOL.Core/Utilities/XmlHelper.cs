@@ -27,12 +27,7 @@ namespace Rattan.Basic.Utility
         public XmlParameter(string name, string innerText, params AttributeParameter[] attParas)
             : this(name, innerText, null, attParas) { }
 
-        public XmlParameter(
-            string name,
-            string innerText,
-            string namespaceOfPrefix,
-            params AttributeParameter[] attParas
-        )
+        public XmlParameter(string name, string innerText, string namespaceOfPrefix, params AttributeParameter[] attParas)
         {
             this._name = name;
             this._innerText = innerText;
@@ -166,25 +161,15 @@ namespace Rattan.Basic.Utility
         /// <param name="xDoc">XmlDocument对象</param>
         /// <param name="parentNode">父节点</param>
         /// <param name="xlParameter">Xml参数</param>
-        private static void AppendChild(
-            XmlDocument xDoc,
-            XmlNode parentNode,
-            params XmlParameter[] xlParameter
-        )
+        private static void AppendChild(XmlDocument xDoc, XmlNode parentNode, params XmlParameter[] xlParameter)
         {
             foreach (XmlParameter xpar in xlParameter)
             {
                 XmlNode newNode = xDoc.CreateNode(XmlNodeType.Element, xpar.Name, null);
-                string ns = string.IsNullOrEmpty(xpar.NamespaceOfPrefix)
-                    ? ""
-                    : newNode.GetNamespaceOfPrefix(xpar.NamespaceOfPrefix);
+                string ns = string.IsNullOrEmpty(xpar.NamespaceOfPrefix) ? "" : newNode.GetNamespaceOfPrefix(xpar.NamespaceOfPrefix);
                 foreach (AttributeParameter attp in xpar.Attributes)
                 {
-                    XmlNode attr = xDoc.CreateNode(
-                        XmlNodeType.Attribute,
-                        attp.Name,
-                        ns == "" ? null : ns
-                    );
+                    XmlNode attr = xDoc.CreateNode(XmlNodeType.Attribute, attp.Name, ns == "" ? null : ns);
                     attr.Value = attp.Value;
                     newNode.Attributes.SetNamedItem(attr);
                 }
@@ -195,11 +180,7 @@ namespace Rattan.Basic.Utility
         #endregion
 
         #region private AddEveryNode
-        private static void AddEveryNode(
-            XmlDocument xDoc,
-            XmlNode parentNode,
-            params XmlParameter[] paras
-        )
+        private static void AddEveryNode(XmlDocument xDoc, XmlNode parentNode, params XmlParameter[] paras)
         {
             XmlNodeList nlst = xDoc.DocumentElement.ChildNodes;
             foreach (XmlNode xns in nlst)
@@ -243,12 +224,7 @@ namespace Rattan.Basic.Utility
         /// <param name="rootNode">根结点名称</param>
         /// <param name="elementName">元素节点名称</param>
         /// <param name="xmlParameter">XML参数</param>
-        public static void CreateXmlFile(
-            string fileName,
-            string rootNode,
-            string elementName,
-            params XmlParameter[] xmlParameter
-        )
+        public static void CreateXmlFile(string fileName, string rootNode, string elementName, params XmlParameter[] xmlParameter)
         {
             XmlDocument xDoc = new XmlDocument();
             XmlNode xn = xDoc.CreateXmlDeclaration("1.0", "UTF-8", null);
@@ -301,11 +277,7 @@ namespace Rattan.Basic.Utility
             XmlDocument xDoc = GetXmlDom();
             if (parentNode.Name == xDoc.DocumentElement.Name)
             {
-                XmlNode newNode = xDoc.CreateNode(
-                    XmlNodeType.Element,
-                    xDoc.DocumentElement.ChildNodes[0].Name,
-                    null
-                );
+                XmlNode newNode = xDoc.CreateNode(XmlNodeType.Element, xDoc.DocumentElement.ChildNodes[0].Name, null);
                 AppendChild(xDoc, newNode, xmlParameter);
                 xDoc.DocumentElement.AppendChild(newNode);
             }
@@ -330,11 +302,7 @@ namespace Rattan.Basic.Utility
                 return;
             if (parentNode.Name == xDoc.DocumentElement.Name)
             {
-                XmlNode newNode = xDoc.CreateNode(
-                    XmlNodeType.Element,
-                    xDoc.DocumentElement.ChildNodes[0].Name,
-                    null
-                );
+                XmlNode newNode = xDoc.CreateNode(XmlNodeType.Element, xDoc.DocumentElement.ChildNodes[0].Name, null);
                 AppendChild(xDoc, newNode, xmlParameter);
                 xDoc.DocumentElement.AppendChild(newNode);
             }
@@ -354,22 +322,11 @@ namespace Rattan.Basic.Utility
         /// <param name="namespaceOfPrefix">该节点的命名空间URI</param>
         /// <param name="attributeName">新属性名称</param>
         /// <param name="attributeValue">属性值</param>
-        public static void AddAttribute(
-            XmlNode node,
-            string namespaceOfPrefix,
-            string attributeName,
-            string attributeValue
-        )
+        public static void AddAttribute(XmlNode node, string namespaceOfPrefix, string attributeName, string attributeValue)
         {
             XmlDocument xDoc = GetXmlDom();
-            string ns = string.IsNullOrEmpty(namespaceOfPrefix)
-                ? ""
-                : node.GetNamespaceOfPrefix(namespaceOfPrefix);
-            XmlNode xn = xDoc.CreateNode(
-                XmlNodeType.Attribute,
-                attributeName,
-                ns == "" ? null : ns
-            );
+            string ns = string.IsNullOrEmpty(namespaceOfPrefix) ? "" : node.GetNamespaceOfPrefix(namespaceOfPrefix);
+            XmlNode xn = xDoc.CreateNode(XmlNodeType.Attribute, attributeName, ns == "" ? null : ns);
             xn.Value = attributeValue;
             node.Attributes.SetNamedItem(xn);
             xDoc.Save(_xPath);
@@ -381,23 +338,13 @@ namespace Rattan.Basic.Utility
         /// <param name="node">节点对象</param>
         /// <param name="namespaceOfPrefix">该节点的命名空间URI</param>
         /// <param name="attributeParameters">节点属性参数</param>
-        public static void AddAttribute(
-            XmlNode node,
-            string namespaceOfPrefix,
-            params AttributeParameter[] attributeParameters
-        )
+        public static void AddAttribute(XmlNode node, string namespaceOfPrefix, params AttributeParameter[] attributeParameters)
         {
             XmlDocument xDoc = GetXmlDom();
-            string ns = string.IsNullOrEmpty(namespaceOfPrefix)
-                ? ""
-                : node.GetNamespaceOfPrefix(namespaceOfPrefix);
+            string ns = string.IsNullOrEmpty(namespaceOfPrefix) ? "" : node.GetNamespaceOfPrefix(namespaceOfPrefix);
             foreach (AttributeParameter attp in attributeParameters)
             {
-                XmlNode xn = xDoc.CreateNode(
-                    XmlNodeType.Attribute,
-                    attp.Name,
-                    ns == "" ? null : ns
-                );
+                XmlNode xn = xDoc.CreateNode(XmlNodeType.Attribute, attp.Name, ns == "" ? null : ns);
                 xn.Value = attp.Value;
                 node.Attributes.SetNamedItem(xn);
             }
@@ -411,12 +358,7 @@ namespace Rattan.Basic.Utility
         /// <param name="namespaceOfPrefix">该节点的命名空间URI</param>
         /// <param name="attributeName">新属性名称</param>
         /// <param name="attributeValue">属性值</param>
-        public static void AddAttribute(
-            string nodeName,
-            string namespaceOfPrefix,
-            string attributeName,
-            string attributeValue
-        )
+        public static void AddAttribute(string nodeName, string namespaceOfPrefix, string attributeName, string attributeValue)
         {
             XmlDocument xDoc = GetXmlDom();
             XmlNodeList xlst = xDoc.DocumentElement.ChildNodes;
@@ -436,11 +378,7 @@ namespace Rattan.Basic.Utility
         /// <param name="nodeName">节点名称</param>
         /// <param name="namespaceOfPrefix">该节点的命名空间URI</param>
         /// <param name="attributeParameters">节点属性参数</param>
-        public static void AddAttribute(
-            string nodeName,
-            string namespaceOfPrefix,
-            params AttributeParameter[] attributeParameters
-        )
+        public static void AddAttribute(string nodeName, string namespaceOfPrefix, params AttributeParameter[] attributeParameters)
         {
             XmlDocument xDoc = GetXmlDom();
             XmlNodeList xlst = xDoc.DocumentElement.ChildNodes;
@@ -602,11 +540,7 @@ namespace Rattan.Basic.Utility
             }
         }
 
-        private static void UpdateNode(
-            XmlNode node,
-            string innerText,
-            AttributeParameter[] attributeParameters
-        )
+        private static void UpdateNode(XmlNode node, string innerText, AttributeParameter[] attributeParameters)
         {
             node.InnerText = innerText;
             for (int i = 0; i < attributeParameters.Length; i++)
@@ -686,11 +620,7 @@ namespace Rattan.Basic.Utility
         /// <param name="xmlParameter">XmlParameter对象</param>
         /// <param name="innerText">修改后的内容</param>
         /// <param name="attributeParameters">需要修改的属性</param>
-        public static void UpdateNode(
-            XmlParameter xmlParameter,
-            string innerText,
-            params AttributeParameter[] attributeParameters
-        )
+        public static void UpdateNode(XmlParameter xmlParameter, string innerText, params AttributeParameter[] attributeParameters)
         {
             XmlDocument xDoc = GetXmlDom();
             XmlNodeList nlst = xDoc.DocumentElement.ChildNodes;
@@ -798,10 +728,7 @@ namespace Rattan.Basic.Utility
         /// </summary>
         /// <param name="xmlParameter">XML参数</param>
         /// <param name="attributeParameters">属性参数</param>
-        public static void SetAttribute(
-            XmlParameter xmlParameter,
-            params AttributeParameter[] attributeParameters
-        )
+        public static void SetAttribute(XmlParameter xmlParameter, params AttributeParameter[] attributeParameters)
         {
             XmlDocument xDoc = GetXmlDom();
             XmlNodeList nlst = xDoc.DocumentElement.ChildNodes;
@@ -827,11 +754,7 @@ namespace Rattan.Basic.Utility
         /// </summary>
         /// <param name="xmlParameter">XML参数</param>
         /// <param name="attributeValue">新属性值</param>
-        public static void SetAttribute(
-            XmlParameter xmlParameter,
-            string attributeName,
-            string attributeValue
-        )
+        public static void SetAttribute(XmlParameter xmlParameter, string attributeName, string attributeValue)
         {
             XmlDocument xDoc = GetXmlDom();
             XmlNodeList nlst = xDoc.DocumentElement.ChildNodes;

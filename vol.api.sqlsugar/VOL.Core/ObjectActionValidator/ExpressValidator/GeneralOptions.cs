@@ -14,11 +14,7 @@ namespace VOL.Core.ObjectActionValidator
         /// </summary>
         /// <param name="generalName"></param>
         /// <param name="customValidator"></param>
-        public GeneralOptions(
-            ValidatorGeneral generalName,
-            string CNName,
-            Func<object, ObjectValidatorResult> customValidator
-        )
+        public GeneralOptions(ValidatorGeneral generalName, string CNName, Func<object, ObjectValidatorResult> customValidator)
         {
             this.CNName = CNName;
             this.CustomValidator = customValidator;
@@ -52,13 +48,7 @@ namespace VOL.Core.ObjectActionValidator
             this.Max = max;
         }
 
-        public GeneralOptions(
-            ValidatorGeneral generalName,
-            string CNName,
-            ParamType type,
-            int? min,
-            int? max
-        )
+        public GeneralOptions(ValidatorGeneral generalName, string CNName, ParamType type, int? min, int? max)
         {
             this.Name = generalName.ToString().ToLower();
             this.CNName = CNName;

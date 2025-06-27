@@ -14,13 +14,7 @@ using VOL.Entity.SystemModels;
 
 namespace VOL.Entity.DomainModels
 {
-    [Entity(
-        TableCnName = "制造BOM",
-        TableName = "MES_Bom_Main",
-        DetailTable = new Type[] { typeof(MES_Bom_Detail) },
-        DetailTableCnName = "BOM明细",
-        DBServer = "ServiceDbContext"
-    )]
+    [Entity(TableCnName = "制造BOM", TableName = "MES_Bom_Main", DetailTable = new Type[] { typeof(MES_Bom_Detail) }, DetailTableCnName = "BOM明细", DBServer = "ServiceDbContext")]
     public partial class MES_Bom_Main : BaseEntity
     {
         /// <summary>

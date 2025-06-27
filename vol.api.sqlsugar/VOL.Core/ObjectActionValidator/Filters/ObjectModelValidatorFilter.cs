@@ -10,10 +10,7 @@ namespace VOL.Core.ObjectActionValidator
     {
         public ObjectModelValidatorFilter(ValidatorModel validatorGroup)
         {
-            MethodsParameters = validatorGroup
-                .GetModelParameters()
-                ?.Select(x => x.ToLower())
-                ?.ToArray();
+            MethodsParameters = validatorGroup.GetModelParameters()?.Select(x => x.ToLower())?.ToArray();
         }
 
         public string[] MethodsParameters { get; }

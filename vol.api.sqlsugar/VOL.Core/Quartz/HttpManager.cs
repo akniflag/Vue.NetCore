@@ -29,11 +29,7 @@ namespace VOL.Core.Quartz
             //    Content = content
             //};
 
-            HttpContent httpContent = new StringContent(
-                new { a = 1, b = 2 }.Serialize(),
-                Encoding.UTF8,
-                "application/json"
-            );
+            HttpContent httpContent = new StringContent(new { a = 1, b = 2 }.Serialize(), Encoding.UTF8, "application/json");
 
             headers ??= new Dictionary<string, string>();
             headers.TryAdd(QuartzAuthorization.Key, QuartzAuthorization.AccessKey);

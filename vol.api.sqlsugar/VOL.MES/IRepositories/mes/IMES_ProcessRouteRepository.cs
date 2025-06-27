@@ -13,7 +13,5 @@ using VOL.Entity.DomainModels;
 
 namespace VOL.MES.IRepositories
 {
-    public partial interface IMES_ProcessRouteRepository
-        : IDependency,
-            IRepository<MES_ProcessRoute> { }
+    public partial interface IMES_ProcessRouteRepository : IDependency, IRepository<MES_ProcessRoute> { }
 }

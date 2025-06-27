@@ -74,12 +74,7 @@ namespace VOL.Core.CacheManager
             return RedisHelper.Set(key, value, expireSeconds);
         }
 
-        public bool AddObject(
-            string key,
-            object value,
-            int expireSeconds = -1,
-            bool isSliding = false
-        )
+        public bool AddObject(string key, object value, int expireSeconds = -1, bool isSliding = false)
         {
             return RedisHelper.Set(key, value, expireSeconds);
         }

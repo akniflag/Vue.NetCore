@@ -32,11 +32,7 @@ namespace VOL.Sys.Services
         private readonly ISys_WorkFlowStepRepository _stepRepository;
 
         [ActivatorUtilitiesConstructor]
-        public Sys_WorkFlowService(
-            ISys_WorkFlowRepository dbRepository,
-            IHttpContextAccessor httpContextAccessor,
-            ISys_WorkFlowStepRepository stepRepository
-        )
+        public Sys_WorkFlowService(ISys_WorkFlowRepository dbRepository, IHttpContextAccessor httpContextAccessor, ISys_WorkFlowStepRepository stepRepository)
             : base(dbRepository)
         {
             _httpContextAccessor = httpContextAccessor;
@@ -56,10 +52,7 @@ namespace VOL.Sys.Services
             {
                 workFlow.WorkFlow_Id = Guid.NewGuid();
 
-                webResponse = WorkFlowContainer.Instance.AddTable(
-                    workFlow,
-                    list as List<Sys_WorkFlowStep>
-                );
+                webResponse = WorkFlowContainer.Instance.AddTable(workFlow, list as List<Sys_WorkFlowStep>);
                 if (!webResponse.Status)
                 {
                     return webResponse;
@@ -77,26 +70,14 @@ namespace VOL.Sys.Services
         public override WebResponseContent Update(SaveModel saveModel)
         {
             Sys_WorkFlow flow = null;
-            UpdateOnExecuting = (
-                Sys_WorkFlow workFlow,
-                object addList,
-                object updateList,
-                List<object> delKeys
-            ) =>
+            UpdateOnExecuting = (Sys_WorkFlow workFlow, object addList, object updateList, List<object> delKeys) =>
             {
                 flow = workFlow;
                 if ((flow.AuditingEdit ?? 0) == 0)
                 {
-                    if (
-                        Sys_WorkFlowTableRepository.Instance.Exists(x =>
-                            x.WorkFlow_Id == flow.WorkFlow_Id
-                            && (x.AuditStatus == (int)AuditStatus.审核中)
-                        )
-                    )
+                    if (Sys_WorkFlowTableRepository.Instance.Exists(x => x.WorkFlow_Id == flow.WorkFlow_Id && (x.AuditStatus == (int)AuditStatus.审核中)))
                     {
-                        return webResponse.Error(
-                            "当前流程有审核中的数据，不能修改,可以修改,流程中的【审核中数据是否可以编辑】属性"
-                        );
+                        return webResponse.Error("当前流程有审核中的数据，不能修改,可以修改,流程中的【审核中数据是否可以编辑】属性");
                     }
                 }
 
@@ -105,35 +86,22 @@ namespace VOL.Sys.Services
                 var stepsClone = add.Serialize().DeserializeObject<List<Sys_WorkFlowStep>>();
                 add.Clear();
 
-                var steps = _stepRepository
-                    .FindAsIQueryable(x => x.WorkFlow_Id == workFlow.WorkFlow_Id)
-                    .Select(s => new { s.WorkStepFlow_Id, s.StepId })
-                    .ToList();
+                var steps = _stepRepository.FindAsIQueryable(x => x.WorkFlow_Id == workFlow.WorkFlow_Id).Select(s => new { s.WorkStepFlow_Id, s.StepId }).ToList();
                 //删除的节点
-                var delIds = steps
-                    .Where(x => !stepsClone.Any(c => c.StepId == x.StepId))
-                    .Select(s => s.WorkStepFlow_Id)
-                    .ToList();
+                var delIds = steps.Where(x => !stepsClone.Any(c => c.StepId == x.StepId)).Select(s => s.WorkStepFlow_Id).ToList();
                 delKeys.AddRange(delIds.Select(s => s as object));
 
                 //新增的节点
-                var newSteps = stepsClone
-                    .Where(x => !steps.Any(c => c.StepId == x.StepId))
-                    .ToList();
+                var newSteps = stepsClone.Where(x => !steps.Any(c => c.StepId == x.StepId)).ToList();
                 add.AddRange(newSteps);
 
                 List<Sys_WorkFlowStep> update = updateList as List<Sys_WorkFlowStep>;
                 //修改的节点
-                var updateSteps = stepsClone
-                    .Where(x => steps.Any(c => c.StepId == x.StepId))
-                    .ToList();
+                var updateSteps = stepsClone.Where(x => steps.Any(c => c.StepId == x.StepId)).ToList();
                 update.AddRange(updateSteps);
                 updateSteps.ForEach(x =>
                 {
-                    x.WorkStepFlow_Id = steps
-                        .Where(c => c.StepId == x.StepId)
-                        .Select(s => s.WorkStepFlow_Id)
-                        .FirstOrDefault();
+                    x.WorkStepFlow_Id = steps.Where(c => c.StepId == x.StepId).Select(s => s.WorkStepFlow_Id).FirstOrDefault();
                     foreach (var item in saveModel.DetailData)
                     {
                         if (item["StepId"].ToString() == x.StepId)
@@ -149,10 +117,7 @@ namespace VOL.Sys.Services
             webResponse = base.Update(saveModel);
             if (webResponse.Status)
             {
-                flow = repository
-                    .FindAsIQueryable(x => x.WorkFlow_Id == flow.WorkFlow_Id)
-                    .Includes(x => x.Sys_WorkFlowStep)
-                    .FirstOrDefault();
+                flow = repository.FindAsIQueryable(x => x.WorkFlow_Id == flow.WorkFlow_Id).Includes(x => x.Sys_WorkFlowStep).FirstOrDefault();
                 webResponse = WorkFlowContainer.Instance.AddTable(flow, flow.Sys_WorkFlowStep);
             }
             return webResponse;

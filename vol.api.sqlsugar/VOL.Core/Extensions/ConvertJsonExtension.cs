@@ -126,12 +126,7 @@ namespace VOL.Core.Extensions
                 for (int j = 0; j < pi.Length; j++)
                 {
                     Type type = pi[j].GetValue(list[i], null).GetType();
-                    Json.Append(
-                        "\""
-                            + pi[j].Name.ToString()
-                            + "\":"
-                            + StringFormat(pi[j].GetValue(list[i], null).ToString(), type)
-                    );
+                    Json.Append("\"" + pi[j].Name.ToString() + "\":" + StringFormat(pi[j].GetValue(list[i], null).ToString(), type));
                     if (j < pi.Length - 1)
                     {
                         Json.Append(",");
@@ -294,12 +289,7 @@ namespace VOL.Core.Extensions
                     for (int j = 0; j < dt.Columns.Count; j++)
                     {
                         Type type = dt.Rows[i][j].GetType();
-                        Json.Append(
-                            "\""
-                                + dt.Columns[j].ColumnName.ToString()
-                                + "\":"
-                                + StringFormat(dt.Rows[i][j].ToString(), type)
-                        );
+                        Json.Append("\"" + dt.Columns[j].ColumnName.ToString() + "\":" + StringFormat(dt.Rows[i][j].ToString(), type));
                         if (j < dt.Columns.Count - 1)
                         {
                             Json.Append(",");
@@ -375,9 +365,7 @@ namespace VOL.Core.Extensions
         {
             if (obj == null)
                 return null;
-            formatDate =
-                formatDate
-                ?? new JsonSerializerSettings { DateFormatString = "yyyy-MM-dd HH:mm:ss" };
+            formatDate = formatDate ?? new JsonSerializerSettings { DateFormatString = "yyyy-MM-dd HH:mm:ss" };
             formatDate.Converters.Add(new LongCovert());
             return JsonConvert.SerializeObject(obj, formatDate);
         }

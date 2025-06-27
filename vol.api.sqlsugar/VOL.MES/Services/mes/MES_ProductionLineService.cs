@@ -12,10 +12,7 @@ using VOL.MES.IServices;
 
 namespace VOL.MES.Services
 {
-    public partial class MES_ProductionLineService
-        : ServiceBase<MES_ProductionLine, IMES_ProductionLineRepository>,
-            IMES_ProductionLineService,
-            IDependency
+    public partial class MES_ProductionLineService : ServiceBase<MES_ProductionLine, IMES_ProductionLineRepository>, IMES_ProductionLineService, IDependency
     {
         public static IMES_ProductionLineService Instance
         {

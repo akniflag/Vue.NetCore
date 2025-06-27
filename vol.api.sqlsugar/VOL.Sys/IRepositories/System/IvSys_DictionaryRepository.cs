@@ -15,7 +15,5 @@ using VOL.Entity.DomainModels;
 
 namespace VOL.Sys.IRepositories
 {
-    public partial interface IvSys_DictionaryRepository
-        : IDependency,
-            IRepository<vSys_Dictionary> { }
+    public partial interface IvSys_DictionaryRepository : IDependency, IRepository<vSys_Dictionary> { }
 }

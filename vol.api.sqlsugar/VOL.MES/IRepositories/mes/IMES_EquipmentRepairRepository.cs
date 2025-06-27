@@ -13,7 +13,5 @@ using VOL.Entity.DomainModels;
 
 namespace VOL.MES.IRepositories
 {
-    public partial interface IMES_EquipmentRepairRepository
-        : IDependency,
-            IRepository<MES_EquipmentRepair> { }
+    public partial interface IMES_EquipmentRepairRepository : IDependency, IRepository<MES_EquipmentRepair> { }
 }

@@ -16,11 +16,7 @@ namespace VOL.Core.Controllers.Basic
         /// <param name="data"></param>
         /// <param name="serializerSettings"></param>
         /// <returns></returns>
-        protected JsonResult JsonNormal(
-            object data,
-            JsonSerializerSettings serializerSettings = null,
-            bool formateDate = true
-        )
+        protected JsonResult JsonNormal(object data, JsonSerializerSettings serializerSettings = null, bool formateDate = true)
         {
             serializerSettings = serializerSettings ?? new JsonSerializerSettings();
             serializerSettings.ContractResolver = null;
@@ -35,12 +31,7 @@ namespace VOL.Core.Controllers.Basic
 
     public class LongCovert : JsonConverter
     {
-        public override object ReadJson(
-            JsonReader reader,
-            Type objectType,
-            object existingValue,
-            JsonSerializer serializer
-        )
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             if (reader.Value == null)
             {

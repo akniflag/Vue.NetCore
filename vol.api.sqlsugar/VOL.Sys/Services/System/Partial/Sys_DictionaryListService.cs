@@ -12,11 +12,7 @@ namespace VOL.Sys.Services
     {
         public override PageGridData<Sys_DictionaryList> GetPageData(PageDataOptions pageData)
         {
-            base.OrderByExpression = x => new Dictionary<object, QueryOrderBy>()
-            {
-                { x.OrderNo, QueryOrderBy.Desc },
-                { x.DicList_ID, QueryOrderBy.Asc },
-            };
+            base.OrderByExpression = x => new Dictionary<object, QueryOrderBy>() { { x.OrderNo, QueryOrderBy.Desc }, { x.DicList_ID, QueryOrderBy.Asc } };
             return base.GetPageData(pageData);
         }
     }

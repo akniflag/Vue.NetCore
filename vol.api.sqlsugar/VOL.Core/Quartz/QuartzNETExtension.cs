@@ -29,26 +29,17 @@ namespace VOL.Core.Quartz
         /// <param name="applicationBuilder"></param>
         /// <param name="env"></param>
         /// <returns></returns>
-        public static IApplicationBuilder UseQuartz(
-            this IApplicationBuilder applicationBuilder,
-            IWebHostEnvironment env
-        )
+        public static IApplicationBuilder UseQuartz(this IApplicationBuilder applicationBuilder, IWebHostEnvironment env)
         {
             IServiceProvider services = applicationBuilder.ApplicationServices;
             ISchedulerFactory _schedulerFactory = services.GetService<ISchedulerFactory>();
             try
             {
-                _taskList = DbManger
-                    .SqlSugarClient.Set<Sys_QuartzOptions>()
-                    .Where(x => true)
-                    .ToList();
+                _taskList = DbManger.SqlSugarClient.Set<Sys_QuartzOptions>().Where(x => true).ToList();
 
                 _taskList.ForEach(options =>
                 {
-                    options
-                        .AddJob(_schedulerFactory, jobFactory: services.GetService<IJobFactory>())
-                        .GetAwaiter()
-                        .GetResult();
+                    options.AddJob(_schedulerFactory, jobFactory: services.GetService<IJobFactory>()).GetAwaiter().GetResult();
                 });
             }
             catch (Exception ex)
@@ -58,36 +49,23 @@ namespace VOL.Core.Quartz
             return applicationBuilder;
         }
 
-        private static async Task<bool> CheckTask(
-            Sys_QuartzOptions taskOptions,
-            ISchedulerFactory schedulerFactory
-        )
+        private static async Task<bool> CheckTask(Sys_QuartzOptions taskOptions, ISchedulerFactory schedulerFactory)
         {
             string groupName = "group";
             string taskName = taskOptions.Id.ToString();
             IScheduler scheduler = await schedulerFactory.GetScheduler();
-            List<JobKey> jobKeys = (
-                await scheduler.GetJobKeys(GroupMatcher<JobKey>.GroupEquals(groupName))
-            ).ToList();
+            List<JobKey> jobKeys = (await scheduler.GetJobKeys(GroupMatcher<JobKey>.GroupEquals(groupName))).ToList();
             if (jobKeys == null || jobKeys.Count() == 0)
             {
                 return false;
             }
-            JobKey jobKey = jobKeys
-                .Where(s =>
-                    scheduler
-                        .GetTriggersOfJob(s)
-                        .Result.Any(x => (x as CronTriggerImpl).Name == taskName)
-                )
-                .FirstOrDefault();
+            JobKey jobKey = jobKeys.Where(s => scheduler.GetTriggersOfJob(s).Result.Any(x => (x as CronTriggerImpl).Name == taskName)).FirstOrDefault();
             if (jobKey == null)
             {
                 return false;
             }
             var triggers = await scheduler.GetTriggersOfJob(jobKey);
-            ITrigger trigger = triggers
-                ?.Where(x => (x as CronTriggerImpl).Name == taskName)
-                .FirstOrDefault();
+            ITrigger trigger = triggers?.Where(x => (x as CronTriggerImpl).Name == taskName).FirstOrDefault();
 
             if (trigger == null)
             {
@@ -103,11 +81,7 @@ namespace VOL.Core.Quartz
         /// <param name="schedulerFactory"></param>
         /// <param name="init">是否初始化,否=需要重新生成配置文件，是=不重新生成配置文件</param>
         /// <returns></returns>
-        public static async Task<object> AddJob(
-            this Sys_QuartzOptions taskOptions,
-            ISchedulerFactory schedulerFactory,
-            IJobFactory jobFactory = null
-        )
+        public static async Task<object> AddJob(this Sys_QuartzOptions taskOptions, ISchedulerFactory schedulerFactory, IJobFactory jobFactory = null)
         {
             string msg = null;
             try
@@ -130,17 +104,13 @@ namespace VOL.Core.Quartz
                 (bool, string) validExpression = taskOptions.CronExpression.IsValidExpression();
                 if (!validExpression.Item1)
                 {
-                    msg =
-                        $"添加作业失败，作业:{taskOptions.TaskName},表达式不正确:{taskOptions.CronExpression}";
+                    msg = $"添加作业失败，作业:{taskOptions.TaskName},表达式不正确:{taskOptions.CronExpression}";
                     Console.WriteLine(msg);
                     QuartzFileHelper.Error(msg);
                     return new { status = false, msg = validExpression.Item2 };
                 }
 
-                IJobDetail job = JobBuilder
-                    .Create<HttpResultfulJob>()
-                    .WithIdentity(taskOptions.Id.ToString(), "group")
-                    .Build();
+                IJobDetail job = JobBuilder.Create<HttpResultfulJob>().WithIdentity(taskOptions.Id.ToString(), "group").Build();
                 ITrigger trigger = TriggerBuilder
                     .Create()
                     .WithIdentity(taskOptions.Id.ToString(), "group")
@@ -193,10 +163,7 @@ namespace VOL.Core.Quartz
         /// <param name="taskName"></param>
         /// <param name="groupName"></param>
         /// <returns></returns>
-        public static Task<object> Remove(
-            this ISchedulerFactory schedulerFactory,
-            Sys_QuartzOptions taskOptions
-        )
+        public static Task<object> Remove(this ISchedulerFactory schedulerFactory, Sys_QuartzOptions taskOptions)
         {
             return schedulerFactory.TriggerAction(JobAction.删除, taskOptions);
         }
@@ -207,10 +174,7 @@ namespace VOL.Core.Quartz
         /// <param name="schedulerFactory"></param>
         /// <param name="taskOptions"></param>
         /// <returns></returns>
-        public static Task<object> Update(
-            this ISchedulerFactory schedulerFactory,
-            Sys_QuartzOptions taskOptions
-        )
+        public static Task<object> Update(this ISchedulerFactory schedulerFactory, Sys_QuartzOptions taskOptions)
         {
             return schedulerFactory.TriggerAction(JobAction.修改, taskOptions);
         }
@@ -221,10 +185,7 @@ namespace VOL.Core.Quartz
         /// <param name="schedulerFactory"></param>
         /// <param name="taskOptions"></param>
         /// <returns></returns>
-        public static Task<object> Pause(
-            this ISchedulerFactory schedulerFactory,
-            Sys_QuartzOptions taskOptions
-        )
+        public static Task<object> Pause(this ISchedulerFactory schedulerFactory, Sys_QuartzOptions taskOptions)
         {
             return schedulerFactory.TriggerAction(JobAction.暂停, taskOptions);
         }
@@ -235,10 +196,7 @@ namespace VOL.Core.Quartz
         /// <param name="schedulerFactory"></param>
         /// <param name="taskOptions"></param>
         /// <returns></returns>
-        public static Task<object> Start(
-            this ISchedulerFactory schedulerFactory,
-            Sys_QuartzOptions taskOptions
-        )
+        public static Task<object> Start(this ISchedulerFactory schedulerFactory, Sys_QuartzOptions taskOptions)
         {
             return schedulerFactory.TriggerAction(JobAction.开启, taskOptions);
             //  return taskOptions.AddJob(schedulerFactory);
@@ -251,10 +209,7 @@ namespace VOL.Core.Quartz
         /// <param name="schedulerFactory"></param>
         /// <param name="taskOptions"></param>
         /// <returns></returns>
-        public static Task<object> Run(
-            this ISchedulerFactory schedulerFactory,
-            Sys_QuartzOptions taskOptions
-        )
+        public static Task<object> Run(this ISchedulerFactory schedulerFactory, Sys_QuartzOptions taskOptions)
         {
             return schedulerFactory.TriggerAction(JobAction.立即执行, taskOptions);
         }
@@ -268,11 +223,7 @@ namespace VOL.Core.Quartz
         /// <param name="action"></param>
         /// <param name="taskOptions"></param>
         /// <returns></returns>
-        public static async Task<object> TriggerAction(
-            this ISchedulerFactory schedulerFactory,
-            JobAction action,
-            Sys_QuartzOptions taskOptions = null
-        )
+        public static async Task<object> TriggerAction(this ISchedulerFactory schedulerFactory, JobAction action, Sys_QuartzOptions taskOptions = null)
         {
             string errorMsg = "";
             try
@@ -280,30 +231,20 @@ namespace VOL.Core.Quartz
                 string groupName = "group";
                 string taskName = taskOptions.Id.ToString();
                 IScheduler scheduler = await schedulerFactory.GetScheduler();
-                List<JobKey> jobKeys = scheduler
-                    .GetJobKeys(GroupMatcher<JobKey>.GroupEquals(groupName))
-                    .Result.ToList();
+                List<JobKey> jobKeys = scheduler.GetJobKeys(GroupMatcher<JobKey>.GroupEquals(groupName)).Result.ToList();
                 if (jobKeys == null || jobKeys.Count() == 0)
                 {
                     errorMsg = $"未找到分组[{groupName}]";
                     return new { status = false, msg = errorMsg };
                 }
-                JobKey jobKey = jobKeys
-                    .Where(s =>
-                        scheduler
-                            .GetTriggersOfJob(s)
-                            .Result.Any(x => (x as CronTriggerImpl).Name == taskName)
-                    )
-                    .FirstOrDefault();
+                JobKey jobKey = jobKeys.Where(s => scheduler.GetTriggersOfJob(s).Result.Any(x => (x as CronTriggerImpl).Name == taskName)).FirstOrDefault();
                 if (jobKey == null)
                 {
                     errorMsg = $"未找到触发器[{taskName}]";
                     return new { status = false, msg = errorMsg };
                 }
                 var triggers = await scheduler.GetTriggersOfJob(jobKey);
-                ITrigger trigger = triggers
-                    ?.Where(x => (x as CronTriggerImpl).Name == taskName)
-                    .FirstOrDefault();
+                ITrigger trigger = triggers?.Where(x => (x as CronTriggerImpl).Name == taskName).FirstOrDefault();
 
                 if (trigger == null)
                 {
@@ -321,11 +262,7 @@ namespace VOL.Core.Quartz
                         break;
                     case JobAction.修改:
                         CronExpression cron = new CronExpression(taskOptions.CronExpression);
-                        trigger = trigger
-                            .GetTriggerBuilder()
-                            .WithIdentity(taskOptions.Id.ToString(), "group")
-                            .WithSchedule(CronScheduleBuilder.CronSchedule(cron))
-                            .Build();
+                        trigger = trigger.GetTriggerBuilder().WithIdentity(taskOptions.Id.ToString(), "group").WithSchedule(CronScheduleBuilder.CronSchedule(cron)).Build();
                         // 更新触发器
                         _taskList.ForEach(x =>
                         {
@@ -352,9 +289,7 @@ namespace VOL.Core.Quartz
                         break;
                     case JobAction.立即执行:
                     case JobAction.开启:
-                        TriggerState state = await scheduler.GetTriggerState(
-                            new TriggerKey(jobKey.Name)
-                        );
+                        TriggerState state = await scheduler.GetTriggerState(new TriggerKey(jobKey.Name));
 
                         if (state == TriggerState.None)
                         {
@@ -386,13 +321,9 @@ namespace VOL.Core.Quartz
         /// <returns></returns>
         public static Sys_QuartzOptions GetTaskOptions(this IJobExecutionContext context)
         {
-            AbstractTrigger trigger =
-                (context as JobExecutionContextImpl).Trigger as AbstractTrigger;
-            Sys_QuartzOptions taskOptions = _taskList
-                .Where(x => x.Id.ToString() == trigger.Name)
-                .FirstOrDefault();
-            return taskOptions
-                ?? _taskList.Where(x => x.Id.ToString() == trigger.JobName).FirstOrDefault();
+            AbstractTrigger trigger = (context as JobExecutionContextImpl).Trigger as AbstractTrigger;
+            Sys_QuartzOptions taskOptions = _taskList.Where(x => x.Id.ToString() == trigger.Name).FirstOrDefault();
+            return taskOptions ?? _taskList.Where(x => x.Id.ToString() == trigger.JobName).FirstOrDefault();
         }
 
         /// <summary>
@@ -403,21 +334,9 @@ namespace VOL.Core.Quartz
         /// <returns></returns>
         public static (bool, object) Exists(this Sys_QuartzOptions taskOptions, bool init)
         {
-            if (
-                !init
-                && _taskList.Any(x =>
-                    x.TaskName == taskOptions.TaskName && x.GroupName == taskOptions.GroupName
-                )
-            )
+            if (!init && _taskList.Any(x => x.TaskName == taskOptions.TaskName && x.GroupName == taskOptions.GroupName))
             {
-                return (
-                    false,
-                    new
-                    {
-                        status = false,
-                        msg = $"作业:{taskOptions.TaskName},分组：{taskOptions.GroupName}已经存在",
-                    }
-                );
+                return (false, new { status = false, msg = $"作业:{taskOptions.TaskName},分组：{taskOptions.GroupName}已经存在" });
             }
             return (true, null);
         }

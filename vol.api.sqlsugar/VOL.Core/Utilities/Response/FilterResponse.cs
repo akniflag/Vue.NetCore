@@ -16,10 +16,7 @@ namespace VOL.Core.Utilities
             GetContentResult(context, actionResult, null);
         }
 
-        public static void SetActionResult(
-            ActionExecutingContext context,
-            WebResponseContent responseData
-        )
+        public static void SetActionResult(ActionExecutingContext context, WebResponseContent responseData)
         {
             context.Result = new ContentResult()
             {
@@ -29,11 +26,7 @@ namespace VOL.Core.Utilities
             };
         }
 
-        public static void GetContentResult(
-            FilterContext context,
-            IActionResult actionResult,
-            WebResponseContent responseData
-        )
+        public static void GetContentResult(FilterContext context, IActionResult actionResult, WebResponseContent responseData)
         {
             responseData = responseData ?? new WebResponseContent();
             responseData.Set(ResponseType.ServerError);

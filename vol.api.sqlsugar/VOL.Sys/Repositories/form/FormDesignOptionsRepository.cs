@@ -10,9 +10,7 @@ using VOL.Sys.IRepositories;
 
 namespace VOL.Sys.Repositories
 {
-    public partial class FormDesignOptionsRepository
-        : RepositoryBase<FormDesignOptions>,
-            IFormDesignOptionsRepository
+    public partial class FormDesignOptionsRepository : RepositoryBase<FormDesignOptions>, IFormDesignOptionsRepository
     {
         public FormDesignOptionsRepository(VOLContext dbContext)
             : base(dbContext) { }

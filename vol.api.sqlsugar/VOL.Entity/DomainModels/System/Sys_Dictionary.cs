@@ -14,12 +14,7 @@ using VOL.Entity.SystemModels;
 
 namespace VOL.Entity.DomainModels
 {
-    [Entity(
-        TableCnName = "字典数据",
-        TableName = "Sys_Dictionary",
-        DetailTable = new Type[] { typeof(Sys_DictionaryList) },
-        DetailTableCnName = "字典明细"
-    )]
+    [Entity(TableCnName = "字典数据", TableName = "Sys_Dictionary", DetailTable = new Type[] { typeof(Sys_DictionaryList) }, DetailTableCnName = "字典明细")]
     public partial class Sys_Dictionary : BaseEntity
     {
         /// <summary>

@@ -14,11 +14,7 @@ using VOL.Entity.SystemModels;
 
 namespace VOL.Entity.DomainModels
 {
-    [Entity(
-        TableCnName = "工线路线",
-        TableName = "MES_ProcessRoute",
-        DBServer = "ServiceDbContext"
-    )]
+    [Entity(TableCnName = "工线路线", TableName = "MES_ProcessRoute", DBServer = "ServiceDbContext")]
     public partial class MES_ProcessRoute : BaseEntity
     {
         /// <summary>

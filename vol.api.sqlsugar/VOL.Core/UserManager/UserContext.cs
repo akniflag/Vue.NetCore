@@ -112,9 +112,7 @@ namespace VOL.Core.ManageUser
                     UserName = s.UserName,
                     UserTrueName = s.UserTrueName,
                     Enable = 1,
-                    DeptIds = string.IsNullOrEmpty(s.DeptIds)
-                        ? new List<Guid>()
-                        : s.DeptIds.Split(",").Select(x => (Guid)x.GetGuid()).ToList(),
+                    DeptIds = string.IsNullOrEmpty(s.DeptIds) ? new List<Guid>() : s.DeptIds.Split(",").Select(x => (Guid)x.GetGuid()).ToList(),
                 })
                 .FirstOrDefault();
 
@@ -128,21 +126,18 @@ namespace VOL.Core.ManageUser
         /// <summary>
         /// 获取角色权限时通过安全字典锁定的角色id
         /// </summary>
-        private static ConcurrentDictionary<string, object> objKeyValue =
-            new ConcurrentDictionary<string, object>();
+        private static ConcurrentDictionary<string, object> objKeyValue = new ConcurrentDictionary<string, object>();
 
         /// <summary>
         /// 角色权限的版本号
         /// </summary>
-        private static readonly Dictionary<int, string> rolePermissionsVersion =
-            new Dictionary<int, string>();
+        private static readonly Dictionary<int, string> rolePermissionsVersion = new Dictionary<int, string>();
 
         /// <summary>
         /// 每个角色ID对应的菜单权限（已做静态化处理）
         /// 每次获取权限时用当前服务器的版本号与redis/memory缓存的版本比较,如果不同会重新刷新缓存
         /// </summary>
-        private static readonly Dictionary<int, List<Permissions>> rolePermissions =
-            new Dictionary<int, List<Permissions>>();
+        private static readonly Dictionary<int, List<Permissions>> rolePermissions = new Dictionary<int, List<Permissions>>();
 
         /// <summary>
         /// 获取用户所有的菜单权限
@@ -158,18 +153,11 @@ namespace VOL.Core.ManageUser
         /// <param name="menuId"></param>
         public void RefreshWithMenuActionChange(int menuId)
         {
-            foreach (
-                var roleId in rolePermissions
-                    .Where(c => c.Value.Any(x => x.Menu_Id == menuId))
-                    .Select(s => s.Key)
-            )
+            foreach (var roleId in rolePermissions.Where(c => c.Value.Any(x => x.Menu_Id == menuId)).Select(s => s.Key))
             {
                 if (rolePermissionsVersion.ContainsKey(roleId))
                 {
-                    CacheService.Add(
-                        roleId.GetRoleIdKey(),
-                        DateTime.Now.ToString("yyyyMMddHHMMssfff")
-                    );
+                    CacheService.Add(roleId.GetRoleIdKey(), DateTime.Now.ToString("yyyyMMddHHMMssfff"));
                 }
             }
         }
@@ -201,10 +189,7 @@ namespace VOL.Core.ManageUser
         public Permissions GetPermissions(Func<Permissions, bool> func)
         {
             // 2022.03.26增移动端加菜单类型判断
-            return GetPermissions(RoleId)
-                .Where(func)
-                .Where(x => x.MenuType == MenuType)
-                .FirstOrDefault();
+            return GetPermissions(RoleId).Where(func).Where(x => x.MenuType == MenuType).FirstOrDefault();
         }
 
         private List<Permissions> ActionToArray(List<Permissions> permissions)
@@ -214,12 +199,7 @@ namespace VOL.Core.ManageUser
                 try
                 {
                     var menuAuthArr = x.MenuAuth.DeserializeObject<List<Sys_Actions>>();
-                    x.UserAuthArr = string.IsNullOrEmpty(x.UserAuth)
-                        ? new string[0]
-                        : x
-                            .UserAuth.Split(",")
-                            .Where(c => menuAuthArr.Any(m => m.Value == c))
-                            .ToArray();
+                    x.UserAuthArr = string.IsNullOrEmpty(x.UserAuth) ? new string[0] : x.UserAuth.Split(",").Where(c => menuAuthArr.Any(m => m.Value == c)).ToArray();
                 }
                 catch { }
                 finally
@@ -239,12 +219,7 @@ namespace VOL.Core.ManageUser
             {
                 try
                 {
-                    x.UserAuthArr = string.IsNullOrEmpty(x.UserAuth)
-                        ? new string[0]
-                        : x
-                            .UserAuth.DeserializeObject<List<Sys_Actions>>()
-                            .Select(s => s.Value)
-                            .ToArray();
+                    x.UserAuthArr = string.IsNullOrEmpty(x.UserAuth) ? new string[0] : x.UserAuth.DeserializeObject<List<Sys_Actions>>().Select(s => s.Value).ToArray();
                 }
                 catch { }
                 finally
@@ -285,14 +260,9 @@ namespace VOL.Core.ManageUser
 
             //角色有缓存，并且当前服务器的角色版本号与redis/memory缓存角色的版本号相同直接返回静态对象角色权限
             string currnetVeriosn = "";
-            if (
-                rolePermissionsVersion.TryGetValue(roleId, out currnetVeriosn)
-                && currnetVeriosn == cacheService.Get(roleKey)
-            )
+            if (rolePermissionsVersion.TryGetValue(roleId, out currnetVeriosn) && currnetVeriosn == cacheService.Get(roleKey))
             {
-                return rolePermissions.ContainsKey(roleId)
-                    ? rolePermissions[roleId]
-                    : new List<Permissions>();
+                return rolePermissions.ContainsKey(roleId) ? rolePermissions[roleId] : new List<Permissions>();
             }
 
             //锁定每个角色，通过安全字典减少锁粒度，否则多个同时角色获取缓存会导致阻塞
@@ -300,14 +270,9 @@ namespace VOL.Core.ManageUser
             //锁定每个角色
             lock (objId)
             {
-                if (
-                    rolePermissionsVersion.TryGetValue(roleId, out currnetVeriosn)
-                    && currnetVeriosn == cacheService.Get(roleKey)
-                )
+                if (rolePermissionsVersion.TryGetValue(roleId, out currnetVeriosn) && currnetVeriosn == cacheService.Get(roleKey))
                 {
-                    return rolePermissions.ContainsKey(roleId)
-                        ? rolePermissions[roleId]
-                        : new List<Permissions>();
+                    return rolePermissions.ContainsKey(roleId) ? rolePermissions[roleId] : new List<Permissions>();
                 }
 
                 //没有redis/memory缓存角色的版本号或与当前服务器的角色版本号不同时，刷新缓存
@@ -362,8 +327,7 @@ namespace VOL.Core.ManageUser
             if (roleId <= 0)
                 roleId = RoleId;
             tableName = tableName.ToLower();
-            return GetPermissions(roleId)
-                .Any(x => x.TableName == tableName && x.UserAuthArr.Contains(authName));
+            return GetPermissions(roleId).Any(x => x.TableName == tableName && x.UserAuthArr.Contains(authName));
         }
 
         /// <summary>
@@ -373,24 +337,14 @@ namespace VOL.Core.ManageUser
         /// <param name="authName"></param>
         /// <param name="roleId"></param>
         /// <returns></returns>
-        public bool ExistsPermissions(
-            string tableName,
-            ActionPermissionOptions actionPermission,
-            int roleId = 0
-        )
+        public bool ExistsPermissions(string tableName, ActionPermissionOptions actionPermission, int roleId = 0)
         {
             return ExistsPermissions(tableName, actionPermission.ToString(), roleId);
         }
 
         public int UserId
         {
-            get
-            {
-                return (
-                    Context.User.FindFirstValue(JwtRegisteredClaimNames.Jti)
-                    ?? Context.User.FindFirstValue(ClaimTypes.NameIdentifier)
-                ).GetInt();
-            }
+            get { return (Context.User.FindFirstValue(JwtRegisteredClaimNames.Jti) ?? Context.User.FindFirstValue(ClaimTypes.NameIdentifier)).GetInt(); }
         }
 
         public string UserName

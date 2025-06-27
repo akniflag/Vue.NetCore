@@ -22,10 +22,7 @@ namespace VOL.Sys.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         [ActivatorUtilitiesConstructor]
-        public Sys_QuartzOptionsController(
-            ISys_QuartzOptionsService service,
-            IHttpContextAccessor httpContextAccessor
-        )
+        public Sys_QuartzOptionsController(ISys_QuartzOptionsService service, IHttpContextAccessor httpContextAccessor)
             : base(service)
         {
             _service = service;

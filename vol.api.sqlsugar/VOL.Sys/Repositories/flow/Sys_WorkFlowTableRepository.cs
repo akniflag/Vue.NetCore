@@ -10,9 +10,7 @@ using VOL.Sys.IRepositories;
 
 namespace VOL.Sys.Repositories
 {
-    public partial class Sys_WorkFlowTableRepository
-        : RepositoryBase<Sys_WorkFlowTable>,
-            ISys_WorkFlowTableRepository
+    public partial class Sys_WorkFlowTableRepository : RepositoryBase<Sys_WorkFlowTable>, ISys_WorkFlowTableRepository
     {
         public Sys_WorkFlowTableRepository(VOLContext dbContext)
             : base(dbContext) { }

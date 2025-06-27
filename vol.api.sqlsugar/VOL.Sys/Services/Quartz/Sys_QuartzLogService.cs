@@ -12,10 +12,7 @@ using VOL.Sys.IServices;
 
 namespace VOL.Sys.Services
 {
-    public partial class Sys_QuartzLogService
-        : ServiceBase<Sys_QuartzLog, ISys_QuartzLogRepository>,
-            ISys_QuartzLogService,
-            IDependency
+    public partial class Sys_QuartzLogService : ServiceBase<Sys_QuartzLog, ISys_QuartzLogRepository>, ISys_QuartzLogService, IDependency
     {
         public Sys_QuartzLogService(ISys_QuartzLogRepository repository)
             : base(repository)

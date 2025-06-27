@@ -14,12 +14,7 @@ using VOL.Entity.SystemModels;
 
 namespace VOL.Entity.DomainModels
 {
-    [Entity(
-        TableCnName = "审批流程",
-        TableName = "Sys_WorkFlowTable",
-        DetailTable = new Type[] { typeof(Sys_WorkFlowTableStep) },
-        DetailTableCnName = "审批节点"
-    )]
+    [Entity(TableCnName = "审批流程", TableName = "Sys_WorkFlowTable", DetailTable = new Type[] { typeof(Sys_WorkFlowTableStep) }, DetailTableCnName = "审批节点")]
     public partial class Sys_WorkFlowTable : BaseEntity
     {
         /// <summary>

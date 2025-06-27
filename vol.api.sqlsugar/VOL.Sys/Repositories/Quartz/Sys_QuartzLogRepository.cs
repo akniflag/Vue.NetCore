@@ -10,9 +10,7 @@ using VOL.Sys.IRepositories;
 
 namespace VOL.Sys.Repositories
 {
-    public partial class Sys_QuartzLogRepository
-        : RepositoryBase<Sys_QuartzLog>,
-            ISys_QuartzLogRepository
+    public partial class Sys_QuartzLogRepository : RepositoryBase<Sys_QuartzLog>, ISys_QuartzLogRepository
     {
         public Sys_QuartzLogRepository(VOLContext dbContext)
             : base(dbContext) { }

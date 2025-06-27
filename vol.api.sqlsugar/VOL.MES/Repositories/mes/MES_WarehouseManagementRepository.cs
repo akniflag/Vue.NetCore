@@ -10,9 +10,7 @@ using VOL.MES.IRepositories;
 
 namespace VOL.MES.Repositories
 {
-    public partial class MES_WarehouseManagementRepository
-        : RepositoryBase<MES_WarehouseManagement>,
-            IMES_WarehouseManagementRepository
+    public partial class MES_WarehouseManagementRepository : RepositoryBase<MES_WarehouseManagement>, IMES_WarehouseManagementRepository
     {
         public MES_WarehouseManagementRepository(VOLContext dbContext)
             : base(dbContext) { }

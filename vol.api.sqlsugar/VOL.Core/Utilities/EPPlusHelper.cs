@@ -44,67 +44,36 @@ namespace VOL.Core.Utilities
             List<T> entities = new List<T>();
             using (ExcelPackage package = new ExcelPackage(file))
             {
-                if (
-                    package.Workbook.Worksheets.Count == 0
-                    || package.Workbook.Worksheets.FirstOrDefault().Dimension.End.Row <= 1
-                )
+                if (package.Workbook.Worksheets.Count == 0 || package.Workbook.Worksheets.FirstOrDefault().Dimension.End.Row <= 1)
                     return responseContent.Error("未导入数据");
                 //2020.08.11修复获取表结构信息时，表为别名时查不到数据的问题
                 //typeof(T).GetEntityTableName()
-                List<CellOptions> cellOptions = GetExportColumnInfo(
-                    typeof(T).Name,
-                    false,
-                    false,
-                    columns: exportColumns?.GetExpressionToArray()
-                );
+                List<CellOptions> cellOptions = GetExportColumnInfo(typeof(T).Name, false, false, columns: exportColumns?.GetExpressionToArray());
                 //设置忽略的列
                 if (exportColumns != null)
                 {
-                    cellOptions = cellOptions
-                        .Where(x =>
-                            exportColumns
-                                .GetExpressionToArray()
-                                .Select(s => s.ToLower())
-                                .Contains(x.ColumnName.ToLower())
-                        )
-                        .ToList();
+                    cellOptions = cellOptions.Where(x => exportColumns.GetExpressionToArray().Select(s => s.ToLower()).Contains(x.ColumnName.ToLower())).ToList();
                 }
                 else if (ignoreTemplate != null)
                 {
-                    cellOptions = cellOptions
-                        .Where(x =>
-                            !ignoreTemplate
-                                .Select(s => s.ToLower())
-                                .Contains(x.ColumnName.ToLower())
-                        )
-                        .ToList();
+                    cellOptions = cellOptions.Where(x => !ignoreTemplate.Select(s => s.ToLower()).Contains(x.ColumnName.ToLower())).ToList();
                 }
 
                 ExcelWorksheet sheetFirst = package.Workbook.Worksheets.FirstOrDefault();
 
-                for (
-                    int j = sheetFirst.Dimension.Start.Column, k = sheetFirst.Dimension.End.Column;
-                    j <= k;
-                    j++
-                )
+                for (int j = sheetFirst.Dimension.Start.Column, k = sheetFirst.Dimension.End.Column; j <= k; j++)
                 {
                     string columnCNName = sheetFirst.Cells[1, j].Value?.ToString()?.Trim();
                     if (!string.IsNullOrEmpty(columnCNName))
                     {
-                        CellOptions options = cellOptions
-                            .Where(x => x.ColumnCNName == columnCNName)
-                            .FirstOrDefault();
+                        CellOptions options = cellOptions.Where(x => x.ColumnCNName == columnCNName).FirstOrDefault();
                         if (options == null)
                         {
-                            return responseContent.Error(
-                                "导入文件列[" + columnCNName + "]不是模板中的列"
-                            );
+                            return responseContent.Error("导入文件列[" + columnCNName + "]不是模板中的列");
                         }
                         if (options.Index > 0)
                         {
-                            return responseContent.Error(
-                                "导入文件列[" + columnCNName + "]不能重复"
-                            );
+                            return responseContent.Error("导入文件列[" + columnCNName + "]不能重复");
                         }
                         options.Index = j;
                     }
@@ -116,31 +85,19 @@ namespace VOL.Core.Utilities
                 string[] ignoreSelectValidationFields = null;
                 if (ignoreSelectValidationColumns != null)
                 {
-                    ignoreSelectValidationFields =
-                        ignoreSelectValidationColumns.GetExpressionToArray();
+                    ignoreSelectValidationFields = ignoreSelectValidationColumns.GetExpressionToArray();
                 }
                 else
                 {
                     ignoreSelectValidationFields = new string[0];
                 }
 
-                PropertyInfo[] propertyInfos = typeof(T)
-                    .GetProperties()
-                    .Where(x => cellOptions.Select(s => s.ColumnName).Contains(x.Name))
-                    .ToArray();
+                PropertyInfo[] propertyInfos = typeof(T).GetProperties().Where(x => cellOptions.Select(s => s.ColumnName).Contains(x.Name)).ToArray();
                 ExcelWorksheet sheet = package.Workbook.Worksheets.FirstOrDefault();
-                for (
-                    int m = sheet.Dimension.Start.Row + 1, n = sheet.Dimension.End.Row;
-                    m <= n;
-                    m++
-                )
+                for (int m = sheet.Dimension.Start.Row + 1, n = sheet.Dimension.End.Row; m <= n; m++)
                 {
                     T entity = Activator.CreateInstance<T>();
-                    for (
-                        int j = sheet.Dimension.Start.Column, k = sheet.Dimension.End.Column;
-                        j <= k;
-                        j++
-                    )
+                    for (int j = sheet.Dimension.Start.Column, k = sheet.Dimension.End.Column; j <= k; j++)
                     {
                         string value = sheet.Cells[m, j].Value?.ToString();
                         //2022.06.20增加原生excel读取方法
@@ -150,51 +107,31 @@ namespace VOL.Core.Utilities
                         }
 
                         CellOptions options = cellOptions.Where(x => x.Index == j).FirstOrDefault();
-                        PropertyInfo property = propertyInfos
-                            .Where(x => x.Name == options.ColumnName)
-                            .FirstOrDefault();
+                        PropertyInfo property = propertyInfos.Where(x => x.Name == options.ColumnName).FirstOrDefault();
                         //2021.06.04优化判断
                         if (string.IsNullOrEmpty(value))
                         {
                             if (options.Requierd)
                             {
-                                return responseContent.Error(
-                                    $"第{m}行[{options.ColumnCNName}]验证未通过,不能为空。"
-                                );
+                                return responseContent.Error($"第{m}行[{options.ColumnCNName}]验证未通过,不能为空。");
                             }
                             continue;
                         }
 
                         //验证字典数据
                         //2020.09.20增加判断数据源是否有值
-                        if (
-                            !string.IsNullOrEmpty(options.DropNo)
-                            && !string.IsNullOrEmpty(value)
-                            && !ignoreSelectValidationFields.Contains(property.Name)
-                        )
+                        if (!string.IsNullOrEmpty(options.DropNo) && !string.IsNullOrEmpty(value) && !ignoreSelectValidationFields.Contains(property.Name))
                         {
                             if (options.KeyValues == null)
                             {
-                                return responseContent.Error(
-                                    $"[{options.ColumnCNName}]字段数字典编号[{options.DropNo}]缺失,请检查字典配置"
-                                );
+                                return responseContent.Error($"[{options.ColumnCNName}]字段数字典编号[{options.DropNo}]缺失,请检查字典配置");
                             }
                             string key = null;
                             //2022.11.21增加导入多选的支持
-                            if (
-                                (options.EditType == "selectList" || options.EditType == "checkbox")
-                                && !string.IsNullOrEmpty(value)
-                            )
+                            if ((options.EditType == "selectList" || options.EditType == "checkbox") && !string.IsNullOrEmpty(value))
                             {
-                                var cellValues = value
-                                    .Replace("，", ",")
-                                    .Split(",")
-                                    .Where(x => !string.IsNullOrEmpty(x))
-                                    .ToArray();
-                                var keys = options
-                                    .KeyValues.Where(x => cellValues.Contains(x.Value))
-                                    .Select(s => s.Key)
-                                    .ToArray();
+                                var cellValues = value.Replace("，", ",").Split(",").Where(x => !string.IsNullOrEmpty(x)).ToArray();
+                                var keys = options.KeyValues.Where(x => cellValues.Contains(x.Value)).Select(s => s.Key).ToArray();
                                 if (cellValues.Length == keys.Length)
                                 {
                                     key = string.Join(",", keys);
@@ -202,38 +139,24 @@ namespace VOL.Core.Utilities
                             }
                             else
                             {
-                                key = options
-                                    .KeyValues.Where(x => x.Value == value)
-                                    .Select(s => s.Key)
-                                    .FirstOrDefault();
+                                key = options.KeyValues.Where(x => x.Value == value).Select(s => s.Key).FirstOrDefault();
                             }
 
                             if (key == null) //&& options.Requierd
                             {
                                 //小于20个字典项，直接提示所有可选value
-                                string values =
-                                    options.KeyValues.Count < 20
-                                        ? (string.Join(',', options.KeyValues.Select(s => s.Value)))
-                                        : options.ColumnCNName;
-                                return responseContent.Error(
-                                    $"第{m}行[{options.ColumnCNName}]验证未通过,必须是字典数据中[{values}]的值。"
-                                );
+                                string values = options.KeyValues.Count < 20 ? (string.Join(',', options.KeyValues.Select(s => s.Value))) : options.ColumnCNName;
+                                return responseContent.Error($"第{m}行[{options.ColumnCNName}]验证未通过,必须是字典数据中[{values}]的值。");
                             }
                             //将值设置为数据字典的Key,如果导入为是/否字典项，存在表中应该对为1/0
                             value = key;
                         }
-                        else if (
-                            property.PropertyType == typeof(DateTime)
-                            || property.PropertyType == typeof(DateTime?)
-                        )
+                        else if (property.PropertyType == typeof(DateTime) || property.PropertyType == typeof(DateTime?))
                         {
                             //2021.06.04增加日期格式处理
                             if (value.Length == 5 && int.TryParse(value, out int days))
                             {
-                                property.SetValue(
-                                    entity,
-                                    new DateTime(1900, 1, 1).AddDays(days - 2)
-                                );
+                                property.SetValue(entity, new DateTime(1900, 1, 1).AddDays(days - 2));
                             }
                             else
                             {
@@ -243,16 +166,11 @@ namespace VOL.Core.Utilities
                         }
 
                         //验证导入与实体数据类型是否相同
-                        (bool, string, object) result = property.ValidationProperty(
-                            value,
-                            options.Requierd
-                        );
+                        (bool, string, object) result = property.ValidationProperty(value, options.Requierd);
 
                         if (!result.Item1)
                         {
-                            return responseContent.Error(
-                                $"第{m}行[{options.ColumnCNName}]验证未通过,{result.Item2}"
-                            );
+                            return responseContent.Error($"第{m}行[{options.ColumnCNName}]验证未通过,{result.Item2}");
                         }
 
                         property.SetValue(entity, value.ChangeType(property.PropertyType));
@@ -271,23 +189,14 @@ namespace VOL.Core.Utilities
         /// <param name="columnCNName">key为字段名, ValueTuple<string, int>为字段中文名及列宽度</param>
         /// <param name="dicNos"> List<ValueTuple<string, string, string>>item1列名,item2 字典value,item3字典name </param>
         /// <returns>返回文件保存的路径</returns>
-        public static string Export(
-            DataTable table,
-            List<CellOptions> cellOptions,
-            string savePath,
-            string fileName
-        )
+        public static string Export(DataTable table, List<CellOptions> cellOptions, string savePath, string fileName)
         {
             if (!Directory.Exists(savePath))
                 Directory.CreateDirectory(savePath);
 
             //获取所有有值的数据源
             var dicNoKeys = cellOptions
-                .Where(x =>
-                    !string.IsNullOrEmpty(x.DropNo)
-                    && x.KeyValues != null
-                    && x.KeyValues.Keys.Count > 0
-                )
+                .Where(x => !string.IsNullOrEmpty(x.DropNo) && x.KeyValues != null && x.KeyValues.Keys.Count > 0)
                 .Select(x => new { x.DropNo, x.ColumnName })
                 .Distinct()
                 .ToList();
@@ -303,9 +212,7 @@ namespace VOL.Core.Utilities
                         worksheet.Cells[1, i + 1].Style.Fill.BackgroundColor.SetColor(Color.Gray); //背景色
                         worksheet.Cells[1, i + 1].Style.Font.Color.SetColor(Color.White);
                     }
-                    CellOptions options = cellOptions
-                        .Where(x => x.ColumnName == table.Columns[i].ColumnName)
-                        .FirstOrDefault();
+                    CellOptions options = cellOptions.Where(x => x.ColumnName == table.Columns[i].ColumnName).FirstOrDefault();
                     if (options != null)
                     {
                         worksheet.Column(i + 1).Width = options.ColumnWidth / 6.00;
@@ -325,11 +232,7 @@ namespace VOL.Core.Utilities
                         string cellValue = (table.Rows[i][j] ?? "").ToString();
                         if (dicNoKeys.Exists(x => x.ColumnName == table.Columns[j].ColumnName))
                         {
-                            cellOptions
-                                .Where(x => x.ColumnName == table.Columns[j].ColumnName)
-                                .Select(s => s.KeyValues)
-                                .FirstOrDefault()
-                                .TryGetValue(cellValue, out string result);
+                            cellOptions.Where(x => x.ColumnName == table.Columns[j].ColumnName).Select(s => s.KeyValues).FirstOrDefault().TryGetValue(cellValue, out string result);
                             cellValue = result ?? cellValue;
                         }
                         worksheet.Cells[i + 2, j + 1].Value = cellValue;
@@ -349,12 +252,7 @@ namespace VOL.Core.Utilities
         /// <param name="savePath">导出文件的绝对路径</param>
         /// <param name="fileName">导出的文件名+后缀,如:123.xlsx</param>
         /// <returns></returns>
-        public static string ExportTemplate<T>(
-            List<string> exportColumns,
-            List<string> ignoreColumns,
-            string savePath,
-            string fileName
-        )
+        public static string ExportTemplate<T>(List<string> exportColumns, List<string> ignoreColumns, string savePath, string fileName)
         {
             return Export<T>(null, exportColumns, ignoreColumns, savePath, fileName, true);
         }
@@ -368,21 +266,9 @@ namespace VOL.Core.Utilities
         /// <param name="savePath">导出文件的绝对路径</param>
         /// <param name="fileName">导出的文件名+后缀,如:123.xlsx</param>
         /// <returns></returns>
-        public static string ExportTemplate<T>(
-            Expression<Func<T, object>> exportColumns,
-            List<string> ignoreColumns,
-            string savePath,
-            string fileName
-        )
+        public static string ExportTemplate<T>(Expression<Func<T, object>> exportColumns, List<string> ignoreColumns, string savePath, string fileName)
         {
-            return Export<T>(
-                null,
-                exportColumns?.GetExpressionToArray(),
-                ignoreColumns,
-                savePath,
-                fileName,
-                true
-            );
+            return Export<T>(null, exportColumns?.GetExpressionToArray(), ignoreColumns, savePath, fileName, true);
         }
 
         /// <summary>
@@ -393,11 +279,7 @@ namespace VOL.Core.Utilities
         /// <param name="savePath">导出文件的绝对路径</param>
         /// <param name="fileName">导出的文件名+后缀,如:123.xlsx</param>
         /// <returns></returns>
-        public static string ExportTemplate<T>(
-            List<string> ignoreColumns,
-            string savePath,
-            string fileName
-        )
+        public static string ExportTemplate<T>(List<string> ignoreColumns, string savePath, string fileName)
         {
             return Export<T>(null, null, ignoreColumns, savePath, fileName, true);
         }
@@ -414,22 +296,9 @@ namespace VOL.Core.Utilities
         /// <param name="fileName"></param>
         /// <param name="template"></param>
         /// <returns></returns>
-        public static string Export<T>(
-            List<T> list,
-            Expression<Func<T, object>> ignore,
-            string savePath,
-            string fileName,
-            bool template = false
-        )
+        public static string Export<T>(List<T> list, Expression<Func<T, object>> ignore, string savePath, string fileName, bool template = false)
         {
-            return Export(
-                list,
-                null,
-                ignore?.GetExpressionProperty(),
-                savePath,
-                fileName,
-                template
-            );
+            return Export(list, null, ignore?.GetExpressionProperty(), savePath, fileName, template);
         }
 
         /// <summary>
@@ -444,14 +313,7 @@ namespace VOL.Core.Utilities
         /// <param name="fileName">保存的文件名</param>
         ///  <param name="template">是否为下载模板</param>
         /// <returns></returns>
-        public static string Export<T>(
-            List<T> list,
-            IEnumerable<string> exportColumns,
-            IEnumerable<string> ignoreColumns,
-            string savePath,
-            string fileName,
-            bool template = false
-        )
+        public static string Export<T>(List<T> list, IEnumerable<string> exportColumns, IEnumerable<string> ignoreColumns, string savePath, string fileName, bool template = false)
         {
             if (!Directory.Exists(savePath))
                 Directory.CreateDirectory(savePath);
@@ -459,19 +321,11 @@ namespace VOL.Core.Utilities
             //获取代码生成器对应的配置信息
             //  List<CellOptions> cellOptions = GetExportColumnInfo(typeof(T).GetEntityTableName(), template);
             //2020.06.02修复使用表别名时读取不到配置信息
-            List<CellOptions> cellOptions = GetExportColumnInfo(
-                typeof(T).Name,
-                template,
-                columns: exportColumns?.ToArray()
-            );
+            List<CellOptions> cellOptions = GetExportColumnInfo(typeof(T).Name, template, columns: exportColumns?.ToArray());
             string fullPath = savePath + fileName;
             //获取所有有值的数据源
             var dicNoKeys = cellOptions
-                .Where(x =>
-                    !string.IsNullOrEmpty(x.DropNo)
-                    && x.KeyValues != null
-                    && x.KeyValues.Keys.Count > 0
-                )
+                .Where(x => !string.IsNullOrEmpty(x.DropNo) && x.KeyValues != null && x.KeyValues.Keys.Count > 0)
                 .Select(x => new
                 {
                     x.DropNo,
@@ -483,12 +337,7 @@ namespace VOL.Core.Utilities
                 .ToList();
             //2021.01.24修复多选类型，导出excel文件没有转换数据源的问题
             var selectList = dicNoKeys
-                .Where(x =>
-                    x.SearchType == "checkbox"
-                    || x.SearchType == "selectList"
-                    || x.EditType == "checkbox"
-                    || x.EditType == "selectList"
-                )
+                .Where(x => x.SearchType == "checkbox" || x.SearchType == "selectList" || x.EditType == "checkbox" || x.EditType == "selectList")
                 .Select(s => s.ColumnName)
                 .ToArray();
 
@@ -505,9 +354,7 @@ namespace VOL.Core.Utilities
                 var properties = typeof(T).GetProperties();
                 foreach (var name in exportColumns)
                 {
-                    var property = properties
-                        .Where(x => x.Name.ToLower() == name.ToLower())
-                        .FirstOrDefault();
+                    var property = properties.Where(x => x.Name.ToLower() == name.ToLower()).FirstOrDefault();
                     if (property != null)
                     {
                         propertyInfo.Add(property);
@@ -533,9 +380,7 @@ namespace VOL.Core.Utilities
                 var properties = typeof(T).GetProperties();
                 foreach (var item in cellOptions)
                 {
-                    var property = properties
-                        .Where(x => x.Name == item.ColumnName)
-                        .FirstOrDefault();
+                    var property = properties.Where(x => x.Name == item.ColumnName).FirstOrDefault();
                     if (property != null)
                     {
                         propertyInfo.Add(property);
@@ -545,12 +390,7 @@ namespace VOL.Core.Utilities
             string[] dateArr = null;
             if (!template)
             {
-                dateArr = propertyInfo
-                    .Where(x =>
-                        x.PropertyType == typeof(DateTime) || x.PropertyType == typeof(DateTime?)
-                    )
-                    .Select(s => s.Name)
-                    .ToArray();
+                dateArr = propertyInfo.Where(x => x.PropertyType == typeof(DateTime) || x.PropertyType == typeof(DateTime?)).Select(s => s.Name).ToArray();
             }
 
             using (ExcelPackage package = new ExcelPackage())
@@ -579,14 +419,10 @@ namespace VOL.Core.Utilities
                                 backgroundColor = Color.White;
                             }
                         }
-                        worksheet
-                            .Cells[1, i + 1]
-                            .Style.Fill.BackgroundColor.SetColor(backgroundColor); //背景色
+                        worksheet.Cells[1, i + 1].Style.Fill.BackgroundColor.SetColor(backgroundColor); //背景色
                         worksheet.Cells[1, i + 1].Style.Font.Color.SetColor(fontColor); //字体颜色
                     }
-                    CellOptions options = cellOptions
-                        .Where(x => x.ColumnName == columnName)
-                        .FirstOrDefault();
+                    CellOptions options = cellOptions.Where(x => x.ColumnName == columnName).FirstOrDefault();
                     if (options != null)
                     {
                         worksheet.Column(i + 1).Width = options.ColumnWidth / 6.00;
@@ -594,9 +430,7 @@ namespace VOL.Core.Utilities
                     }
                     else
                     {
-                        columnName =
-                            propertyInfo[i].GetTypeCustomValue<DisplayAttribute>(x => x.Name)
-                            ?? columnName;
+                        columnName = propertyInfo[i].GetTypeCustomValue<DisplayAttribute>(x => x.Name) ?? columnName;
                         worksheet.Column(i + 1).Width = 15;
                         worksheet.Cells[1, i + 1].Value = columnName;
                     }
@@ -613,11 +447,7 @@ namespace VOL.Core.Utilities
                     var values = cellValues.Split(",");
                     for (int i = 0; i < values.Length; i++)
                     {
-                        cellOptions
-                            .Where(x => x.ColumnName == propertyName)
-                            .Select(s => s.KeyValues)
-                            .FirstOrDefault()
-                            .TryGetValue(values[i], out string result);
+                        cellOptions.Where(x => x.ColumnName == propertyName).Select(s => s.KeyValues).FirstOrDefault().TryGetValue(values[i], out string result);
                         yield return result ?? values[i];
                     }
                 }
@@ -629,29 +459,18 @@ namespace VOL.Core.Utilities
                         if (dateArr != null && dateArr.Contains(propertyInfo[j].Name))
                         {
                             object value = propertyInfo[j].GetValue(list[i]);
-                            cellValue =
-                                value == null
-                                    ? ""
-                                    : ((DateTime)value)
-                                        .ToString("yyyy-MM-dd HH:mm:sss")
-                                        .Replace(" 00:00:00", "");
+                            cellValue = value == null ? "" : ((DateTime)value).ToString("yyyy-MM-dd HH:mm:sss").Replace(" 00:00:00", "");
                         }
                         else
                         {
                             cellValue = propertyInfo[j].GetValue(list[i]);
                         }
-                        if (
-                            cellValue != null
-                            && dicNoKeys.Exists(x => x.ColumnName == propertyInfo[j].Name)
-                        )
+                        if (cellValue != null && dicNoKeys.Exists(x => x.ColumnName == propertyInfo[j].Name))
                         {
                             //2021.01.24修复多选类型，导出excel文件没有转换数据源的问题
                             if (selectList.Contains(propertyInfo[j].Name))
                             {
-                                cellValue = string.Join(
-                                    ",",
-                                    GetListValues(cellValue.ToString(), propertyInfo[j].Name)
-                                );
+                                cellValue = string.Join(",", GetListValues(cellValue.ToString(), propertyInfo[j].Name));
                             }
                             else
                             {
@@ -679,20 +498,13 @@ namespace VOL.Core.Utilities
         /// <param name="temlate">是否为下载模板</param>
         /// filterKeyValue是否过滤Key相同的数据
         /// <returns></returns>
-        private static List<CellOptions> GetExportColumnInfo(
-            string tableName,
-            bool temlate = false,
-            bool filterKeyValue = true,
-            string[] columns = null
-        )
+        private static List<CellOptions> GetExportColumnInfo(string tableName, bool temlate = false, bool filterKeyValue = true, string[] columns = null)
         {
             //&& x.IsDisplay == 1&&x.IsReadDataset==0只导出代码生器中设置为显示并且不是只读的列，可根据具体业务设置导出列
             // && x.IsReadDataset == 0
             //2020.06.02增加不区分大表名大小写: 原因mysql可能是表名是小写，但生成model的时候强制大写
             //x => x.TableName.ToLower() == tableName.ToLower()
-            var query = DBServerProvider
-                .DbContext.Set<Sys_TableColumn>()
-                .Where(x => x.TableName.ToLower() == tableName.ToLower());
+            var query = DBServerProvider.DbContext.Set<Sys_TableColumn>().Where(x => x.TableName.ToLower() == tableName.ToLower());
             if (columns != null && columns.Length > 0)
             {
                 query = query.Where(x => columns.Contains(x.ColumnName));
@@ -718,9 +530,7 @@ namespace VOL.Core.Utilities
             if (temlate)
                 return cellOptions;
 
-            var dicNos = cellOptions
-                .Where(x => !string.IsNullOrEmpty(x.DropNo))
-                .Select(c => c.DropNo);
+            var dicNos = cellOptions.Where(x => !string.IsNullOrEmpty(x.DropNo)).Select(c => c.DropNo);
 
             if (dicNos.Count() == 0)
                 return cellOptions;
@@ -729,9 +539,7 @@ namespace VOL.Core.Utilities
             //获取绑定字典数据源下拉框的值
             foreach (string dicNo in dicNos.Distinct())
             {
-                Dictionary<string, string> keyValues = new Dictionary<string, string>(
-                    StringComparer.OrdinalIgnoreCase
-                );
+                Dictionary<string, string> keyValues = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
                 List<Sys_DictionaryList> dictionaryLists = dictionaries
                     .Where(x => x.DicNo == dicNo && x.Sys_DictionaryList != null)
                     .Select(s => s.Sys_DictionaryList)
@@ -764,13 +572,7 @@ namespace VOL.Core.Utilities
             Action<ExcelWorksheet> saveBefore = null
         )
         {
-            return ExportGeneralExcel(
-                rows.Select(item => item as IDictionary<string, object>).ToList(),
-                fileName,
-                path,
-                onFillCell,
-                saveBefore
-            );
+            return ExportGeneralExcel(rows.Select(item => item as IDictionary<string, object>).ToList(), fileName, path, onFillCell, saveBefore);
         }
 
         /// <summary>

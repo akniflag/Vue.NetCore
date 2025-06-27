@@ -6,6 +6,5 @@ using VOL.Entity.DomainModels;
 
 namespace VOL.Sys.IServices
 {
-    public partial interface ISys_WorkFlowTableAuditLogService
-        : IService<Sys_WorkFlowTableAuditLog> { }
+    public partial interface ISys_WorkFlowTableAuditLogService : IService<Sys_WorkFlowTableAuditLog> { }
 }

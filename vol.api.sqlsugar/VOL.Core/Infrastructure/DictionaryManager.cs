@@ -35,10 +35,7 @@ namespace VOL.Core.Infrastructure
         /// <param name="dicNos"></param>
         /// <param name="executeSql">是否执行自定义sql</param>
         /// <returns></returns>
-        public static IEnumerable<Sys_Dictionary> GetDictionaries(
-            IEnumerable<string> dicNos,
-            bool executeSql = true
-        )
+        public static IEnumerable<Sys_Dictionary> GetDictionaries(IEnumerable<string> dicNos, bool executeSql = true)
         {
             static List<Sys_DictionaryList> query(string sql)
             {
@@ -46,18 +43,12 @@ namespace VOL.Core.Infrastructure
                 {
                     return DbManger
                         .SqlSugarClient.QueryList<SourceKeyVaule>(sql, null)
-                        .Select(s => new Sys_DictionaryList()
-                        {
-                            DicName = s.Value,
-                            DicValue = s.Key.ToString(),
-                        })
+                        .Select(s => new Sys_DictionaryList() { DicName = s.Value, DicValue = s.Key.ToString() })
                         .ToList();
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error(
-                        $"字典执行sql异常,sql:{sql},异常信息：{ex.Message + ex.StackTrace}"
-                    );
+                    Logger.Error($"字典执行sql异常,sql:{sql},异常信息：{ex.Message + ex.StackTrace}");
                     throw new Exception(ex.Message + ex.StackTrace);
                 }
             }
@@ -91,17 +82,9 @@ namespace VOL.Core.Infrastructure
 
             lock (_dicObj)
             {
-                if (
-                    _dicVersionn != ""
-                    && _dictionaries != null
-                    && _dicVersionn == cacheService.Get(Key)
-                )
+                if (_dicVersionn != "" && _dictionaries != null && _dicVersionn == cacheService.Get(Key))
                     return _dictionaries;
-                _dictionaries = DBServerProvider
-                    .DbContext.Set<Sys_Dictionary>()
-                    .Where(x => x.Enable == 1)
-                    .Includes(c => c.Sys_DictionaryList)
-                    .ToList();
+                _dictionaries = DBServerProvider.DbContext.Set<Sys_Dictionary>().Where(x => x.Enable == 1).Includes(c => c.Sys_DictionaryList).ToList();
 
                 string cacheVersion = cacheService.Get(Key);
                 if (string.IsNullOrEmpty(cacheVersion))

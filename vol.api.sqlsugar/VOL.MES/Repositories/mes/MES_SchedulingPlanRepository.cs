@@ -10,9 +10,7 @@ using VOL.MES.IRepositories;
 
 namespace VOL.MES.Repositories
 {
-    public partial class MES_SchedulingPlanRepository
-        : RepositoryBase<MES_SchedulingPlan>,
-            IMES_SchedulingPlanRepository
+    public partial class MES_SchedulingPlanRepository : RepositoryBase<MES_SchedulingPlan>, IMES_SchedulingPlanRepository
     {
         public MES_SchedulingPlanRepository(VOLContext dbContext)
             : base(dbContext) { }

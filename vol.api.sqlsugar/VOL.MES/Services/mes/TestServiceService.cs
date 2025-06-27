@@ -12,10 +12,7 @@ using VOL.MES.IServices;
 
 namespace VOL.MES.Services
 {
-    public partial class TestServiceService
-        : ServiceBase<TestService, ITestServiceRepository>,
-            ITestServiceService,
-            IDependency
+    public partial class TestServiceService : ServiceBase<TestService, ITestServiceRepository>, ITestServiceService, IDependency
     {
         public static ITestServiceService Instance
         {

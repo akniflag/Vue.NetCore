@@ -47,12 +47,7 @@ namespace VOL.Core.Services
             Info(loggerType, message, null, null);
         }
 
-        public static void Info(
-            LoggerType loggerType,
-            string requestParam,
-            string resposeParam,
-            string ex = null
-        )
+        public static void Info(LoggerType loggerType, string requestParam, string resposeParam, string ex = null)
         {
             Add(loggerType, requestParam, resposeParam, ex, LoggerStatus.Info);
         }
@@ -67,12 +62,7 @@ namespace VOL.Core.Services
             OK(loggerType, message, null, null);
         }
 
-        public static void OK(
-            LoggerType loggerType,
-            string requestParam,
-            string resposeParam,
-            string ex = null
-        )
+        public static void OK(LoggerType loggerType, string requestParam, string resposeParam, string ex = null)
         {
             Add(loggerType, requestParam, resposeParam, ex, LoggerStatus.Success);
         }
@@ -87,12 +77,7 @@ namespace VOL.Core.Services
             Error(loggerType, message, null, null);
         }
 
-        public static void Error(
-            LoggerType loggerType,
-            string requestParam,
-            string resposeParam,
-            string ex = null
-        )
+        public static void Error(LoggerType loggerType, string requestParam, string resposeParam, string ex = null)
         {
             Add(loggerType, requestParam, resposeParam, ex, LoggerStatus.Error);
         }
@@ -103,22 +88,10 @@ namespace VOL.Core.Services
         /// <param name="message"></param>
         public static void AddAsync(string message, string ex = null)
         {
-            AddAsync(
-                LoggerType.Info,
-                null,
-                message,
-                ex,
-                ex != null ? LoggerStatus.Error : LoggerStatus.Info
-            );
+            AddAsync(LoggerType.Info, null, message, ex, ex != null ? LoggerStatus.Error : LoggerStatus.Info);
         }
 
-        public static void AddAsync(
-            LoggerType loggerType,
-            string requestParameter,
-            string responseParameter,
-            string ex,
-            LoggerStatus status
-        )
+        public static void AddAsync(LoggerType loggerType, string requestParameter, string responseParameter, string ex, LoggerStatus status)
         {
             var log = new Sys_Log()
             {
@@ -143,24 +116,12 @@ namespace VOL.Core.Services
         /// <param name="responseParameter">响应参数</param>
         /// <param name="success">响应结果1、成功,2、异常，0、其他</param>
         /// <param name="userInfo">用户数据</param>
-        public static void Add(
-            LoggerType loggerType,
-            string requestParameter,
-            string responseParameter,
-            string ex,
-            LoggerStatus status
-        )
+        public static void Add(LoggerType loggerType, string requestParameter, string responseParameter, string ex, LoggerStatus status)
         {
             Add(loggerType.ToString(), requestParameter, responseParameter, ex, status);
         }
 
-        public static void Add(
-            string loggerType,
-            string requestParameter,
-            string responseParameter,
-            string ex,
-            LoggerStatus status
-        )
+        public static void Add(string loggerType, string requestParameter, string responseParameter, string ex, LoggerStatus status)
         {
             Sys_Log log = null;
             try
@@ -168,14 +129,10 @@ namespace VOL.Core.Services
                 HttpContext context = Utilities.HttpContext.Current;
                 if (context.Request.Method == "OPTIONS")
                     return;
-                ActionObserver cctionObserver = (
-                    context.RequestServices.GetService(typeof(ActionObserver)) as ActionObserver
-                );
+                ActionObserver cctionObserver = (context.RequestServices.GetService(typeof(ActionObserver)) as ActionObserver);
                 if (context == null)
                 {
-                    WriteText(
-                        $"未获取到httpcontext信息,type:{loggerType},reqParam:{requestParameter},respParam:{responseParameter},ex:{ex},success:{status.ToString()}"
-                    );
+                    WriteText($"未获取到httpcontext信息,type:{loggerType},reqParam:{requestParameter},respParam:{responseParameter},ex:{ex},success:{status.ToString()}");
                     return;
                 }
                 UserInfo userInfo = UserContext.Current.UserInfo;
@@ -257,11 +214,7 @@ namespace VOL.Core.Services
         {
             try
             {
-                Utilities.FileHelper.WriteFile(
-                    _loggerPath + "WriteError\\",
-                    $"{DateTime.Now.ToString("yyyyMMdd")}.txt",
-                    message + "\r\n"
-                );
+                Utilities.FileHelper.WriteFile(_loggerPath + "WriteError\\", $"{DateTime.Now.ToString("yyyyMMdd")}.txt", message + "\r\n");
             }
             catch (Exception ex)
             {
@@ -285,9 +238,7 @@ namespace VOL.Core.Services
             row["Success"] = log.Success ?? -1;
             row["BeginDate"] = log.BeginDate;
             row["EndDate"] = log.EndDate;
-            row["ElapsedTime"] = (
-                (DateTime)log.EndDate - (DateTime)log.BeginDate
-            ).TotalMilliseconds;
+            row["ElapsedTime"] = ((DateTime)log.EndDate - (DateTime)log.BeginDate).TotalMilliseconds;
             row["UserIP"] = log.UserIP;
             row["ServiceIP"] = log.ServiceIP;
             row["BrowserType"] = log.BrowserType;
@@ -322,18 +273,10 @@ namespace VOL.Core.Services
         public static void SetServicesInfo(Sys_Log log, HttpContext context)
         {
             string result = String.Empty;
-            log.Url =
-                context.Request.Scheme
-                + "://"
-                + context.Request.Host
-                + context.Request.PathBase
-                + context.Request.Path;
+            log.Url = context.Request.Scheme + "://" + context.Request.Host + context.Request.PathBase + context.Request.Path;
 
             log.UserIP = context.GetUserIp()?.Replace("::ffff:", "");
-            log.ServiceIP =
-                context.Connection.LocalIpAddress.MapToIPv4().ToString()
-                + ":"
-                + context.Connection.LocalPort;
+            log.ServiceIP = context.Connection.LocalIpAddress.MapToIPv4().ToString() + ":" + context.Connection.LocalPort;
 
             log.BrowserType = context.Request.Headers["User-Agent"];
             if (log.BrowserType != null && log.BrowserType.Length > 190)

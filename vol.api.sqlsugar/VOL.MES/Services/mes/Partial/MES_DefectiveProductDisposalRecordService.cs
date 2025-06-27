@@ -26,10 +26,7 @@ namespace VOL.MES.Services
         private readonly IMES_DefectiveProductDisposalRecordRepository _repository; //访问数据库
 
         [ActivatorUtilitiesConstructor]
-        public MES_DefectiveProductDisposalRecordService(
-            IMES_DefectiveProductDisposalRecordRepository dbRepository,
-            IHttpContextAccessor httpContextAccessor
-        )
+        public MES_DefectiveProductDisposalRecordService(IMES_DefectiveProductDisposalRecordRepository dbRepository, IHttpContextAccessor httpContextAccessor)
             : base(dbRepository)
         {
             _httpContextAccessor = httpContextAccessor;

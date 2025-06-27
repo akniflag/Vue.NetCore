@@ -7,20 +7,8 @@ namespace VOL.Core.Utilities
 {
     public static class VierificationCodeHelpers
     { //验证码字体集合
-        private static readonly string[] fonts =
-        {
-            "Verdana",
-            "Microsoft Sans Serif",
-            "Comic Sans MS",
-            "Arial",
-            "宋体",
-        };
-        private static readonly SKColor[] colors =
-        {
-            SKColors.Black,
-            SKColors.Green,
-            SKColors.Brown,
-        };
+        private static readonly string[] fonts = { "Verdana", "Microsoft Sans Serif", "Comic Sans MS", "Arial", "宋体" };
+        private static readonly SKColor[] colors = { SKColors.Black, SKColors.Green, SKColors.Brown };
 
         /// <summary>
         ///
@@ -45,12 +33,7 @@ namespace VOL.Core.Utilities
             for (int i = 0; i < code.Length; i++)
             {
                 pen.Color = random.GetRandom(colors); //随机颜色索引值
-                pen.Typeface = SKTypeface.FromFamilyName(
-                    random.GetRandom(fonts),
-                    700,
-                    20,
-                    SKFontStyleSlant.Italic
-                ); //配置字体
+                pen.Typeface = SKTypeface.FromFamilyName(random.GetRandom(fonts), 700, 20, SKFontStyleSlant.Italic); //配置字体
                 var point = new SKPoint()
                 {
                     X = i * 16,
@@ -60,10 +43,7 @@ namespace VOL.Core.Utilities
             }
 
             //绘制噪点
-            var points = Enumerable
-                .Range(0, 100)
-                .Select(_ => new SKPoint(random.Next(bitmap.Width), random.Next(bitmap.Height)))
-                .ToArray();
+            var points = Enumerable.Range(0, 100).Select(_ => new SKPoint(random.Next(bitmap.Width), random.Next(bitmap.Height))).ToArray();
             canvas.DrawPoints(SKPointMode.Points, points, pen);
 
             //绘制贝塞尔线条

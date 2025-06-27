@@ -15,13 +15,7 @@ using VOL.Entity.SystemModels;
 
 namespace VOL.Entity.DomainModels
 {
-    [Entity(
-        TableCnName = "用户管理",
-        TableName = "Sys_User",
-        DBServer = "SysDbContext",
-        ApiInput = typeof(ApiSys_UserInput),
-        ApiOutput = typeof(ApiSys_UserOutput)
-    )]
+    [Entity(TableCnName = "用户管理", TableName = "Sys_User", DBServer = "SysDbContext", ApiInput = typeof(ApiSys_UserInput), ApiOutput = typeof(ApiSys_UserOutput))]
     public partial class Sys_User : BaseEntity
     {
         /// <summary>

@@ -25,10 +25,7 @@ namespace VOL.Core.Quartz
         /// </summary>
         /// <param name="serviceProvider"></param>
         /// <param name="httpClientFactory"></param>
-        public HttpResultfulJob(
-            IServiceProvider serviceProvider,
-            IHttpClientFactory httpClientFactory
-        )
+        public HttpResultfulJob(IServiceProvider serviceProvider, IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
             _serviceProvider = serviceProvider;
@@ -41,8 +38,7 @@ namespace VOL.Core.Quartz
 
             Sys_QuartzOptions taskOptions = context.GetTaskOptions();
             string httpMessage = "";
-            AbstractTrigger trigger =
-                (context as JobExecutionContextImpl).Trigger as AbstractTrigger;
+            AbstractTrigger trigger = (context as JobExecutionContextImpl).Trigger as AbstractTrigger;
             if (taskOptions == null)
             {
                 Console.WriteLine($"未获取到作业");
@@ -61,10 +57,7 @@ namespace VOL.Core.Quartz
 
             try
             {
-                var _taskOptions = DbManger
-                    .SqlSugarClient.Set<Sys_QuartzOptions>()
-                    .Where(x => x.Id == taskOptions.Id)
-                    .FirstOrDefault();
+                var _taskOptions = DbManger.SqlSugarClient.Set<Sys_QuartzOptions>().Where(x => x.Id == taskOptions.Id).FirstOrDefault();
 
                 if (_taskOptions != null)
                 {
@@ -75,10 +68,7 @@ namespace VOL.Core.Quartz
                 }
 
                 Dictionary<string, string> header = new Dictionary<string, string>();
-                if (
-                    !string.IsNullOrEmpty(taskOptions.AuthKey)
-                    && !string.IsNullOrEmpty(taskOptions.AuthValue)
-                )
+                if (!string.IsNullOrEmpty(taskOptions.AuthKey) && !string.IsNullOrEmpty(taskOptions.AuthValue))
                 {
                     header.Add(taskOptions.AuthKey.Trim(), taskOptions.AuthValue.Trim());
                 }
@@ -119,18 +109,10 @@ namespace VOL.Core.Quartz
                 catch (Exception ex)
                 {
                     Console.WriteLine($"日志写入异常:{taskOptions.TaskName},{ex.Message}");
-                    QuartzFileHelper.Error(
-                        $"日志写入异常:{typeof(HttpResultfulJob).Name},{taskOptions.TaskName},{ex.Message}"
-                    );
+                    QuartzFileHelper.Error($"日志写入异常:{typeof(HttpResultfulJob).Name},{taskOptions.TaskName},{ex.Message}");
                 }
             }
-            Console.WriteLine(
-                trigger.FullName
-                    + " "
-                    + DateTime.Now.ToString("yyyy-MM-dd HH:mm:sss")
-                    + " "
-                    + httpMessage
-            );
+            Console.WriteLine(trigger.FullName + " " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:sss") + " " + httpMessage);
             return;
         }
     }

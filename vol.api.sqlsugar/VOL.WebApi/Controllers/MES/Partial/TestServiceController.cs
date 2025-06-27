@@ -20,10 +20,7 @@ namespace VOL.MES.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         [ActivatorUtilitiesConstructor]
-        public TestServiceController(
-            ITestServiceService service,
-            IHttpContextAccessor httpContextAccessor
-        )
+        public TestServiceController(ITestServiceService service, IHttpContextAccessor httpContextAccessor)
             : base(service)
         {
             _service = service;

@@ -26,10 +26,7 @@ namespace VOL.MES.Services
         private readonly IMES_ProcessRepository _repository; //访问数据库
 
         [ActivatorUtilitiesConstructor]
-        public MES_ProcessService(
-            IMES_ProcessRepository dbRepository,
-            IHttpContextAccessor httpContextAccessor
-        )
+        public MES_ProcessService(IMES_ProcessRepository dbRepository, IHttpContextAccessor httpContextAccessor)
             : base(dbRepository)
         {
             _httpContextAccessor = httpContextAccessor;

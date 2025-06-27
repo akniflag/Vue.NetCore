@@ -83,13 +83,10 @@ namespace VOL.Core.Configuration
             Secret = provider.GetRequiredService<IOptions<Secret>>().Value;
 
             //设置修改或删除时需要设置为默认用户信息的字段
-            CreateMember =
-                provider.GetRequiredService<IOptions<CreateMember>>().Value ?? new CreateMember();
-            ModifyMember =
-                provider.GetRequiredService<IOptions<ModifyMember>>().Value ?? new ModifyMember();
+            CreateMember = provider.GetRequiredService<IOptions<CreateMember>>().Value ?? new CreateMember();
+            ModifyMember = provider.GetRequiredService<IOptions<ModifyMember>>().Value ?? new ModifyMember();
 
-            GlobalFilter =
-                provider.GetRequiredService<IOptions<GlobalFilter>>().Value ?? new GlobalFilter();
+            GlobalFilter = provider.GetRequiredService<IOptions<GlobalFilter>>().Value ?? new GlobalFilter();
 
             GlobalFilter.Actions = GlobalFilter.Actions ?? new string[0];
             Kafka = provider.GetRequiredService<IOptions<Kafka>>().Value ?? new Kafka();
@@ -106,9 +103,7 @@ namespace VOL.Core.Configuration
 
             try
             {
-                _connection.DbConnectionString = _connection.DbConnectionString.DecryptDES(
-                    Secret.DB
-                );
+                _connection.DbConnectionString = _connection.DbConnectionString.DecryptDES(Secret.DB);
             }
             catch { }
 
@@ -116,8 +111,7 @@ namespace VOL.Core.Configuration
             {
                 try
                 {
-                    _connection.RedisConnectionString =
-                        _connection.RedisConnectionString.DecryptDES(Secret.Redis);
+                    _connection.RedisConnectionString = _connection.RedisConnectionString.DecryptDES(Secret.Redis);
                 }
                 catch { }
             }

@@ -12,10 +12,7 @@ using VOL.Sys.IServices;
 
 namespace VOL.Sys.Services
 {
-    public partial class Sys_UserService
-        : ServiceBase<Sys_User, ISys_UserRepository>,
-            ISys_UserService,
-            IDependency
+    public partial class Sys_UserService : ServiceBase<Sys_User, ISys_UserRepository>, ISys_UserService, IDependency
     {
         public static ISys_UserService Instance
         {

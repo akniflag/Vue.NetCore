@@ -12,10 +12,7 @@ using VOL.MES.IServices;
 
 namespace VOL.MES.Services
 {
-    public partial class MES_SchedulingPlanService
-        : ServiceBase<MES_SchedulingPlan, IMES_SchedulingPlanRepository>,
-            IMES_SchedulingPlanService,
-            IDependency
+    public partial class MES_SchedulingPlanService : ServiceBase<MES_SchedulingPlan, IMES_SchedulingPlanRepository>, IMES_SchedulingPlanService, IDependency
     {
         public static IMES_SchedulingPlanService Instance
         {

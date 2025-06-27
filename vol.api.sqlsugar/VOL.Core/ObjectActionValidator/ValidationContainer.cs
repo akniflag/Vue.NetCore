@@ -47,9 +47,7 @@ namespace VOL.Core.ObjectActionValidator
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
-        public static IServiceCollection UseMethodsGeneralParameters(
-            this IServiceCollection services
-        )
+        public static IServiceCollection UseMethodsGeneralParameters(this IServiceCollection services)
         {
             //配置用户名最多30个字符
             ValidatorGeneral.UserName.Add("用户名", 30);

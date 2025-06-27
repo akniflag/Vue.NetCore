@@ -10,9 +10,7 @@ using VOL.MES.IRepositories;
 
 namespace VOL.MES.Repositories
 {
-    public partial class MES_LocationManagementRepository
-        : RepositoryBase<MES_LocationManagement>,
-            IMES_LocationManagementRepository
+    public partial class MES_LocationManagementRepository : RepositoryBase<MES_LocationManagement>, IMES_LocationManagementRepository
     {
         public MES_LocationManagementRepository(VOLContext dbContext)
             : base(dbContext) { }

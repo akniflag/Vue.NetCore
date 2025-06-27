@@ -12,10 +12,7 @@ using VOL.Sys.IServices;
 
 namespace VOL.Sys.Services
 {
-    public partial class Sys_RoleService
-        : ServiceBase<Sys_Role, ISys_RoleRepository>,
-            ISys_RoleService,
-            IDependency
+    public partial class Sys_RoleService : ServiceBase<Sys_Role, ISys_RoleRepository>, ISys_RoleService, IDependency
     {
         public Sys_RoleService(ISys_RoleRepository repository)
             : base(repository)

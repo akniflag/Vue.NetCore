@@ -12,10 +12,7 @@ using VOL.MES.IServices;
 
 namespace VOL.MES.Services
 {
-    public partial class MES_MaterialCatalogService
-        : ServiceBase<MES_MaterialCatalog, IMES_MaterialCatalogRepository>,
-            IMES_MaterialCatalogService,
-            IDependency
+    public partial class MES_MaterialCatalogService : ServiceBase<MES_MaterialCatalog, IMES_MaterialCatalogRepository>, IMES_MaterialCatalogService, IDependency
     {
         public static IMES_MaterialCatalogService Instance
         {

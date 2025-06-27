@@ -37,11 +37,7 @@ namespace VOL.Sys.Controllers
         private ICacheService _cache;
 
         [ActivatorUtilitiesConstructor]
-        public Sys_UserController(
-            ISys_UserService userService,
-            ISys_UserRepository userRepository,
-            ICacheService cahce
-        )
+        public Sys_UserController(ISys_UserService userService, ISys_UserRepository userRepository, ICacheService cahce)
             : base(userService)
         {
             _userRepository = userRepository;
@@ -55,8 +51,7 @@ namespace VOL.Sys.Controllers
             return Json(await Service.Login(loginInfo));
         }
 
-        private readonly ConcurrentDictionary<int, object> _lockCurrent =
-            new ConcurrentDictionary<int, object>();
+        private readonly ConcurrentDictionary<int, object> _lockCurrent = new ConcurrentDictionary<int, object>();
 
         [HttpPost, Route("replaceToken")]
         public IActionResult ReplaceToken()
@@ -106,11 +101,7 @@ namespace VOL.Sys.Controllers
                     //移除当前缓存
                     _cache.Remove(userId.GetUserIdKey());
                     //只更新的token字段
-                    _userRepository.Update(
-                        new Sys_User() { User_Id = userId, Token = token },
-                        x => x.Token,
-                        true
-                    );
+                    _userRepository.Update(new Sys_User() { User_Id = userId, Token = token }, x => x.Token, true);
                     //添加一个5秒缓存
                     _cache.Add(key, token, 5);
                     responseContent.OK(null, token);
@@ -124,8 +115,7 @@ namespace VOL.Sys.Controllers
             finally
             {
                 _lockCurrent.TryRemove(UserContext.Current.UserId, out object val);
-                string _message =
-                    $"用户{userInfo?.User_Id}_{userInfo?.UserTrueName},({(responseContent.Status ? "token替换成功" : "token替换失败")})";
+                string _message = $"用户{userInfo?.User_Id}_{userInfo?.UserTrueName},({(responseContent.Status ? "token替换成功" : "token替换失败")})";
                 Logger.Info(LoggerType.ReplaceToeken, _message, null, error);
             }
             return Json(responseContent);
@@ -178,14 +168,8 @@ namespace VOL.Sys.Controllers
         public IActionResult GetVierificationCode()
         {
             string code = VierificationCode.RandomText();
-            var data = new
-            {
-                img = VierificationCode.CreateBase64Imgage(code),
-                uuid = Guid.NewGuid(),
-            };
-            HttpContext
-                .GetService<IMemoryCache>()
-                .Set(data.uuid.ToString(), code, new TimeSpan(0, 5, 0));
+            var data = new { img = VierificationCode.CreateBase64Imgage(code), uuid = Guid.NewGuid() };
+            HttpContext.GetService<IMemoryCache>().Set(data.uuid.ToString(), code, new TimeSpan(0, 5, 0));
             return Json(data);
         }
 

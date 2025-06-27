@@ -10,19 +10,14 @@ using VOL.MES.IRepositories;
 
 namespace VOL.MES.Repositories
 {
-    public partial class MES_DefectiveProductRecordRepository
-        : RepositoryBase<MES_DefectiveProductRecord>,
-            IMES_DefectiveProductRecordRepository
+    public partial class MES_DefectiveProductRecordRepository : RepositoryBase<MES_DefectiveProductRecord>, IMES_DefectiveProductRecordRepository
     {
         public MES_DefectiveProductRecordRepository(VOLContext dbContext)
             : base(dbContext) { }
 
         public static IMES_DefectiveProductRecordRepository Instance
         {
-            get
-            {
-                return AutofacContainerModule.GetService<IMES_DefectiveProductRecordRepository>();
-            }
+            get { return AutofacContainerModule.GetService<IMES_DefectiveProductRecordRepository>(); }
         }
     }
 }

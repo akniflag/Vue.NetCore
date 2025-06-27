@@ -12,10 +12,7 @@ using VOL.Sys.IServices;
 
 namespace VOL.Sys.Services
 {
-    public partial class Sys_WorkFlowStepService
-        : ServiceBase<Sys_WorkFlowStep, ISys_WorkFlowStepRepository>,
-            ISys_WorkFlowStepService,
-            IDependency
+    public partial class Sys_WorkFlowStepService : ServiceBase<Sys_WorkFlowStep, ISys_WorkFlowStepRepository>, ISys_WorkFlowStepService, IDependency
     {
         public Sys_WorkFlowStepService(ISys_WorkFlowStepRepository repository)
             : base(repository)

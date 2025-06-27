@@ -6,6 +6,5 @@ using VOL.Entity.DomainModels;
 
 namespace VOL.MES.IServices
 {
-    public partial interface IMES_ProductionPlanChangeRecordService
-        : IService<MES_ProductionPlanChangeRecord> { }
+    public partial interface IMES_ProductionPlanChangeRecordService : IService<MES_ProductionPlanChangeRecord> { }
 }

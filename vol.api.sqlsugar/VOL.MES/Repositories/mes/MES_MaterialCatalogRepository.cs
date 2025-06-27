@@ -10,9 +10,7 @@ using VOL.MES.IRepositories;
 
 namespace VOL.MES.Repositories
 {
-    public partial class MES_MaterialCatalogRepository
-        : RepositoryBase<MES_MaterialCatalog>,
-            IMES_MaterialCatalogRepository
+    public partial class MES_MaterialCatalogRepository : RepositoryBase<MES_MaterialCatalog>, IMES_MaterialCatalogRepository
     {
         public MES_MaterialCatalogRepository(VOLContext dbContext)
             : base(dbContext) { }

@@ -13,7 +13,5 @@ using VOL.Entity.DomainModels;
 
 namespace VOL.Sys.IRepositories
 {
-    public partial interface IFormCollectionObjectRepository
-        : IDependency,
-            IRepository<FormCollectionObject> { }
+    public partial interface IFormCollectionObjectRepository : IDependency, IRepository<FormCollectionObject> { }
 }

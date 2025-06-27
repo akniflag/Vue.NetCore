@@ -11,8 +11,7 @@ namespace VOL.MES.Controllers
 {
     [Route("api/MES_MaterialCatalog")]
     [PermissionTable(Name = "MES_MaterialCatalog")]
-    public partial class MES_MaterialCatalogController
-        : ApiBaseController<IMES_MaterialCatalogService>
+    public partial class MES_MaterialCatalogController : ApiBaseController<IMES_MaterialCatalogService>
     {
         public MES_MaterialCatalogController(IMES_MaterialCatalogService service)
             : base(service) { }

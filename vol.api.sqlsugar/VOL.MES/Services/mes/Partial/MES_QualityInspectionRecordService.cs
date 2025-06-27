@@ -26,10 +26,7 @@ namespace VOL.MES.Services
         private readonly IMES_QualityInspectionRecordRepository _repository; //访问数据库
 
         [ActivatorUtilitiesConstructor]
-        public MES_QualityInspectionRecordService(
-            IMES_QualityInspectionRecordRepository dbRepository,
-            IHttpContextAccessor httpContextAccessor
-        )
+        public MES_QualityInspectionRecordService(IMES_QualityInspectionRecordRepository dbRepository, IHttpContextAccessor httpContextAccessor)
             : base(dbRepository)
         {
             _httpContextAccessor = httpContextAccessor;

@@ -31,11 +31,7 @@ namespace VOL.Sys.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         [ActivatorUtilitiesConstructor]
-        public Sys_RoleController(
-            ISys_RoleService service,
-            ISys_RoleRepository repository,
-            IHttpContextAccessor httpContextAccessor
-        )
+        public Sys_RoleController(ISys_RoleService service, ISys_RoleRepository repository, IHttpContextAccessor httpContextAccessor)
             : base(service)
         {
             _service = service;
@@ -59,10 +55,7 @@ namespace VOL.Sys.Controllers
 
         [HttpPost, Route("savePermission")]
         [ApiActionPermission(ActionPermissionOptions.Update)]
-        public async Task<IActionResult> SavePermission(
-            [FromBody] List<UserPermissions> userPermissions,
-            int roleId
-        )
+        public async Task<IActionResult> SavePermission([FromBody] List<UserPermissions> userPermissions, int roleId)
         {
             return Json(await Service.SavePermission(userPermissions, roleId));
         }
@@ -150,10 +143,7 @@ namespace VOL.Sys.Controllers
                     s.Modifier,
                     s.ModifyDate,
                     s.OrderNo,
-                    hasChildren = SqlFunc
-                        .Subqueryable<Sys_Role>()
-                        .Where(x => x.ParentId == s.Role_Id)
-                        .Any(),
+                    hasChildren = SqlFunc.Subqueryable<Sys_Role>().Where(x => x.ParentId == s.Role_Id).Any(),
                 })
                 .ToListAsync();
             return JsonNormal(new { total = await query.CountAsync(), rows });
@@ -167,11 +157,7 @@ namespace VOL.Sys.Controllers
         [ApiActionPermission(ActionPermissionOptions.Search)]
         public async Task<ActionResult> GetTreeTableChildrenData(int roleId)
         {
-            if (
-                !UserContext.Current.IsSuperAdmin
-                && roleId != UserContext.Current.RoleId
-                && !RoleContext.GetAllChildren(UserContext.Current.RoleId).Any(x => x.Id == roleId)
-            )
+            if (!UserContext.Current.IsSuperAdmin && roleId != UserContext.Current.RoleId && !RoleContext.GetAllChildren(UserContext.Current.RoleId).Any(x => x.Id == roleId))
             {
                 return JsonNormal(new { rows = new object[] { } });
             }
@@ -192,10 +178,7 @@ namespace VOL.Sys.Controllers
                     s.Modifier,
                     s.ModifyDate,
                     s.OrderNo,
-                    hasChildren = SqlFunc
-                        .Subqueryable<Sys_Role>()
-                        .Where(x => x.ParentId == s.Role_Id)
-                        .Any(),
+                    hasChildren = SqlFunc.Subqueryable<Sys_Role>().Where(x => x.ParentId == s.Role_Id).Any(),
                 })
                 .ToListAsync();
             return JsonNormal(new { rows });

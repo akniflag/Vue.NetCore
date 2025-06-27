@@ -22,19 +22,10 @@ namespace VOL.Core.Filters
         public ApiActionPermissionAttribute(ActionRolePermission actionRolePermission)
             : base(actionRolePermission, true) { }
 
-        public ApiActionPermissionAttribute(
-            string tableName,
-            ActionPermissionOptions tableAction,
-            bool sysController = false
-        )
+        public ApiActionPermissionAttribute(string tableName, ActionPermissionOptions tableAction, bool sysController = false)
             : base(tableName, tableAction, sysController, true) { }
 
-        public ApiActionPermissionAttribute(
-            string tableName,
-            string roleIds,
-            ActionPermissionOptions tableAction,
-            bool sysController = false
-        )
+        public ApiActionPermissionAttribute(string tableName, string roleIds, ActionPermissionOptions tableAction, bool sysController = false)
             : base(tableName, roleIds, tableAction, sysController, true) { }
 
         public ApiActionPermissionAttribute(ActionPermissionOptions tableAction)

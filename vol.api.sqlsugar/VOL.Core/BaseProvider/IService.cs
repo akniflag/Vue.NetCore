@@ -70,11 +70,7 @@ namespace VOL.Core.BaseProvider
         /// <param name="list">保存的明细</param>
         /// <param name="validationEntity">是否对实体进行校验</param>
         /// <returns></returns>
-        WebResponseContent Add<TDetail>(
-            T entity,
-            List<TDetail> list = null,
-            bool validationEntity = true
-        )
+        WebResponseContent Add<TDetail>(T entity, List<TDetail> list = null, bool validationEntity = true)
             where TDetail : class, new();
 
         /// <summary>
@@ -94,10 +90,7 @@ namespace VOL.Core.BaseProvider
 
         WebResponseContent Audit(object[] id, int? auditStatus, string auditReason);
 
-        (string, T, bool) ApiValidate(
-            string bizContent,
-            Expression<Func<T, object>> expression = null
-        );
+        (string, T, bool) ApiValidate(string bizContent, Expression<Func<T, object>> expression = null);
 
         /// <summary>
         ///
@@ -106,10 +99,7 @@ namespace VOL.Core.BaseProvider
         /// <param name="bizContent"></param>
         /// <param name="expression">对指属性验证格式如：x=>new { x.UserName,x.Value }</param>
         /// <returns>(string,TInput, bool) string:返回验证消息,TInput：bizContent序列化后的对象,bool:验证是否通过</returns>
-        (string, TInput, bool) ApiValidateInput<TInput>(
-            string bizContent,
-            Expression<Func<TInput, object>> expression
-        );
+        (string, TInput, bool) ApiValidateInput<TInput>(string bizContent, Expression<Func<TInput, object>> expression);
 
         /// <summary>
         ///
@@ -119,11 +109,7 @@ namespace VOL.Core.BaseProvider
         /// <param name="expression">对指属性验证格式如：x=>new { x.UserName,x.Value }</param>
         /// <param name="validateExpression">对指定的字段只做合法性判断比如长度是是否超长</param>
         /// <returns>(string,TInput, bool) string:返回验证消息,TInput：bizContent序列化后的对象,bool:验证是否通过</returns>
-        (string, TInput, bool) ApiValidateInput<TInput>(
-            string bizContent,
-            Expression<Func<TInput, object>> expression,
-            Expression<Func<TInput, object>> validateExpression
-        );
+        (string, TInput, bool) ApiValidateInput<TInput>(string bizContent, Expression<Func<TInput, object>> expression, Expression<Func<TInput, object>> validateExpression);
 
         /// <summary>
         /// 将数据源映射到新的数据中,List<TSource>映射到List<TResult>或TSource映射到TResult
@@ -142,11 +128,7 @@ namespace VOL.Core.BaseProvider
         ///  Sys_Menu sysMenu = new Sys_Menu();
         ///  sysMenu.MapToObject<Sys_Menu, Sys_Menu>(x => new { x.MenuName, x.Menu_Id}, null);
         /// <returns></returns>
-        TResult MapToEntity<TSource, TResult>(
-            TSource source,
-            Expression<Func<TResult, object>> resultExpression,
-            Expression<Func<TSource, object>> sourceExpression = null
-        )
+        TResult MapToEntity<TSource, TResult>(TSource source, Expression<Func<TResult, object>> resultExpression, Expression<Func<TSource, object>> sourceExpression = null)
             where TResult : class;
 
         /// <summary>
@@ -158,11 +140,7 @@ namespace VOL.Core.BaseProvider
         /// <param name="source"></param>
         /// <param name="result"></param>
         /// <param name="expression">指定对需要的字段赋值,格式x=>new {x.Name,x.P},返回的结果只会对Name与P赋值</param>
-        void MapValueToEntity<TSource, TResult>(
-            TSource source,
-            TResult result,
-            Expression<Func<TResult, object>> expression = null
-        )
+        void MapValueToEntity<TSource, TResult>(TSource source, TResult result, Expression<Func<TResult, object>> expression = null)
             where TResult : class;
     }
 }

@@ -19,10 +19,7 @@ namespace VOL.MES.Services
     {
         public static IMES_QualityInspectionPlanDetailService Instance
         {
-            get
-            {
-                return AutofacContainerModule.GetService<IMES_QualityInspectionPlanDetailService>();
-            }
+            get { return AutofacContainerModule.GetService<IMES_QualityInspectionPlanDetailService>(); }
         }
     }
 }

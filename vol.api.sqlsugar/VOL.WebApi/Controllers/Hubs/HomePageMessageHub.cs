@@ -21,8 +21,7 @@ namespace VOL.WebApi.Controllers.Hubs
     {
         private readonly ICacheService _cacheService;
 
-        private static ConcurrentDictionary<string, string> _connectionIds =
-            new ConcurrentDictionary<string, string>();
+        private static ConcurrentDictionary<string, string> _connectionIds = new ConcurrentDictionary<string, string>();
 
         /// <summary>
         /// 构造 注入
@@ -39,10 +38,7 @@ namespace VOL.WebApi.Controllers.Hubs
         public override async Task OnConnectedAsync()
         {
             //Console.WriteLine($"建立连接{Context.ConnectionId}");
-            _connectionIds[Context.ConnectionId] = Context
-                .GetHttpContext()
-                .Request.Query["userName"]
-                .ToString();
+            _connectionIds[Context.ConnectionId] = Context.GetHttpContext().Request.Query["userName"].ToString();
             //添加到一个组下
             //await Groups.AddToGroupAsync(Context.ConnectionId, "SignalR Users");
             //发送上线消息

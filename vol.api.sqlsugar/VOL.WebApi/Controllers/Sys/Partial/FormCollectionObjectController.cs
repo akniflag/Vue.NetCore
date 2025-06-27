@@ -20,10 +20,7 @@ namespace VOL.Sys.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         [ActivatorUtilitiesConstructor]
-        public FormCollectionObjectController(
-            IFormCollectionObjectService service,
-            IHttpContextAccessor httpContextAccessor
-        )
+        public FormCollectionObjectController(IFormCollectionObjectService service, IHttpContextAccessor httpContextAccessor)
             : base(service)
         {
             _service = service;

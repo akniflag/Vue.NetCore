@@ -13,7 +13,5 @@ using VOL.Entity.DomainModels;
 
 namespace VOL.MES.IRepositories
 {
-    public partial interface IMES_QualityInspectionPlanRepository
-        : IDependency,
-            IRepository<MES_QualityInspectionPlan> { }
+    public partial interface IMES_QualityInspectionPlanRepository : IDependency, IRepository<MES_QualityInspectionPlan> { }
 }

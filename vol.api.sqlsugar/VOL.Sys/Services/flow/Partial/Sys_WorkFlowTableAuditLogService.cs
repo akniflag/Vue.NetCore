@@ -26,10 +26,7 @@ namespace VOL.Sys.Services
         private readonly ISys_WorkFlowTableAuditLogRepository _repository; //访问数据库
 
         [ActivatorUtilitiesConstructor]
-        public Sys_WorkFlowTableAuditLogService(
-            ISys_WorkFlowTableAuditLogRepository dbRepository,
-            IHttpContextAccessor httpContextAccessor
-        )
+        public Sys_WorkFlowTableAuditLogService(ISys_WorkFlowTableAuditLogRepository dbRepository, IHttpContextAccessor httpContextAccessor)
             : base(dbRepository)
         {
             _httpContextAccessor = httpContextAccessor;

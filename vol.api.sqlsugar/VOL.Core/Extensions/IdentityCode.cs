@@ -27,12 +27,7 @@ namespace VOL.Core.Extensions
         ///   Sys_User user=  new Sys_User();
         ///   user.Create(x => x.UserName, "U", x => x.CreateDate);
         /// <returns></returns>
-        public static string Create<T>(
-            this T entity,
-            Expression<Func<T, object>> codeField,
-            string preCode = "Code",
-            Expression<Func<T, object>> dateFieldExpression = null
-        )
+        public static string Create<T>(this T entity, Expression<Func<T, object>> codeField, string preCode = "Code", Expression<Func<T, object>> dateFieldExpression = null)
             where T : class
         {
             string dateField;
@@ -49,13 +44,7 @@ namespace VOL.Core.Extensions
             var condition = dateField.CreateExpression<T>(dateNow, LinqExpressionType.ThanOrEqual);
             var field = codeField.GetExpressionPropertyFirst();
             var select = field.GetExpression<T, string>();
-            string orderNo = DbManger
-                .Db.Queryable<T>()
-                .Where(condition)
-                .OrderByDescending(codeField)
-                .Select(select)
-                .FirstOrDefault()
-                ?.ToString();
+            string orderNo = DbManger.Db.Queryable<T>().Where(condition).OrderByDescending(codeField).Select(select).FirstOrDefault()?.ToString();
             string rule = $"{preCode}{DateTime.Now.ToString("yyyyMMdd")}";
             if (string.IsNullOrEmpty(orderNo))
             {

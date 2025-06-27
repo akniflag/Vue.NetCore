@@ -13,7 +13,5 @@ using VOL.Entity.DomainModels;
 
 namespace VOL.MES.IRepositories
 {
-    public partial interface IMES_SchedulingPlanRepository
-        : IDependency,
-            IRepository<MES_SchedulingPlan> { }
+    public partial interface IMES_SchedulingPlanRepository : IDependency, IRepository<MES_SchedulingPlan> { }
 }

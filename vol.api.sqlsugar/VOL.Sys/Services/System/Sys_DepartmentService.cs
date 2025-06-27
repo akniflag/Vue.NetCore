@@ -12,10 +12,7 @@ using VOL.Sys.IServices;
 
 namespace VOL.Sys.Services
 {
-    public partial class Sys_DepartmentService
-        : ServiceBase<Sys_Department, ISys_DepartmentRepository>,
-            ISys_DepartmentService,
-            IDependency
+    public partial class Sys_DepartmentService : ServiceBase<Sys_Department, ISys_DepartmentRepository>, ISys_DepartmentService, IDependency
     {
         public Sys_DepartmentService(ISys_DepartmentRepository repository)
             : base(repository)

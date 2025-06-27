@@ -10,9 +10,7 @@ using VOL.Sys.IRepositories;
 
 namespace VOL.Sys.Repositories
 {
-    public partial class Sys_DepartmentRepository
-        : RepositoryBase<Sys_Department>,
-            ISys_DepartmentRepository
+    public partial class Sys_DepartmentRepository : RepositoryBase<Sys_Department>, ISys_DepartmentRepository
     {
         public Sys_DepartmentRepository(VOLContext dbContext)
             : base(dbContext) { }

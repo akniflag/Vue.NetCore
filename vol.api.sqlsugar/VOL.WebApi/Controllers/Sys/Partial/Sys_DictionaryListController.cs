@@ -21,10 +21,7 @@ namespace VOL.Sys.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         [ActivatorUtilitiesConstructor]
-        public Sys_DictionaryListController(
-            ISys_DictionaryListService service,
-            IHttpContextAccessor httpContextAccessor
-        )
+        public Sys_DictionaryListController(ISys_DictionaryListService service, IHttpContextAccessor httpContextAccessor)
             : base(service)
         {
             _service = service;

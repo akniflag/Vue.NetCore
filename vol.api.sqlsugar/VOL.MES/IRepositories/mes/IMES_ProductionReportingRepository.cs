@@ -13,7 +13,5 @@ using VOL.Entity.DomainModels;
 
 namespace VOL.MES.IRepositories
 {
-    public partial interface IMES_ProductionReportingRepository
-        : IDependency,
-            IRepository<MES_ProductionReporting> { }
+    public partial interface IMES_ProductionReportingRepository : IDependency, IRepository<MES_ProductionReporting> { }
 }

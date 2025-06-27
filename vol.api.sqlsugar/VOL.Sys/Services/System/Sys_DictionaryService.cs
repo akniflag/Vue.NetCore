@@ -12,10 +12,7 @@ using VOL.Sys.IServices;
 
 namespace VOL.Sys.Services
 {
-    public partial class Sys_DictionaryService
-        : ServiceBase<Sys_Dictionary, ISys_DictionaryRepository>,
-            ISys_DictionaryService,
-            IDependency
+    public partial class Sys_DictionaryService : ServiceBase<Sys_Dictionary, ISys_DictionaryRepository>, ISys_DictionaryService, IDependency
     {
         public Sys_DictionaryService(ISys_DictionaryRepository repository)
             : base(repository)

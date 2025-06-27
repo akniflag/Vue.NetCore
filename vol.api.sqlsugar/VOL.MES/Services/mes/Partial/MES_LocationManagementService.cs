@@ -26,10 +26,7 @@ namespace VOL.MES.Services
         private readonly IMES_LocationManagementRepository _repository; //访问数据库
 
         [ActivatorUtilitiesConstructor]
-        public MES_LocationManagementService(
-            IMES_LocationManagementRepository dbRepository,
-            IHttpContextAccessor httpContextAccessor
-        )
+        public MES_LocationManagementService(IMES_LocationManagementRepository dbRepository, IHttpContextAccessor httpContextAccessor)
             : base(dbRepository)
         {
             _httpContextAccessor = httpContextAccessor;

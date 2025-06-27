@@ -20,10 +20,7 @@ namespace VOL.Sys.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         [ActivatorUtilitiesConstructor]
-        public Sys_QuartzLogController(
-            ISys_QuartzLogService service,
-            IHttpContextAccessor httpContextAccessor
-        )
+        public Sys_QuartzLogController(ISys_QuartzLogService service, IHttpContextAccessor httpContextAccessor)
             : base(service)
         {
             _service = service;

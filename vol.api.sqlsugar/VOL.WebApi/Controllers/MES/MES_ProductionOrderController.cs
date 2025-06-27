@@ -11,8 +11,7 @@ namespace VOL.MES.Controllers
 {
     [Route("api/MES_ProductionOrder")]
     [PermissionTable(Name = "MES_ProductionOrder")]
-    public partial class MES_ProductionOrderController
-        : ApiBaseController<IMES_ProductionOrderService>
+    public partial class MES_ProductionOrderController : ApiBaseController<IMES_ProductionOrderService>
     {
         public MES_ProductionOrderController(IMES_ProductionOrderService service)
             : base(service) { }

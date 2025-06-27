@@ -25,18 +25,12 @@ namespace VOL.Core.Extensions
         /// <param name="t"></param>
         /// <param name="expression"></param>
         /// <returns></returns>
-        public static Dictionary<string, object> ToDictionary<T>(
-            this T t,
-            Expression<Func<T, object>> expression
-        )
+        public static Dictionary<string, object> ToDictionary<T>(this T t, Expression<Func<T, object>> expression)
             where T : class
         {
             Dictionary<string, object> dic = new Dictionary<string, object>();
             string[] fields = expression.GetExpressionToArray();
-            PropertyInfo[] properties =
-                expression == null
-                    ? t.GetType().GetProperties()
-                    : t.GetType().GetProperties().Where(x => fields.Contains(x.Name)).ToArray();
+            PropertyInfo[] properties = expression == null ? t.GetType().GetProperties() : t.GetType().GetProperties().Where(x => fields.Contains(x.Name)).ToArray();
 
             foreach (var property in properties)
             {
@@ -46,10 +40,7 @@ namespace VOL.Core.Extensions
             return dic;
         }
 
-        public static Dictionary<string, string> ToDictionary<TInterface, T>(
-            this TInterface t,
-            Dictionary<string, string> dic = null
-        )
+        public static Dictionary<string, string> ToDictionary<TInterface, T>(this TInterface t, Dictionary<string, string> dic = null)
             where T : class, TInterface
         {
             if (dic == null)
@@ -68,20 +59,13 @@ namespace VOL.Core.Extensions
         #endregion
 
 
-        public static DataTable ToDataTable<T>(
-            this IEnumerable<T> source,
-            Expression<Func<T, object>> columns = null,
-            bool contianKey = true
-        )
+        public static DataTable ToDataTable<T>(this IEnumerable<T> source, Expression<Func<T, object>> columns = null, bool contianKey = true)
         {
             DataTable dtReturn = new DataTable();
             if (source == null)
                 return dtReturn;
 
-            PropertyInfo[] oProps = typeof(T)
-                .GetProperties()
-                .Where(x => x.PropertyType.Name != "List`1")
-                .ToArray();
+            PropertyInfo[] oProps = typeof(T).GetProperties().Where(x => x.PropertyType.Name != "List`1").ToArray();
             if (columns != null)
             {
                 string[] columnArray = columns.GetExpressionToArray();
@@ -89,11 +73,7 @@ namespace VOL.Core.Extensions
             }
             //移除自增主键
             PropertyInfo keyType = oProps.GetKeyProperty(); // oProps.GetKeyProperty()?.PropertyType;
-            if (
-                !contianKey
-                && keyType != null
-                && (keyType.PropertyType == typeof(int) || keyType.PropertyType == typeof(long))
-            )
+            if (!contianKey && keyType != null && (keyType.PropertyType == typeof(int) || keyType.PropertyType == typeof(long)))
             {
                 oProps = oProps.Where(x => x.Name != keyType.Name).ToArray();
             }
@@ -102,10 +82,7 @@ namespace VOL.Core.Extensions
             {
                 var colType = pi.PropertyType;
 
-                if (
-                    (colType.IsGenericType)
-                    && (colType.GetGenericTypeDefinition() == typeof(Nullable<>))
-                )
+                if ((colType.IsGenericType) && (colType.GetGenericTypeDefinition() == typeof(Nullable<>)))
                 {
                     colType = colType.GetGenericArguments()[0];
                 }
@@ -117,8 +94,7 @@ namespace VOL.Core.Extensions
                 var dr = dtReturn.NewRow();
                 foreach (var pi in oProps)
                 {
-                    dr[pi.Name] =
-                        pi.GetValue(rec, null) == null ? DBNull.Value : pi.GetValue(rec, null);
+                    dr[pi.Name] = pi.GetValue(rec, null) == null ? DBNull.Value : pi.GetValue(rec, null);
                 }
                 dtReturn.Rows.Add(dr);
             }

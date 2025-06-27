@@ -26,10 +26,7 @@ namespace VOL.Sys.Services
         private readonly IFormDesignOptionsRepository _repository; //访问数据库
 
         [ActivatorUtilitiesConstructor]
-        public FormDesignOptionsService(
-            IFormDesignOptionsRepository dbRepository,
-            IHttpContextAccessor httpContextAccessor
-        )
+        public FormDesignOptionsService(IFormDesignOptionsRepository dbRepository, IHttpContextAccessor httpContextAccessor)
             : base(dbRepository)
         {
             _httpContextAccessor = httpContextAccessor;

@@ -19,20 +19,14 @@ namespace VOL.Core.ObjectActionValidator
         /// <summary>
         /// 方法上的model校验配置
         /// </summary>
-        public static Dictionary<string, string[]> ValidatorCollection { get; } =
-            new Dictionary<string, string[]>();
+        public static Dictionary<string, string[]> ValidatorCollection { get; } = new Dictionary<string, string[]>();
 
-        public static void Add<T>(
-            this ValidatorModel validatorGroup,
-            Expression<Func<T, object>> loginExpress = null
-        )
+        public static void Add<T>(this ValidatorModel validatorGroup, Expression<Func<T, object>> loginExpress = null)
         {
             if (
                 !ValidatorCollection.TryAdd(
                     validatorGroup.ToString().ToLower(),
-                    loginExpress == null
-                        ? typeof(T).GetGenericProperties().Select(x => x.Name).ToArray()
-                        : loginExpress.GetExpressionToArray()
+                    loginExpress == null ? typeof(T).GetGenericProperties().Select(x => x.Name).ToArray() : loginExpress.GetExpressionToArray()
                 )
             )
             {
@@ -43,8 +37,7 @@ namespace VOL.Core.ObjectActionValidator
         /// <summary>
         /// 方法上的普通参数校验配置
         /// </summary>
-        public static Dictionary<string, GeneralOptions> ValidatorGeneralCollection { get; } =
-            new Dictionary<string, GeneralOptions>();
+        public static Dictionary<string, GeneralOptions> ValidatorGeneralCollection { get; } = new Dictionary<string, GeneralOptions>();
 
         /// <summary>
         /// 默认校验的是string类型
@@ -66,12 +59,7 @@ namespace VOL.Core.ObjectActionValidator
             general.Add(CNName, type, null, null);
         }
 
-        public static void Add(
-            this ValidatorGeneral general,
-            string CNName,
-            ParamType type,
-            int? max
-        )
+        public static void Add(this ValidatorGeneral general, string CNName, ParamType type, int? max)
         {
             general.Add(CNName, type, null, max);
         }
@@ -89,13 +77,7 @@ namespace VOL.Core.ObjectActionValidator
         /// <param name="type">参数类型</param>
         /// <param name="min">最大小度(最小值)</param>
         /// <param name="max">最大长度(最大值)</param>
-        public static void Add(
-            this ValidatorGeneral general,
-            string CNName,
-            ParamType type,
-            int? min = null,
-            int? max = null
-        )
+        public static void Add(this ValidatorGeneral general, string CNName, ParamType type, int? min = null, int? max = null)
         {
             GeneralOptions options = new GeneralOptions(general, CNName, type, min, max);
             if (!ValidatorGeneralCollection.TryAdd(general.ToString().ToLower(), options))
@@ -109,11 +91,7 @@ namespace VOL.Core.ObjectActionValidator
         /// </summary>
         /// <param name="general"></param>
         /// <param name="customValidator"></param>
-        public static void Add(
-            this ValidatorGeneral general,
-            string CNName,
-            Func<object, ObjectValidatorResult> customValidator
-        )
+        public static void Add(this ValidatorGeneral general, string CNName, Func<object, ObjectValidatorResult> customValidator)
         {
             GeneralOptions options = new GeneralOptions(general, CNName, customValidator);
             if (!ValidatorGeneralCollection.TryAdd(general.ToString().ToLower(), options))
@@ -166,12 +144,7 @@ namespace VOL.Core.ObjectActionValidator
         {
             foreach (string item in generalName)
             {
-                if (
-                    !ValidatorGeneralCollection.TryGetValue(
-                        item.ToLower(),
-                        out GeneralOptions options
-                    )
-                )
+                if (!ValidatorGeneralCollection.TryGetValue(item.ToLower(), out GeneralOptions options))
                 {
                     throw new Exception($"未注册{generalName.ToString()}参数的配置");
                 }
@@ -188,8 +161,7 @@ namespace VOL.Core.ObjectActionValidator
             if (!context.ExistsActionModelValidator())
                 return;
             //判断当前model校验是否通垸
-            ObjectModelValidatorState objectModel =
-                context.HttpContext.GetService<ObjectModelValidatorState>();
+            ObjectModelValidatorState objectModel = context.HttpContext.GetService<ObjectModelValidatorState>();
             if (!objectModel.Status)
             {
                 context.Result = new JsonResult(objectModel);
@@ -211,9 +183,7 @@ namespace VOL.Core.ObjectActionValidator
         /// <returns></returns>
         public static bool ExistsActionModelValidator(this ActionExecutingContext context)
         {
-            return context.ActionDescriptor.EndpointMetadata.Any(item =>
-                item is ObjectModelValidatorFilter
-            );
+            return context.ActionDescriptor.EndpointMetadata.Any(item => item is ObjectModelValidatorFilter);
         }
 
         /// <summary>
@@ -224,11 +194,7 @@ namespace VOL.Core.ObjectActionValidator
         public static string[] GetModelValidatorParams(this ActionContext actionContext)
         {
             return (
-                actionContext
-                    .ActionDescriptor.EndpointMetadata.Where(item =>
-                        item is ObjectModelValidatorFilter
-                    )
-                    .FirstOrDefault() as ObjectModelValidatorFilter
+                actionContext.ActionDescriptor.EndpointMetadata.Where(item => item is ObjectModelValidatorFilter).FirstOrDefault() as ObjectModelValidatorFilter
             )?.MethodsParameters;
         }
 
@@ -239,11 +205,7 @@ namespace VOL.Core.ObjectActionValidator
         /// <param name="prefix"></param>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static void ModelValidator(
-            this ActionContext actionContext,
-            string prefix,
-            object model
-        )
+        public static void ModelValidator(this ActionContext actionContext, string prefix, object model)
         {
             string[] parameters = actionContext.GetModelValidatorParams();
             //没有设置模型校验的直接返回
@@ -255,11 +217,7 @@ namespace VOL.Core.ObjectActionValidator
                 return;
             }
             //model==list未判断
-            PropertyInfo[] properties = model
-                .GetType()
-                .GetProperties()
-                .Where(x => parameters.Contains(x.Name.ToLower()))
-                .ToArray();
+            PropertyInfo[] properties = model.GetType().GetProperties().Where(x => parameters.Contains(x.Name.ToLower())).ToArray();
             foreach (var item in properties)
             {
                 if (!item.ValidationRquiredValueForDbType(item.GetValue(model), out string message))
@@ -277,25 +235,13 @@ namespace VOL.Core.ObjectActionValidator
         /// <param name="actionContext"></param>
         public static void GeneralValidator(this ActionExecutingContext actionContext)
         {
-            if (
-                actionContext
-                    .ActionDescriptor.EndpointMetadata.Where(item =>
-                        item is ObjectGeneralValidatorFilter
-                    )
-                    .FirstOrDefault()
-                is ObjectGeneralValidatorFilter objectGeneral
-            )
+            if (actionContext.ActionDescriptor.EndpointMetadata.Where(item => item is ObjectGeneralValidatorFilter).FirstOrDefault() is ObjectGeneralValidatorFilter objectGeneral)
             {
                 foreach (GeneralOptions general in objectGeneral.MethodsParameters)
                 {
                     if (actionContext.Result != null)
                         return;
-                    if (
-                        !actionContext.HttpContext.Request.Query.TryGetValue(
-                            general.Name,
-                            out StringValues value
-                        )
-                    )
+                    if (!actionContext.HttpContext.Request.Query.TryGetValue(general.Name, out StringValues value))
                     {
                         actionContext.ActionErrorResult($"请提交参数[{general.CNName}]");
                         return;
@@ -326,11 +272,7 @@ namespace VOL.Core.ObjectActionValidator
             value.ChangeType(type);
         }
 
-        public static void ValidatorValue(
-            this ActionExecutingContext actionContext,
-            GeneralOptions options,
-            object model
-        )
+        public static void ValidatorValue(this ActionExecutingContext actionContext, GeneralOptions options, object model)
         {
             if (model == null)
             {
@@ -352,31 +294,23 @@ namespace VOL.Core.ObjectActionValidator
                     }
                     if (options.Min != null && _number < options.Min)
                     {
-                        actionContext.ActionErrorResult(
-                            $"[{options.CNName}]不能小于[{options.Min}]"
-                        );
+                        actionContext.ActionErrorResult($"[{options.CNName}]不能小于[{options.Min}]");
                         break;
                     }
                     if (options.Max != null && _number > options.Max)
                     {
-                        actionContext.ActionErrorResult(
-                            $"[{options.CNName}]不能大于[{options.Max}]"
-                        );
+                        actionContext.ActionErrorResult($"[{options.CNName}]不能大于[{options.Max}]");
                     }
                     break;
                 case ParamType.String:
                     string value = model.ToString();
                     if (options.Min != null && value.Length < options.Min)
                     {
-                        actionContext.ActionErrorResult(
-                            $"[{options.CNName}]至少[{options.Min}]个字符"
-                        );
+                        actionContext.ActionErrorResult($"[{options.CNName}]至少[{options.Min}]个字符");
                     }
                     if (options.Max != null && value.Length > options.Max)
                     {
-                        actionContext.ActionErrorResult(
-                            $"[{options.CNName}]最多[{options.Max}]个字符"
-                        );
+                        actionContext.ActionErrorResult($"[{options.CNName}]最多[{options.Max}]个字符");
                     }
                     break;
                 //待完日期大小
@@ -395,16 +329,12 @@ namespace VOL.Core.ObjectActionValidator
                     }
                     if (options.Min != null && _decimal < options.Min)
                     {
-                        actionContext.ActionErrorResult(
-                            $"[{options.CNName}]不能小于[{options.Min}]"
-                        );
+                        actionContext.ActionErrorResult($"[{options.CNName}]不能小于[{options.Min}]");
                         break;
                     }
                     if (options.Max != null && _decimal > options.Max)
                     {
-                        actionContext.ActionErrorResult(
-                            $"[{options.CNName}]不能大于[{options.Max}]"
-                        );
+                        actionContext.ActionErrorResult($"[{options.CNName}]不能大于[{options.Max}]");
                     }
                     break;
                 case ParamType.Guid:
@@ -418,10 +348,7 @@ namespace VOL.Core.ObjectActionValidator
             }
         }
 
-        public static void ActionErrorResult(
-            this ActionExecutingContext actionContext,
-            string message
-        )
+        public static void ActionErrorResult(this ActionExecutingContext actionContext, string message)
         {
             actionContext.Result = new JsonResult(new { Status = false, Message = message });
         }
@@ -433,8 +360,7 @@ namespace VOL.Core.ObjectActionValidator
         /// <param name="message"></param>
         public static void ErrorResult(this ActionContext actionContext, string message)
         {
-            ObjectModelValidatorState objectModel =
-                actionContext.HttpContext.GetService<ObjectModelValidatorState>();
+            ObjectModelValidatorState objectModel = actionContext.HttpContext.GetService<ObjectModelValidatorState>();
             if (!objectModel.Status)
             {
                 return;
@@ -445,8 +371,7 @@ namespace VOL.Core.ObjectActionValidator
 
         public static void OkModelResult(this ActionContext actionContext)
         {
-            ObjectModelValidatorState objectModel =
-                actionContext.HttpContext.GetService<ObjectModelValidatorState>();
+            ObjectModelValidatorState objectModel = actionContext.HttpContext.GetService<ObjectModelValidatorState>();
             objectModel.HasModelContent = true;
         }
     }

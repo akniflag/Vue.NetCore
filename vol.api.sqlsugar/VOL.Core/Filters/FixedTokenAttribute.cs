@@ -40,9 +40,7 @@ namespace VOL.Core.Filters
             }
             else
             {
-                fixedoken = (
-                    (ClaimsIdentity)context.HttpContext.User.Identity
-                )?.BootstrapContext?.ToString();
+                fixedoken = ((ClaimsIdentity)context.HttpContext.User.Identity)?.BootstrapContext?.ToString();
             }
             //判断当前用户的token与缓存的token是否相同
             if (UserContext.Current.Token != fixedoken)

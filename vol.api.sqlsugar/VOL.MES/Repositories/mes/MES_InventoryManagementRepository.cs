@@ -10,9 +10,7 @@ using VOL.MES.IRepositories;
 
 namespace VOL.MES.Repositories
 {
-    public partial class MES_InventoryManagementRepository
-        : RepositoryBase<MES_InventoryManagement>,
-            IMES_InventoryManagementRepository
+    public partial class MES_InventoryManagementRepository : RepositoryBase<MES_InventoryManagement>, IMES_InventoryManagementRepository
     {
         public MES_InventoryManagementRepository(VOLContext dbContext)
             : base(dbContext) { }

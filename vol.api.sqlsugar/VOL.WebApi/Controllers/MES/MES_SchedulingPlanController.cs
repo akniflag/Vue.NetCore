@@ -11,8 +11,7 @@ namespace VOL.MES.Controllers
 {
     [Route("api/MES_SchedulingPlan")]
     [PermissionTable(Name = "MES_SchedulingPlan")]
-    public partial class MES_SchedulingPlanController
-        : ApiBaseController<IMES_SchedulingPlanService>
+    public partial class MES_SchedulingPlanController : ApiBaseController<IMES_SchedulingPlanService>
     {
         public MES_SchedulingPlanController(IMES_SchedulingPlanService service)
             : base(service) { }

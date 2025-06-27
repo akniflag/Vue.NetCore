@@ -43,9 +43,7 @@ namespace VOL.Sys.Services
                     dicNo = s.DicNo,
                     config = s.Config,
                     dbSql = s.DbSql,
-                    list = s
-                        .Sys_DictionaryList.OrderByDescending(o => o.OrderNo)
-                        .Select(list => new { key = list.DicValue, value = list.DicName }),
+                    list = s.Sys_DictionaryList.OrderByDescending(o => o.OrderNo).Select(list => new { key = list.DicValue, value = list.DicName }),
                 })
                 .ToList();
 
@@ -89,10 +87,7 @@ namespace VOL.Sys.Services
                 return null;
             }
             sql = $"SELECT * FROM ({sql}) AS t WHERE value LIKE @value";
-            return repository.SqlSugarClient.QueryList<object>(
-                sql,
-                new { value = "%" + value + "%" }
-            );
+            return repository.SqlSugarClient.QueryList<object>(sql, new { value = "%" + value + "%" });
         }
 
         /// <summary>
@@ -129,10 +124,7 @@ namespace VOL.Sys.Services
             {
                 return GetPgSqlTableDictionary(keyData);
             }
-            var dicInfo = Dictionaries
-                .Where(x => keyData.ContainsKey(x.DicNo) && !string.IsNullOrEmpty(x.DbSql))
-                .Select(x => new { x.DicNo, x.DbSql })
-                .ToList();
+            var dicInfo = Dictionaries.Where(x => keyData.ContainsKey(x.DicNo) && !string.IsNullOrEmpty(x.DbSql)).Select(x => new { x.DicNo, x.DbSql }).ToList();
             List<object> list = new List<object>();
             string keySql = DBType.Name == DbCurrentType.MySql.ToString() ? "t.key" : "t.[key]";
             dicInfo.ForEach(x =>
@@ -142,13 +134,7 @@ namespace VOL.Sys.Services
                     //  2020.05.01增加根据用户信息加载字典数据源sql
                     string sql = DictionaryHandler.GetCustomDBSql(x.DicNo, x.DbSql);
                     sql = $"SELECT * FROM ({sql}) AS t WHERE " + $"{keySql}" + $" in @data";
-                    list.Add(
-                        new
-                        {
-                            key = x.DicNo,
-                            data = repository.SqlSugarClient.QueryList<object>(sql, new { data }),
-                        }
-                    );
+                    list.Add(new { key = x.DicNo, data = repository.SqlSugarClient.QueryList<object>(sql, new { data }) });
                 }
             });
             return list;
@@ -161,10 +147,7 @@ namespace VOL.Sys.Services
         /// <returns></returns>
         public object GetPgSqlTableDictionary(Dictionary<string, object[]> keyData)
         {
-            var dicInfo = Dictionaries
-                .Where(x => keyData.ContainsKey(x.DicNo) && !string.IsNullOrEmpty(x.DbSql))
-                .Select(x => new { x.DicNo, x.DbSql })
-                .ToList();
+            var dicInfo = Dictionaries.Where(x => keyData.ContainsKey(x.DicNo) && !string.IsNullOrEmpty(x.DbSql)).Select(x => new { x.DicNo, x.DbSql }).ToList();
             List<object> list = new List<object>();
 
             dicInfo.ForEach(x =>
@@ -173,16 +156,7 @@ namespace VOL.Sys.Services
                 {
                     string sql = DictionaryHandler.GetCustomDBSql(x.DicNo, x.DbSql);
                     sql = $"SELECT * FROM ({sql}) AS t WHERE t.key=any(@data)";
-                    list.Add(
-                        new
-                        {
-                            key = x.DicNo,
-                            data = repository.SqlSugarClient.QueryList<object>(
-                                sql,
-                                new { data = data.Select(s => s.ToString()).ToList() }
-                            ),
-                        }
-                    );
+                    list.Add(new { key = x.DicNo, data = repository.SqlSugarClient.QueryList<object>(sql, new { data = data.Select(s => s.ToString()).ToList() }) });
                 }
             });
             return list;
@@ -200,26 +174,14 @@ namespace VOL.Sys.Services
 
         public override WebResponseContent Update(SaveModel saveDataModel)
         {
-            if (
-                saveDataModel.MainData.DicKeyIsNullOrEmpty("DicNo")
-                || saveDataModel.MainData.DicKeyIsNullOrEmpty("Dic_ID")
-            )
+            if (saveDataModel.MainData.DicKeyIsNullOrEmpty("DicNo") || saveDataModel.MainData.DicKeyIsNullOrEmpty("Dic_ID"))
                 return base.Add(saveDataModel);
             //判断修改的字典编号是否在其他ID存在
             string dicNo = saveDataModel.MainData["DicNo"].ToString().Trim();
-            if (
-                base.repository.Exists(x =>
-                    x.DicNo == dicNo && x.Dic_ID != saveDataModel.MainData["Dic_ID"].GetInt()
-                )
-            )
+            if (base.repository.Exists(x => x.DicNo == dicNo && x.Dic_ID != saveDataModel.MainData["Dic_ID"].GetInt()))
                 return new WebResponseContent().Error($"字典编号:{dicNo}已存在。!");
 
-            base.UpdateOnExecuting = (
-                Sys_Dictionary dictionary,
-                object addList,
-                object editList,
-                List<object> obj
-            ) =>
+            base.UpdateOnExecuting = (Sys_Dictionary dictionary, object addList, object editList, List<object> obj) =>
             {
                 List<Sys_DictionaryList> listObj = new List<Sys_DictionaryList>();
                 listObj.AddRange(addList as List<Sys_DictionaryList>);

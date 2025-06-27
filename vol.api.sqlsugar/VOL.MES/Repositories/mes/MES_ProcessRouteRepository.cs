@@ -10,9 +10,7 @@ using VOL.MES.IRepositories;
 
 namespace VOL.MES.Repositories
 {
-    public partial class MES_ProcessRouteRepository
-        : RepositoryBase<MES_ProcessRoute>,
-            IMES_ProcessRouteRepository
+    public partial class MES_ProcessRouteRepository : RepositoryBase<MES_ProcessRoute>, IMES_ProcessRouteRepository
     {
         public MES_ProcessRouteRepository(VOLContext dbContext)
             : base(dbContext) { }

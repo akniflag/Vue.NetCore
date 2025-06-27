@@ -10,19 +10,14 @@ using VOL.MES.IRepositories;
 
 namespace VOL.MES.Repositories
 {
-    public partial class MES_ProductionPlanChangeRecordRepository
-        : RepositoryBase<MES_ProductionPlanChangeRecord>,
-            IMES_ProductionPlanChangeRecordRepository
+    public partial class MES_ProductionPlanChangeRecordRepository : RepositoryBase<MES_ProductionPlanChangeRecord>, IMES_ProductionPlanChangeRecordRepository
     {
         public MES_ProductionPlanChangeRecordRepository(VOLContext dbContext)
             : base(dbContext) { }
 
         public static IMES_ProductionPlanChangeRecordRepository Instance
         {
-            get
-            {
-                return AutofacContainerModule.GetService<IMES_ProductionPlanChangeRecordRepository>();
-            }
+            get { return AutofacContainerModule.GetService<IMES_ProductionPlanChangeRecordRepository>(); }
         }
     }
 }

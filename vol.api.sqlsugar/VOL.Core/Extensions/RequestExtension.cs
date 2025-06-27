@@ -74,9 +74,7 @@ namespace VOL.Core.Extensions
             string requestParam = context.GetRequestParameters();
             if (string.IsNullOrEmpty(requestParam))
                 return null;
-            Dictionary<string, object> keyValues = requestParam.DeserializeObject<
-                Dictionary<string, object>
-            >();
+            Dictionary<string, object> keyValues = requestParam.DeserializeObject<Dictionary<string, object>>();
             if (keyValues == null || keyValues.Count == 0)
                 return null;
             if (keyValues.TryGetValue(parameter, out object value))
@@ -99,11 +97,7 @@ namespace VOL.Core.Extensions
         /// <returns></returns>
         public static bool IsAjaxRequest(this HttpContext context)
         {
-            return context.Request("X-Requested-With") == "XMLHttpRequest"
-                || (
-                    context.Request.Headers != null
-                    && context.Request.Headers["X-Requested-With"] == "XMLHttpRequest"
-                );
+            return context.Request("X-Requested-With") == "XMLHttpRequest" || (context.Request.Headers != null && context.Request.Headers["X-Requested-With"] == "XMLHttpRequest");
         }
 
         public static UserAgent GetAgentType(this HttpContext context)
@@ -150,15 +144,7 @@ namespace VOL.Core.Extensions
             {
                 if (context.Request.Body.Position > 0)
                     context.Request.Body.Position = 0;
-                using (
-                    StreamReader reader = new StreamReader(
-                        context.Request.Body,
-                        Encoding.UTF8,
-                        detectEncodingFromByteOrderMarks: true,
-                        bufferSize: 1024,
-                        leaveOpen: true
-                    )
-                )
+                using (StreamReader reader = new StreamReader(context.Request.Body, Encoding.UTF8, detectEncodingFromByteOrderMarks: true, bufferSize: 1024, leaveOpen: true))
                 {
                     prarameters += reader.ReadToEnd();
                 }

@@ -19,12 +19,7 @@ namespace VOL.Core.Utilities
         /// <param name="pageSize">分页大小</param>
         /// <param name="seekEnd"> 是否最后一行向前读取,默认从前向后读取</param>
         /// <returns></returns>
-        public static IEnumerable<string> ReadPageLine(
-            string fullPath,
-            int page,
-            int pageSize,
-            bool seekEnd = false
-        )
+        public static IEnumerable<string> ReadPageLine(string fullPath, int page, int pageSize, bool seekEnd = false)
         {
             if (page <= 0)
             {
@@ -136,25 +131,14 @@ namespace VOL.Core.Utilities
         /// <param name="fileName">文件名</param>
         /// <param name="content">写入的内容</param>
         /// <param name="appendToLast">是否将内容添加到未尾,默认不添加</param>
-        public static void WriteFile(
-            string path,
-            string fileName,
-            string content,
-            bool appendToLast = false
-        )
+        public static void WriteFile(string path, string fileName, string content, bool appendToLast = false)
         {
             path = path.ReplacePath();
             fileName = fileName.ReplacePath();
             if (!Directory.Exists(path)) //如果不存在就创建file文件夹
                 Directory.CreateDirectory(path);
 
-            using (
-                FileStream stream = File.Open(
-                    path + fileName,
-                    FileMode.OpenOrCreate,
-                    FileAccess.Write
-                )
-            )
+            using (FileStream stream = File.Open(path + fileName, FileMode.OpenOrCreate, FileAccess.Write))
             {
                 byte[] by = Encoding.Default.GetBytes(content);
                 if (appendToLast)

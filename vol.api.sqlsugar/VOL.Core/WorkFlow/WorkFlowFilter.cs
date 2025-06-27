@@ -33,8 +33,7 @@ namespace VOL.Core.WorkFlow
                 }
                 if (!fields.Contains(filter.Field))
                 {
-                    string msg =
-                        $"表【{typeof(T).GetEntityTableName()}】不存在字段【{filter.Field}】";
+                    string msg = $"表【{typeof(T).GetEntityTableName()}】不存在字段【{filter.Field}】";
                     Console.WriteLine(msg);
                     throw new Exception(msg);
                 }
@@ -69,10 +68,7 @@ namespace VOL.Core.WorkFlow
                 }
                 if (type == LinqExpressionType.In)
                 {
-                    var values = filter
-                        .Value.Split(",")
-                        .Where(x => !string.IsNullOrEmpty(x))
-                        .ToList();
+                    var values = filter.Value.Split(",").Where(x => !string.IsNullOrEmpty(x)).ToList();
                     if (values.Count > 0)
                     {
                         expression = expression.And(filter.Field.CreateExpression<T>(values, type));
@@ -84,15 +80,11 @@ namespace VOL.Core.WorkFlow
                     {
                         orFilter = x => false;
                     }
-                    orFilter = orFilter.Or(
-                        filter.Field.CreateExpression<T>(filter.Value, LinqExpressionType.Equal)
-                    );
+                    orFilter = orFilter.Or(filter.Field.CreateExpression<T>(filter.Value, LinqExpressionType.Equal));
                 }
                 else
                 {
-                    expression = expression.And(
-                        filter.Field.CreateExpression<T>(filter.Value, type)
-                    );
+                    expression = expression.And(filter.Field.CreateExpression<T>(filter.Value, type));
                 }
             }
             if (orFilter != null)

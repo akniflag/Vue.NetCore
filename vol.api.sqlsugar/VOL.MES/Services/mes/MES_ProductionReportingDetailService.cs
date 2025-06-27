@@ -19,10 +19,7 @@ namespace VOL.MES.Services
     {
         public static IMES_ProductionReportingDetailService Instance
         {
-            get
-            {
-                return AutofacContainerModule.GetService<IMES_ProductionReportingDetailService>();
-            }
+            get { return AutofacContainerModule.GetService<IMES_ProductionReportingDetailService>(); }
         }
     }
 }

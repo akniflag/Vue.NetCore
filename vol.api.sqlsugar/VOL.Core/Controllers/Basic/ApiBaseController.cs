@@ -29,12 +29,7 @@ namespace VOL.Core.Controllers.Basic
             Service = service;
         }
 
-        public ApiBaseController(
-            string projectName,
-            string folder,
-            string tablename,
-            IServiceBase service
-        )
+        public ApiBaseController(string projectName, string folder, string tablename, IServiceBase service)
         {
             Service = service;
         }
@@ -85,16 +80,11 @@ namespace VOL.Core.Controllers.Basic
         [ApiExplorerSettings(IgnoreApi = true)]
         public virtual ActionResult DownLoadTemplate()
         {
-            _baseWebResponseContent =
-                InvokeService("DownLoadTemplate", new object[] { }) as WebResponseContent;
+            _baseWebResponseContent = InvokeService("DownLoadTemplate", new object[] { }) as WebResponseContent;
             if (!_baseWebResponseContent.Status)
                 return Json(_baseWebResponseContent);
             byte[] fileBytes = System.IO.File.ReadAllBytes(_baseWebResponseContent.Data.ToString());
-            return File(
-                fileBytes,
-                System.Net.Mime.MediaTypeNames.Application.Octet,
-                Path.GetFileName(_baseWebResponseContent.Data.ToString())
-            );
+            return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, Path.GetFileName(_baseWebResponseContent.Data.ToString()));
         }
 
         /// <summary>
@@ -123,11 +113,7 @@ namespace VOL.Core.Controllers.Basic
         public virtual ActionResult Export([FromBody] PageDataOptions loadData)
         {
             var result = InvokeService("Export", new object[] { loadData }) as WebResponseContent;
-            return File(
-                System.IO.File.ReadAllBytes(result.Data.ToString().MapPath()),
-                System.Net.Mime.MediaTypeNames.Application.Octet,
-                Path.GetFileName(result.Data.ToString())
-            );
+            return File(System.IO.File.ReadAllBytes(result.Data.ToString().MapPath()), System.Net.Mime.MediaTypeNames.Application.Octet, Path.GetFileName(result.Data.ToString()));
         }
 
         /// <summary>
@@ -141,13 +127,8 @@ namespace VOL.Core.Controllers.Basic
         [ApiExplorerSettings(IgnoreApi = true)]
         public virtual ActionResult Del([FromBody] object[] keys)
         {
-            _baseWebResponseContent =
-                InvokeService("Del", new object[] { keys, true }) as WebResponseContent;
-            Logger.Info(
-                Enums.LoggerType.Del,
-                keys.Serialize(),
-                _baseWebResponseContent.Status ? "Ok" : _baseWebResponseContent.Message
-            );
+            _baseWebResponseContent = InvokeService("Del", new object[] { keys, true }) as WebResponseContent;
+            Logger.Info(Enums.LoggerType.Del, keys.Serialize(), _baseWebResponseContent.Status ? "Ok" : _baseWebResponseContent.Message);
             return Json(_baseWebResponseContent);
         }
 
@@ -160,15 +141,9 @@ namespace VOL.Core.Controllers.Basic
         [ApiActionPermission(Enums.ActionPermissionOptions.Audit)]
         [HttpPost, Route("Audit")]
         [ApiExplorerSettings(IgnoreApi = true)]
-        public virtual ActionResult Audit(
-            [FromBody] object[] id,
-            int? auditStatus,
-            string auditReason
-        )
+        public virtual ActionResult Audit([FromBody] object[] id, int? auditStatus, string auditReason)
         {
-            _baseWebResponseContent =
-                InvokeService("Audit", new object[] { id, auditStatus, auditReason })
-                as WebResponseContent;
+            _baseWebResponseContent = InvokeService("Audit", new object[] { id, auditStatus, auditReason }) as WebResponseContent;
             Logger.Info(
                 Enums.LoggerType.Del,
                 id?.Serialize() + "," + (auditStatus ?? -1) + "," + auditReason,
@@ -188,14 +163,8 @@ namespace VOL.Core.Controllers.Basic
         [ApiExplorerSettings(IgnoreApi = true)]
         public virtual ActionResult Add([FromBody] SaveModel saveModel)
         {
-            _baseWebResponseContent =
-                InvokeService("Add", new Type[] { typeof(SaveModel) }, new object[] { saveModel })
-                as WebResponseContent;
-            Logger.Info(
-                Enums.LoggerType.Add,
-                null,
-                _baseWebResponseContent.Status ? "Ok" : _baseWebResponseContent.Message
-            );
+            _baseWebResponseContent = InvokeService("Add", new Type[] { typeof(SaveModel) }, new object[] { saveModel }) as WebResponseContent;
+            Logger.Info(Enums.LoggerType.Add, null, _baseWebResponseContent.Status ? "Ok" : _baseWebResponseContent.Message);
             _baseWebResponseContent.Data = _baseWebResponseContent.Data?.Serialize();
             return Json(_baseWebResponseContent);
         }
@@ -212,13 +181,8 @@ namespace VOL.Core.Controllers.Basic
         [ApiExplorerSettings(IgnoreApi = true)]
         public virtual ActionResult Update([FromBody] SaveModel saveModel)
         {
-            _baseWebResponseContent =
-                InvokeService("Update", new object[] { saveModel }) as WebResponseContent;
-            Logger.Info(
-                Enums.LoggerType.Edit,
-                null,
-                _baseWebResponseContent.Status ? "Ok" : _baseWebResponseContent.Message
-            );
+            _baseWebResponseContent = InvokeService("Update", new object[] { saveModel }) as WebResponseContent;
+            Logger.Info(Enums.LoggerType.Edit, null, _baseWebResponseContent.Status ? "Ok" : _baseWebResponseContent.Message);
             _baseWebResponseContent.Data = _baseWebResponseContent.Data?.Serialize();
             return Json(_baseWebResponseContent);
         }

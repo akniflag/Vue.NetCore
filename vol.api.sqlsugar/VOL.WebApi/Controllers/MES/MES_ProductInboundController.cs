@@ -11,8 +11,7 @@ namespace VOL.MES.Controllers
 {
     [Route("api/MES_ProductInbound")]
     [PermissionTable(Name = "MES_ProductInbound")]
-    public partial class MES_ProductInboundController
-        : ApiBaseController<IMES_ProductInboundService>
+    public partial class MES_ProductInboundController : ApiBaseController<IMES_ProductInboundService>
     {
         public MES_ProductInboundController(IMES_ProductInboundService service)
             : base(service) { }

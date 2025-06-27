@@ -6,9 +6,7 @@ using VOL.Entity.DomainModels;
 
 namespace VOL.Builder.Repositories
 {
-    public partial class Sys_TableInfoRepository
-        : RepositoryBase<Sys_TableInfo>,
-            ISys_TableInfoRepository
+    public partial class Sys_TableInfoRepository : RepositoryBase<Sys_TableInfo>, ISys_TableInfoRepository
     {
         public Sys_TableInfoRepository(VOLContext dbContext)
             : base(dbContext) { }

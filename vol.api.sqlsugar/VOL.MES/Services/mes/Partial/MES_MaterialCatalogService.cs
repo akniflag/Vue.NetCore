@@ -26,10 +26,7 @@ namespace VOL.MES.Services
         private readonly IMES_MaterialCatalogRepository _repository; //访问数据库
 
         [ActivatorUtilitiesConstructor]
-        public MES_MaterialCatalogService(
-            IMES_MaterialCatalogRepository dbRepository,
-            IHttpContextAccessor httpContextAccessor
-        )
+        public MES_MaterialCatalogService(IMES_MaterialCatalogRepository dbRepository, IHttpContextAccessor httpContextAccessor)
             : base(dbRepository)
         {
             _httpContextAccessor = httpContextAccessor;

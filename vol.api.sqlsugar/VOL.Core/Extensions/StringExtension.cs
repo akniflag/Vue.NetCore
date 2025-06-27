@@ -45,10 +45,7 @@ namespace VOL.Core.Extensions
         {
             if (timeStamp == null)
                 return dateStart;
-            DateTime dateTime = new DateTime(
-                longTime + Convert.ToInt64(timeStamp) * samllTime,
-                DateTimeKind.Utc
-            ).ToLocalTime();
+            DateTime dateTime = new DateTime(longTime + Convert.ToInt64(timeStamp) * samllTime, DateTimeKind.Utc).ToLocalTime();
             return dateTime;
         }
 
@@ -408,9 +405,7 @@ namespace VOL.Core.Extensions
                 case "System.Guid":
                     return ToGuid(str);
             }
-            throw new NotSupportedException(
-                string.Format("The string of \"{0}\" can not be parsed to {1}", str, type)
-            );
+            throw new NotSupportedException(string.Format("The string of \"{0}\" can not be parsed to {1}", str, type));
         }
 
         public static sbyte? ToSByte(this string value)
@@ -564,9 +559,7 @@ namespace VOL.Core.Extensions
         /// <returns>替换后的字符串</returns>
         public static string ReplaceWhitespace(this string input, string replacement = "")
         {
-            return string.IsNullOrEmpty(input)
-                ? null
-                : Regex.Replace(input, "\\s", replacement, RegexOptions.Compiled);
+            return string.IsNullOrEmpty(input) ? null : Regex.Replace(input, "\\s", replacement, RegexOptions.Compiled);
         }
 
         private static char[] randomConstant =

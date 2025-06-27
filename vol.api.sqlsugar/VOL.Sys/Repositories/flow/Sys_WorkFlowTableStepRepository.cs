@@ -10,9 +10,7 @@ using VOL.Sys.IRepositories;
 
 namespace VOL.Sys.Repositories
 {
-    public partial class Sys_WorkFlowTableStepRepository
-        : RepositoryBase<Sys_WorkFlowTableStep>,
-            ISys_WorkFlowTableStepRepository
+    public partial class Sys_WorkFlowTableStepRepository : RepositoryBase<Sys_WorkFlowTableStep>, ISys_WorkFlowTableStepRepository
     {
         public Sys_WorkFlowTableStepRepository(VOLContext dbContext)
             : base(dbContext) { }

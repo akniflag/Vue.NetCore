@@ -12,10 +12,7 @@ using VOL.Sys.IServices;
 
 namespace VOL.Sys.Services
 {
-    public partial class FormCollectionObjectService
-        : ServiceBase<FormCollectionObject, IFormCollectionObjectRepository>,
-            IFormCollectionObjectService,
-            IDependency
+    public partial class FormCollectionObjectService : ServiceBase<FormCollectionObject, IFormCollectionObjectRepository>, IFormCollectionObjectService, IDependency
     {
         public FormCollectionObjectService(IFormCollectionObjectRepository repository)
             : base(repository)

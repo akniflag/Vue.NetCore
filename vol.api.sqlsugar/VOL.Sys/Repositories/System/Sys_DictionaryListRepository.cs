@@ -10,9 +10,7 @@ using VOL.Sys.IRepositories;
 
 namespace VOL.Sys.Repositories
 {
-    public partial class Sys_DictionaryListRepository
-        : RepositoryBase<Sys_DictionaryList>,
-            ISys_DictionaryListRepository
+    public partial class Sys_DictionaryListRepository : RepositoryBase<Sys_DictionaryList>, ISys_DictionaryListRepository
     {
         public Sys_DictionaryListRepository(VOLContext dbContext)
             : base(dbContext) { }

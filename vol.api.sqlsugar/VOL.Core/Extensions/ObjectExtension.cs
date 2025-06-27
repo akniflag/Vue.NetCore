@@ -42,18 +42,14 @@ namespace VOL.Core.Extensions
         /// </summary>
         /// <param name="Reader"></param>
         /// <returns></returns>
-        public static List<Dictionary<string, object>> ReaderToDictionaryList(
-            this IDataReader Reader
-        )
+        public static List<Dictionary<string, object>> ReaderToDictionaryList(this IDataReader Reader)
         {
             List<Dictionary<string, object>> rowList = new List<Dictionary<string, object>>();
             try
             {
                 while (Reader.Read())
                 {
-                    Dictionary<string, object> row = new Dictionary<string, object>(
-                        StringComparer.OrdinalIgnoreCase
-                    );
+                    Dictionary<string, object> row = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
                     for (var fieldCount = 0; fieldCount < Reader.FieldCount; fieldCount++)
                     {
                         row.Add(Reader.GetName(fieldCount), Reader[fieldCount]);
@@ -87,34 +83,19 @@ namespace VOL.Core.Extensions
 
         public static object DicToList(this List<Dictionary<string, object>> dicList, Type type)
         {
-            return typeof(ObjectExtension)
-                .GetMethod("DicToList")
-                .MakeGenericMethod(new Type[] { type })
-                .Invoke(typeof(ObjectExtension), new object[] { dicList });
+            return typeof(ObjectExtension).GetMethod("DicToList").MakeGenericMethod(new Type[] { type }).Invoke(typeof(ObjectExtension), new object[] { dicList });
         }
 
-        public static IEnumerable<T> DicToIEnumerable<T>(
-            this List<Dictionary<string, object>> dicList
-        )
+        public static IEnumerable<T> DicToIEnumerable<T>(this List<Dictionary<string, object>> dicList)
         {
             foreach (Dictionary<string, object> dic in dicList)
             {
                 T model = Activator.CreateInstance<T>();
-                foreach (
-                    PropertyInfo property in model
-                        .GetType()
-                        .GetProperties(
-                            BindingFlags.GetProperty | BindingFlags.Public | BindingFlags.Instance
-                        )
-                )
+                foreach (PropertyInfo property in model.GetType().GetProperties(BindingFlags.GetProperty | BindingFlags.Public | BindingFlags.Instance))
                 {
                     if (!dic.TryGetValue(property.Name, out object value))
                         continue;
-                    property.SetValue(
-                        model,
-                        value?.ToString().ChangeType(property.PropertyType),
-                        null
-                    );
+                    property.SetValue(model, value?.ToString().ChangeType(property.PropertyType), null);
                 }
                 yield return model;
             }
@@ -139,15 +120,7 @@ namespace VOL.Core.Extensions
                 while (Reader.Read())
                 {
                     T model = Activator.CreateInstance<T>();
-                    foreach (
-                        PropertyInfo property in model
-                            .GetType()
-                            .GetProperties(
-                                BindingFlags.GetProperty
-                                    | BindingFlags.Public
-                                    | BindingFlags.Instance
-                            )
-                    )
+                    foreach (PropertyInfo property in model.GetType().GetProperties(BindingFlags.GetProperty | BindingFlags.Public | BindingFlags.Instance))
                     {
                         if (!objectField.Contains(property.Name.ToLower()))
                         {
@@ -157,11 +130,7 @@ namespace VOL.Core.Extensions
                         {
                             continue;
                         }
-                        property.SetValue(
-                            model,
-                            Reader[property.Name].ToString().ChangeType(property.PropertyType),
-                            null
-                        );
+                        property.SetValue(model, Reader[property.Name].ToString().ChangeType(property.PropertyType), null);
                     }
                     objectList.Add(model);
                 }
@@ -195,10 +164,7 @@ namespace VOL.Core.Extensions
 
                 if (!type.IsGenericType)
                     return Convert.ChangeType(convertibleValue, type);
-                if (
-                    type.ToString() == "System.Nullable`1[System.Boolean]"
-                    || type.ToString() == "System.Boolean"
-                )
+                if (type.ToString() == "System.Nullable`1[System.Boolean]" || type.ToString() == "System.Boolean")
                 {
                     if (convertibleValue.ToString() == "0")
                         return false;
@@ -375,10 +341,7 @@ namespace VOL.Core.Extensions
                 foreach (var j in fields)
                 {
                     MemberExpression field = Expression.Field(Expression.Constant(i), j.Name);
-                    LambdaExpression lambda = Expression.Lambda(
-                        field,
-                        new ParameterExpression[] { }
-                    );
+                    LambdaExpression lambda = Expression.Lambda(field, new ParameterExpression[] { });
                     Delegate func = lambda.Compile();
                     object value = func.DynamicInvoke();
                     addRow[j.Name] = value;
@@ -386,10 +349,7 @@ namespace VOL.Core.Extensions
                 foreach (var j in properties)
                 {
                     MemberExpression property = Expression.Property(Expression.Constant(i), j);
-                    LambdaExpression lambda = Expression.Lambda(
-                        property,
-                        new ParameterExpression[] { }
-                    );
+                    LambdaExpression lambda = Expression.Lambda(property, new ParameterExpression[] { });
                     Delegate func = lambda.Compile();
                     object value = func.DynamicInvoke();
                     addRow[j.Name] = value;
@@ -530,10 +490,7 @@ namespace VOL.Core.Extensions
             return date.Value.ToString(format);
         }
 
-        private static Regex BoolRegex = new Regex(
-            "(?<info>(true|false))",
-            RegexOptions.IgnoreCase | RegexOptions.Singleline
-        );
+        private static Regex BoolRegex = new Regex("(?<info>(true|false))", RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
         /// <summary>
         /// 从object中获取bool类型信息。
@@ -546,15 +503,9 @@ namespace VOL.Core.Extensions
             return result;
         }
 
-        private static Regex IntRegex = new Regex(
-            "(?<info>-?\\d+)",
-            RegexOptions.IgnoreCase | RegexOptions.Singleline
-        );
+        private static Regex IntRegex = new Regex("(?<info>-?\\d+)", RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
-        private static Regex DecimalRegex = new Regex(
-            "(?<info>-?\\d+(\\.\\d+)?)",
-            RegexOptions.IgnoreCase | RegexOptions.Singleline
-        );
+        private static Regex DecimalRegex = new Regex("(?<info>-?\\d+(\\.\\d+)?)", RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
         /// <summary>
         /// 读取XElement节点的文本内容。
@@ -583,11 +534,7 @@ namespace VOL.Core.Extensions
         /// <param name="key">键。</param>
         /// <param name="t">默认值。</param>
         /// <returns>值。</returns>
-        public static TValue GetValue<TKey, TValue>(
-            this IDictionary<TKey, TValue> dictionary,
-            TKey key,
-            TValue t = default(TValue)
-        )
+        public static TValue GetValue<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue t = default(TValue))
         {
             TValue value = default(TValue);
             if (dictionary == null || key == null)
@@ -610,11 +557,7 @@ namespace VOL.Core.Extensions
         /// <param name="key">键。</param>
         /// <param name="t">默认值。</param>
         /// <returns>值。</returns>
-        public static TValue GetFirstOrDefaultValue<TKey, TValue>(
-            this IDictionary<TKey, TValue> dictionary,
-            TKey key,
-            TValue t = default(TValue)
-        )
+        public static TValue GetFirstOrDefaultValue<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue t = default(TValue))
         {
             TValue value = default(TValue);
             if (dictionary == null || key == null)
@@ -691,11 +634,7 @@ namespace VOL.Core.Extensions
         /// <param name="xName">要匹配的 System.Xml.Linq.XName。</param>
         /// <param name="t">是否返回非空默认值。</param>
         /// <returns>System.Xml.Linq.XElement 的按文档顺序包含具有匹配System.Xml.Linq.XName 的 System.Xml.Linq.XContainer 的子级，或者非空默认值。</returns>
-        public static IEnumerable<XElement> Elements(
-            this XContainer xContainer,
-            XName xName,
-            bool t
-        )
+        public static IEnumerable<XElement> Elements(this XContainer xContainer, XName xName, bool t)
         {
             IEnumerable<XElement> info;
             if (xContainer == null)
@@ -762,11 +701,7 @@ namespace VOL.Core.Extensions
         /// <param name="regex">匹配要编码的文本。</param>
         /// <param name="encoding">指定编码方案的 System.Text.Encoding 对象。</param>
         /// <returns>一个已编码的字符串。</returns>
-        public static string ToUrlEncodeString(
-            this string s,
-            Regex regex = default(Regex),
-            Encoding encoding = null
-        )
+        public static string ToUrlEncodeString(this string s, Regex regex = default(Regex), Encoding encoding = null)
         {
             if (encoding == null)
             {
@@ -792,11 +727,7 @@ namespace VOL.Core.Extensions
         /// <param name="regex">匹配要编码的文本。</param>
         /// <param name="encoding">指定编码方案的 System.Text.Encoding 对象。</param>
         /// <returns>一个已编码的字符串。</returns>
-        public static string ToUrlEncodeString(
-            this string s,
-            string regex,
-            Encoding encoding = null
-        )
+        public static string ToUrlEncodeString(this string s, string regex, Encoding encoding = null)
         {
             return ToUrlEncodeString(s, new Regex(regex), encoding);
         }
@@ -814,9 +745,7 @@ namespace VOL.Core.Extensions
         }
 
         private static readonly Regex MobileRegex = new Regex("^1[3-9][0-9]\\d{4,8}$");
-        private static readonly Regex EmailRegex = new Regex(
-            "^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\\.[a-zA-Z0-9_-]{2,3}){1,2})$"
-        );
+        private static readonly Regex EmailRegex = new Regex("^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\\.[a-zA-Z0-9_-]{2,3}){1,2})$");
 
         /// <summary>
         /// 判断当前字符串是否是移动电话号码

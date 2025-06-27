@@ -29,10 +29,7 @@ namespace VOL.MES.Services
         private readonly IMES_ProductionPlanDetailRepository _repository; //访问数据库
 
         [ActivatorUtilitiesConstructor]
-        public MES_ProductionPlanDetailService(
-            IMES_ProductionPlanDetailRepository dbRepository,
-            IHttpContextAccessor httpContextAccessor
-        )
+        public MES_ProductionPlanDetailService(IMES_ProductionPlanDetailRepository dbRepository, IHttpContextAccessor httpContextAccessor)
             : base(dbRepository)
         {
             _httpContextAccessor = httpContextAccessor;

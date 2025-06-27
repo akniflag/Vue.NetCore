@@ -10,10 +10,7 @@ namespace VOL.Core.Extensions
 {
     public static class StaticDefaultFileExtensions
     {
-        public static IApplicationBuilder UseStaticDefaultFile(
-            this IApplicationBuilder app,
-            string path
-        )
+        public static IApplicationBuilder UseStaticDefaultFile(this IApplicationBuilder app, string path)
         {
             app.UseStaticFiles(
                     new StaticFileOptions()
@@ -26,27 +23,9 @@ namespace VOL.Core.Extensions
                         //}
                     }
                 )
-                .UseStaticFiles(
-                    new StaticFileOptions()
-                    {
-                        FileProvider = new PhysicalFileProvider(Path.Combine(path, "fonts")),
-                        RequestPath = new PathString("/fonts"),
-                    }
-                )
-                .UseStaticFiles(
-                    new StaticFileOptions()
-                    {
-                        FileProvider = new PhysicalFileProvider(Path.Combine(path, "Scripts")),
-                        RequestPath = new PathString("/Scripts"),
-                    }
-                )
-                .UseStaticFiles(
-                    new StaticFileOptions()
-                    {
-                        FileProvider = new PhysicalFileProvider(Path.Combine(path, "Html")),
-                        RequestPath = new PathString("/Html"),
-                    }
-                );
+                .UseStaticFiles(new StaticFileOptions() { FileProvider = new PhysicalFileProvider(Path.Combine(path, "fonts")), RequestPath = new PathString("/fonts") })
+                .UseStaticFiles(new StaticFileOptions() { FileProvider = new PhysicalFileProvider(Path.Combine(path, "Scripts")), RequestPath = new PathString("/Scripts") })
+                .UseStaticFiles(new StaticFileOptions() { FileProvider = new PhysicalFileProvider(Path.Combine(path, "Html")), RequestPath = new PathString("/Html") });
             return app;
         }
     }

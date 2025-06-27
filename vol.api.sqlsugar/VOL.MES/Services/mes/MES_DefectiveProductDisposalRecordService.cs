@@ -13,19 +13,13 @@ using VOL.MES.IServices;
 namespace VOL.MES.Services
 {
     public partial class MES_DefectiveProductDisposalRecordService
-        : ServiceBase<
-            MES_DefectiveProductDisposalRecord,
-            IMES_DefectiveProductDisposalRecordRepository
-        >,
+        : ServiceBase<MES_DefectiveProductDisposalRecord, IMES_DefectiveProductDisposalRecordRepository>,
             IMES_DefectiveProductDisposalRecordService,
             IDependency
     {
         public static IMES_DefectiveProductDisposalRecordService Instance
         {
-            get
-            {
-                return AutofacContainerModule.GetService<IMES_DefectiveProductDisposalRecordService>();
-            }
+            get { return AutofacContainerModule.GetService<IMES_DefectiveProductDisposalRecordService>(); }
         }
     }
 }

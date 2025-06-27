@@ -52,10 +52,7 @@ namespace VOL.Core.Quartz
 
         public static AuthorizationFilterContext Validation(AuthorizationFilterContext context)
         {
-            bool result = context.HttpContext.Request.Headers.TryGetValue(
-                Key,
-                out StringValues value
-            );
+            bool result = context.HttpContext.Request.Headers.TryGetValue(Key, out StringValues value);
             if (!result || AccessKey != value)
             {
                 context.Result = new ContentResult()

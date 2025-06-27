@@ -26,10 +26,7 @@ namespace VOL.MES.Services
         private readonly IMES_WarehouseManagementRepository _repository; //访问数据库
 
         [ActivatorUtilitiesConstructor]
-        public MES_WarehouseManagementService(
-            IMES_WarehouseManagementRepository dbRepository,
-            IHttpContextAccessor httpContextAccessor
-        )
+        public MES_WarehouseManagementService(IMES_WarehouseManagementRepository dbRepository, IHttpContextAccessor httpContextAccessor)
             : base(dbRepository)
         {
             _httpContextAccessor = httpContextAccessor;

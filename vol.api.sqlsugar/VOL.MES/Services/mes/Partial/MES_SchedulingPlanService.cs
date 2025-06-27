@@ -26,10 +26,7 @@ namespace VOL.MES.Services
         private readonly IMES_SchedulingPlanRepository _repository; //访问数据库
 
         [ActivatorUtilitiesConstructor]
-        public MES_SchedulingPlanService(
-            IMES_SchedulingPlanRepository dbRepository,
-            IHttpContextAccessor httpContextAccessor
-        )
+        public MES_SchedulingPlanService(IMES_SchedulingPlanRepository dbRepository, IHttpContextAccessor httpContextAccessor)
             : base(dbRepository)
         {
             _httpContextAccessor = httpContextAccessor;

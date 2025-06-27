@@ -25,11 +25,7 @@ namespace VOL.MES.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         [ActivatorUtilitiesConstructor]
-        public MES_MaterialCatalogController(
-            IMES_MaterialCatalogService service,
-            IMES_MaterialCatalogRepository repository,
-            IHttpContextAccessor httpContextAccessor
-        )
+        public MES_MaterialCatalogController(IMES_MaterialCatalogService service, IMES_MaterialCatalogRepository repository, IHttpContextAccessor httpContextAccessor)
             : base(service)
         {
             _service = service;

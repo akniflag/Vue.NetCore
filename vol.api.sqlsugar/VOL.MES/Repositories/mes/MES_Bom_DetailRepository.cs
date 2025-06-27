@@ -10,9 +10,7 @@ using VOL.MES.IRepositories;
 
 namespace VOL.MES.Repositories
 {
-    public partial class MES_Bom_DetailRepository
-        : RepositoryBase<MES_Bom_Detail>,
-            IMES_Bom_DetailRepository
+    public partial class MES_Bom_DetailRepository : RepositoryBase<MES_Bom_Detail>, IMES_Bom_DetailRepository
     {
         public MES_Bom_DetailRepository(VOLContext dbContext)
             : base(dbContext) { }

@@ -34,10 +34,7 @@ namespace VOL.Core.ModelBinder
             {
                 return Task.CompletedTask;
             }
-            var model = Newtonsoft.Json.JsonConvert.DeserializeObject(
-                value,
-                bindingContext.ModelType
-            );
+            var model = Newtonsoft.Json.JsonConvert.DeserializeObject(value, bindingContext.ModelType);
             bindingContext.Result = ModelBindingResult.Success(model);
             return Task.CompletedTask;
         }

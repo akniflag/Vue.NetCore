@@ -6,6 +6,5 @@ using VOL.Entity.DomainModels;
 
 namespace VOL.MES.IServices
 {
-    public partial interface IMES_EquipmentFaultRecordService
-        : IService<MES_EquipmentFaultRecord> { }
+    public partial interface IMES_EquipmentFaultRecordService : IService<MES_EquipmentFaultRecord> { }
 }

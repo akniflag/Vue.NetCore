@@ -16,9 +16,7 @@ namespace VOL.Core.DBManager
 {
     public partial class DBServerProvider : DbManger
     {
-        private static Dictionary<string, string> ConnectionArray = new Dictionary<string, string>(
-            StringComparer.OrdinalIgnoreCase
-        );
+        private static Dictionary<string, string> ConnectionArray = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         private static readonly string DefaultConnName = "defalut";
 
@@ -67,11 +65,7 @@ namespace VOL.Core.DBManager
 
         public static VOLContext DbContext
         {
-            get
-            {
-                return Utilities.HttpContext.Current.RequestServices.GetService(typeof(VOLContext))
-                    as VOLContext;
-            }
+            get { return Utilities.HttpContext.Current.RequestServices.GetService(typeof(VOLContext)) as VOLContext; }
         }
     }
 }

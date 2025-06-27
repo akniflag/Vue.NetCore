@@ -26,10 +26,7 @@ namespace VOL.MES.Services
         private readonly IMES_EquipmentRepairRepository _repository; //访问数据库
 
         [ActivatorUtilitiesConstructor]
-        public MES_EquipmentRepairService(
-            IMES_EquipmentRepairRepository dbRepository,
-            IHttpContextAccessor httpContextAccessor
-        )
+        public MES_EquipmentRepairService(IMES_EquipmentRepairRepository dbRepository, IHttpContextAccessor httpContextAccessor)
             : base(dbRepository)
         {
             _httpContextAccessor = httpContextAccessor;

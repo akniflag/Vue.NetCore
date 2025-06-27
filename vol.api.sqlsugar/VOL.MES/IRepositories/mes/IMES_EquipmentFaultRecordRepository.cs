@@ -13,7 +13,5 @@ using VOL.Entity.DomainModels;
 
 namespace VOL.MES.IRepositories
 {
-    public partial interface IMES_EquipmentFaultRecordRepository
-        : IDependency,
-            IRepository<MES_EquipmentFaultRecord> { }
+    public partial interface IMES_EquipmentFaultRecordRepository : IDependency, IRepository<MES_EquipmentFaultRecord> { }
 }

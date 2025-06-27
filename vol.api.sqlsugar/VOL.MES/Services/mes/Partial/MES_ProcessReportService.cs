@@ -29,10 +29,7 @@ namespace VOL.MES.Services
         private readonly IMES_ProcessReportRepository _repository; //访问数据库
 
         [ActivatorUtilitiesConstructor]
-        public MES_ProcessReportService(
-            IMES_ProcessReportRepository dbRepository,
-            IHttpContextAccessor httpContextAccessor
-        )
+        public MES_ProcessReportService(IMES_ProcessReportRepository dbRepository, IHttpContextAccessor httpContextAccessor)
             : base(dbRepository)
         {
             _httpContextAccessor = httpContextAccessor;
@@ -48,12 +45,8 @@ namespace VOL.MES.Services
                 return queryable
                     .Select(x => new
                     {
-                        CompletedQuantity = SqlFunc
-                            .AggregateSum(x.CompletedQuantity)
-                            .ToString("f2"),
-                        DefectiveQuantity = SqlFunc
-                            .AggregateSum(x.DefectiveQuantity)
-                            .ToString("f2"),
+                        CompletedQuantity = SqlFunc.AggregateSum(x.CompletedQuantity).ToString("f2"),
+                        DefectiveQuantity = SqlFunc.AggregateSum(x.DefectiveQuantity).ToString("f2"),
                     })
                     .FirstOrDefault();
             };

@@ -20,10 +20,7 @@ namespace VOL.MES.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         [ActivatorUtilitiesConstructor]
-        public MES_Bom_DetailController(
-            IMES_Bom_DetailService service,
-            IHttpContextAccessor httpContextAccessor
-        )
+        public MES_Bom_DetailController(IMES_Bom_DetailService service, IHttpContextAccessor httpContextAccessor)
             : base(service)
         {
             _service = service;

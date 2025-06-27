@@ -12,10 +12,7 @@ using VOL.MES.IServices;
 
 namespace VOL.MES.Services
 {
-    public partial class MES_ProcessReportService
-        : ServiceBase<MES_ProcessReport, IMES_ProcessReportRepository>,
-            IMES_ProcessReportService,
-            IDependency
+    public partial class MES_ProcessReportService : ServiceBase<MES_ProcessReport, IMES_ProcessReportRepository>, IMES_ProcessReportService, IDependency
     {
         public static IMES_ProcessReportService Instance
         {

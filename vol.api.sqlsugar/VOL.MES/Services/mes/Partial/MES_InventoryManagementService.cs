@@ -29,10 +29,7 @@ namespace VOL.MES.Services
         private readonly IMES_InventoryManagementRepository _repository; //访问数据库
 
         [ActivatorUtilitiesConstructor]
-        public MES_InventoryManagementService(
-            IMES_InventoryManagementRepository dbRepository,
-            IHttpContextAccessor httpContextAccessor
-        )
+        public MES_InventoryManagementService(IMES_InventoryManagementRepository dbRepository, IHttpContextAccessor httpContextAccessor)
             : base(dbRepository)
         {
             _httpContextAccessor = httpContextAccessor;
@@ -45,14 +42,7 @@ namespace VOL.MES.Services
         {
             SummaryExpress = (ISugarQueryable<MES_InventoryManagement> queryable) =>
             {
-                return queryable
-                    .Select(x => new
-                    {
-                        InventoryQuantity = SqlFunc
-                            .AggregateSum(x.InventoryQuantity)
-                            .ToString("f2"),
-                    })
-                    .FirstOrDefault();
+                return queryable.Select(x => new { InventoryQuantity = SqlFunc.AggregateSum(x.InventoryQuantity).ToString("f2") }).FirstOrDefault();
             };
             return base.GetPageData(options);
         }

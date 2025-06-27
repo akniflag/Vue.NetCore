@@ -13,7 +13,8 @@ using VOL.Entity.DomainModels;
 
 namespace VOL.MES.IRepositories
 {
-    public partial interface IMES_Bom_DetailRepository
-        : IDependency,
-            IRepository<MES_Bom_Detail> { }
+    public partial interface IMES_Bom_DetailRepository : IDependency, IRepository<MES_Bom_Detail>
+    {
+        // 添加自定义方法
+    }
 }

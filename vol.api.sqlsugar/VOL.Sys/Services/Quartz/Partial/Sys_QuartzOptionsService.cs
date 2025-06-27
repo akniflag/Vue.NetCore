@@ -32,11 +32,7 @@ namespace VOL.Sys.Services
         private readonly ISchedulerFactory _schedulerFactory;
 
         [ActivatorUtilitiesConstructor]
-        public Sys_QuartzOptionsService(
-            ISys_QuartzOptionsRepository dbRepository,
-            IHttpContextAccessor httpContextAccessor,
-            ISchedulerFactory schedulerFactory
-        )
+        public Sys_QuartzOptionsService(ISys_QuartzOptionsRepository dbRepository, IHttpContextAccessor httpContextAccessor, ISchedulerFactory schedulerFactory)
             : base(dbRepository)
         {
             _httpContextAccessor = httpContextAccessor;
@@ -92,12 +88,7 @@ namespace VOL.Sys.Services
 
         public override WebResponseContent Update(SaveModel saveModel)
         {
-            UpdateOnExecuted = (
-                Sys_QuartzOptions options,
-                object addList,
-                object updateList,
-                List<object> delKeys
-            ) =>
+            UpdateOnExecuted = (Sys_QuartzOptions options, object addList, object updateList, List<object> delKeys) =>
             {
                 _schedulerFactory.Update(options).GetAwaiter().GetResult();
                 return webResponse.OK();

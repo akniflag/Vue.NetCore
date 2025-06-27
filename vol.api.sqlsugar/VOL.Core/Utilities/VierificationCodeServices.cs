@@ -14,14 +14,7 @@ namespace VOL.Core.Utilities
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                fonts = new string[]
-                {
-                    "Verdana",
-                    "Microsoft Sans Serif",
-                    "Comic Sans MS",
-                    "Arial",
-                    "宋体",
-                };
+                fonts = new string[] { "Verdana", "Microsoft Sans Serif", "Comic Sans MS", "Arial", "宋体" };
             }
             else
             {
@@ -29,12 +22,7 @@ namespace VOL.Core.Utilities
             }
         }
 
-        private static readonly SKColor[] colors =
-        {
-            SKColors.Black,
-            SKColors.Green,
-            SKColors.Brown,
-        };
+        private static readonly SKColor[] colors = { SKColors.Black, SKColors.Green, SKColors.Brown };
 
         /// <summary>
         ///
@@ -60,12 +48,7 @@ namespace VOL.Core.Utilities
             {
                 pen.Color = random.GetRandom(colors); //随机颜色索引值
 
-                pen.Typeface = SKTypeface.FromFamilyName(
-                    random.GetRandom(fonts),
-                    700,
-                    20,
-                    SKFontStyleSlant.Italic
-                ); //配置字体
+                pen.Typeface = SKTypeface.FromFamilyName(random.GetRandom(fonts), 700, 20, SKFontStyleSlant.Italic); //配置字体
                 var point = new SKPoint()
                 {
                     X = i * 16,
@@ -75,10 +58,7 @@ namespace VOL.Core.Utilities
             }
 
             // 绘制噪点
-            var points = Enumerable
-                .Range(0, 100)
-                .Select(_ => new SKPoint(random.Next(bitmap.Width), random.Next(bitmap.Height)))
-                .ToArray();
+            var points = Enumerable.Range(0, 100).Select(_ => new SKPoint(random.Next(bitmap.Width), random.Next(bitmap.Height))).ToArray();
             canvas.DrawPoints(SKPointMode.Points, points, pen);
 
             //绘制贝塞尔线条

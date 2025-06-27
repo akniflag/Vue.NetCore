@@ -30,11 +30,7 @@ namespace VOL.Sys.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         [ActivatorUtilitiesConstructor]
-        public Sys_DepartmentController(
-            ISys_DepartmentService service,
-            ISys_DepartmentRepository repository,
-            IHttpContextAccessor httpContextAccessor
-        )
+        public Sys_DepartmentController(ISys_DepartmentService service, ISys_DepartmentRepository repository, IHttpContextAccessor httpContextAccessor)
             : base(service)
         {
             _service = service;
@@ -75,13 +71,8 @@ namespace VOL.Sys.Controllers
             else
             {
                 var deptIds = UserContext.Current.DeptIds;
-                var list = DepartmentContext
-                    .GetAllDept()
-                    .Where(c => deptIds.Contains(c.id))
-                    .ToList();
-                deptIds = list.Where(c => !list.Any(x => x.id == c.parentId))
-                    .Select(x => x.id)
-                    .ToList();
+                var list = DepartmentContext.GetAllDept().Where(c => deptIds.Contains(c.id)).ToList();
+                deptIds = list.Where(c => !list.Any(x => x.id == c.parentId)).Select(x => x.id).ToList();
                 query = query.Where(x => deptIds.Contains(x.DepartmentId));
             }
             var queryChild = _repository.FindAsIQueryable(x => true);
@@ -100,10 +91,7 @@ namespace VOL.Sys.Controllers
                     s.Creator,
                     s.Modifier,
                     s.ModifyDate,
-                    hasChildren = SqlFunc
-                        .Subqueryable<Sys_Department>()
-                        .Where(x => x.ParentId == s.DepartmentId)
-                        .Any(),
+                    hasChildren = SqlFunc.Subqueryable<Sys_Department>().Where(x => x.ParentId == s.DepartmentId).Any(),
                 })
                 .ToListAsync();
             return JsonNormal(new { total = await query.CountAsync(), rows });
@@ -133,10 +121,7 @@ namespace VOL.Sys.Controllers
                     s.Creator,
                     s.Modifier,
                     s.ModifyDate,
-                    hasChildren = SqlFunc
-                        .Subqueryable<Sys_Department>()
-                        .Where(x => x.ParentId == s.DepartmentId)
-                        .Any(),
+                    hasChildren = SqlFunc.Subqueryable<Sys_Department>().Where(x => x.ParentId == s.DepartmentId).Any(),
                 })
                 .ToListAsync();
             return JsonNormal(new { rows });

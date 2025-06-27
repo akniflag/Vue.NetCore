@@ -20,10 +20,7 @@ namespace VOL.MES.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         [ActivatorUtilitiesConstructor]
-        public MES_QualityInspectionRecordController(
-            IMES_QualityInspectionRecordService service,
-            IHttpContextAccessor httpContextAccessor
-        )
+        public MES_QualityInspectionRecordController(IMES_QualityInspectionRecordService service, IHttpContextAccessor httpContextAccessor)
             : base(service)
         {
             _service = service;

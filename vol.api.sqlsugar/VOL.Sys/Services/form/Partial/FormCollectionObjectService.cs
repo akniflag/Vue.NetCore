@@ -56,36 +56,22 @@ namespace VOL.Sys.Services
             ExportOnExecuting = (List<FormCollectionObject> list, List<string> columns) =>
             {
                 var formId = list[0].FormId;
-                var data = _designOptionsRepository
-                    .FindAsIQueryable(x => x.FormId == formId)
-                    .Select(s => new { s.Title, s.FormConfig })
-                    .FirstOrDefault();
+                var data = _designOptionsRepository.FindAsIQueryable(x => x.FormId == formId).Select(s => new { s.Title, s.FormConfig }).FirstOrDefault();
                 try
                 {
-                    List<FormOptions> formObj = data.FormConfig.DeserializeObject<
-                        List<FormOptions>
-                    >();
-                    List<Dictionary<string, object>> listDic =
-                        new List<Dictionary<string, object>>();
+                    List<FormOptions> formObj = data.FormConfig.DeserializeObject<List<FormOptions>>();
+                    List<Dictionary<string, object>> listDic = new List<Dictionary<string, object>>();
                     foreach (var item in list)
                     {
                         Dictionary<string, object> dic = new Dictionary<string, object>();
-                        var formData = item.FormData.DeserializeObject<
-                            Dictionary<string, string>
-                        >();
+                        var formData = item.FormData.DeserializeObject<Dictionary<string, string>>();
                         dic.Add("标题", data.Title);
 
                         dic.Add("提交人", item.Creator);
                         dic.Add("提交时间", item.CreateDate.ToString("yyyy-MM-dd HH:mm:sss"));
                         foreach (var obj in formObj)
                         {
-                            dic.Add(
-                                obj.Title,
-                                formData
-                                    .Where(x => x.Key == obj.Field)
-                                    .Select(s => s.Value)
-                                    .FirstOrDefault()
-                            );
+                            dic.Add(obj.Title, formData.Where(x => x.Key == obj.Field).Select(s => s.Value).FirstOrDefault());
                         }
                         listDic.Add(dic);
                     }
@@ -94,9 +80,7 @@ namespace VOL.Sys.Services
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error(
-                        $"解析表单出错：{data.Title},表单配置：{data.FormConfig},{ex.Message}"
-                    );
+                    Logger.Error($"解析表单出错：{data.Title},表单配置：{data.FormConfig},{ex.Message}");
                     return webResponse.Error("获取表单出错");
                 }
                 webResponse.Code = "-1";

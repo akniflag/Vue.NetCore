@@ -10,25 +10,7 @@ namespace VOL.Core.Utilities
     public class SecurityEncDecrypt
     {
         #region
-        private static byte[] Keys =
-        {
-            0x00,
-            0x01,
-            0x02,
-            0x03,
-            0x04,
-            0x05,
-            0x06,
-            0x07,
-            0x08,
-            0x09,
-            0x0A,
-            0x0B,
-            0x0C,
-            0x0D,
-            0x0E,
-            0x0F,
-        };
+        private static byte[] Keys = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F };
 
         /// <summary>
         /// DES加密字符串
@@ -45,11 +27,7 @@ namespace VOL.Core.Utilities
                 byte[] inputByteArray = Encoding.UTF8.GetBytes(encryptString);
                 var DCSP = Aes.Create();
                 MemoryStream mStream = new MemoryStream();
-                CryptoStream cStream = new CryptoStream(
-                    mStream,
-                    DCSP.CreateEncryptor(rgbKey, rgbIV),
-                    CryptoStreamMode.Write
-                );
+                CryptoStream cStream = new CryptoStream(mStream, DCSP.CreateEncryptor(rgbKey, rgbIV), CryptoStreamMode.Write);
                 cStream.Write(inputByteArray, 0, inputByteArray.Length);
                 cStream.FlushFinalBlock();
                 return Convert.ToBase64String(mStream.ToArray());
@@ -75,11 +53,7 @@ namespace VOL.Core.Utilities
                 byte[] inputByteArray = Convert.FromBase64String(decryptString);
                 var DCSP = Aes.Create();
                 MemoryStream mStream = new MemoryStream();
-                CryptoStream cStream = new CryptoStream(
-                    mStream,
-                    DCSP.CreateDecryptor(rgbKey, rgbIV),
-                    CryptoStreamMode.Write
-                );
+                CryptoStream cStream = new CryptoStream(mStream, DCSP.CreateDecryptor(rgbKey, rgbIV), CryptoStreamMode.Write);
                 Byte[] inputByteArrays = new byte[inputByteArray.Length];
                 cStream.Write(inputByteArray, 0, inputByteArray.Length);
                 cStream.FlushFinalBlock();
@@ -87,9 +61,7 @@ namespace VOL.Core.Utilities
             }
             catch (Exception ex)
             {
-                Logger.Error(
-                    "解密异常：str:" + decryptString + ",Key:" + decryptKey + "---" + ex.Message
-                );
+                Logger.Error("解密异常：str:" + decryptString + ",Key:" + decryptKey + "---" + ex.Message);
                 return null;
             }
         }

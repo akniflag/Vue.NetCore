@@ -30,10 +30,7 @@ namespace VOL.Sys.Services
         private readonly ISys_DepartmentRepository _repository; //访问数据库
 
         [ActivatorUtilitiesConstructor]
-        public Sys_DepartmentService(
-            ISys_DepartmentRepository dbRepository,
-            IHttpContextAccessor httpContextAccessor
-        )
+        public Sys_DepartmentService(ISys_DepartmentRepository dbRepository, IHttpContextAccessor httpContextAccessor)
             : base(dbRepository)
         {
             _httpContextAccessor = httpContextAccessor;
@@ -81,25 +78,13 @@ namespace VOL.Sys.Services
 
         public override WebResponseContent Update(SaveModel saveModel)
         {
-            UpdateOnExecuting = (
-                Sys_Department dept,
-                object addList,
-                object updateList,
-                List<object> delKeys
-            ) =>
+            UpdateOnExecuting = (Sys_Department dept, object addList, object updateList, List<object> delKeys) =>
             {
-                if (
-                    _repository.Exists(x =>
-                        x.DepartmentId == dept.ParentId && x.DepartmentId == dept.DepartmentId
-                    )
-                )
+                if (_repository.Exists(x => x.DepartmentId == dept.ParentId && x.DepartmentId == dept.DepartmentId))
                 {
                     return webResponse.Error("上级组织不能选择自己");
                 }
-                if (
-                    _repository.Exists(x => x.ParentId == dept.DepartmentId)
-                    && _repository.Exists(x => x.DepartmentId == dept.ParentId)
-                )
+                if (_repository.Exists(x => x.ParentId == dept.DepartmentId) && _repository.Exists(x => x.DepartmentId == dept.ParentId))
                 {
                     return webResponse.Error("不能选择此上级组织");
                 }

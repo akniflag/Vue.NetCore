@@ -26,10 +26,7 @@ namespace VOL.MES.Services
         private readonly IMES_ProductionPlanChangeRecordRepository _repository; //访问数据库
 
         [ActivatorUtilitiesConstructor]
-        public MES_ProductionPlanChangeRecordService(
-            IMES_ProductionPlanChangeRecordRepository dbRepository,
-            IHttpContextAccessor httpContextAccessor
-        )
+        public MES_ProductionPlanChangeRecordService(IMES_ProductionPlanChangeRecordRepository dbRepository, IHttpContextAccessor httpContextAccessor)
             : base(dbRepository)
         {
             _httpContextAccessor = httpContextAccessor;

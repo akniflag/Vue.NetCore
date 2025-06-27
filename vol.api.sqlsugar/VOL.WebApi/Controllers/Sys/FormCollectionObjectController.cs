@@ -11,8 +11,7 @@ namespace VOL.Sys.Controllers
 {
     [Route("api/FormCollectionObject")]
     [PermissionTable(Name = "FormCollectionObject")]
-    public partial class FormCollectionObjectController
-        : ApiBaseController<IFormCollectionObjectService>
+    public partial class FormCollectionObjectController : ApiBaseController<IFormCollectionObjectService>
     {
         public FormCollectionObjectController(IFormCollectionObjectService service)
             : base(service) { }

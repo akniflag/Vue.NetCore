@@ -13,7 +13,5 @@ using VOL.Entity.DomainModels;
 
 namespace VOL.MES.IRepositories
 {
-    public partial interface IMES_WarehouseManagementRepository
-        : IDependency,
-            IRepository<MES_WarehouseManagement> { }
+    public partial interface IMES_WarehouseManagementRepository : IDependency, IRepository<MES_WarehouseManagement> { }
 }

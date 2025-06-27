@@ -10,19 +10,14 @@ using VOL.MES.IRepositories;
 
 namespace VOL.MES.Repositories
 {
-    public partial class MES_QualityInspectionRecordRepository
-        : RepositoryBase<MES_QualityInspectionRecord>,
-            IMES_QualityInspectionRecordRepository
+    public partial class MES_QualityInspectionRecordRepository : RepositoryBase<MES_QualityInspectionRecord>, IMES_QualityInspectionRecordRepository
     {
         public MES_QualityInspectionRecordRepository(VOLContext dbContext)
             : base(dbContext) { }
 
         public static IMES_QualityInspectionRecordRepository Instance
         {
-            get
-            {
-                return AutofacContainerModule.GetService<IMES_QualityInspectionRecordRepository>();
-            }
+            get { return AutofacContainerModule.GetService<IMES_QualityInspectionRecordRepository>(); }
         }
     }
 }

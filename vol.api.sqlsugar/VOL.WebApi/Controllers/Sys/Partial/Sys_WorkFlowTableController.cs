@@ -21,10 +21,7 @@ namespace VOL.Sys.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         [ActivatorUtilitiesConstructor]
-        public Sys_WorkFlowTableController(
-            ISys_WorkFlowTableService service,
-            IHttpContextAccessor httpContextAccessor
-        )
+        public Sys_WorkFlowTableController(ISys_WorkFlowTableService service, IHttpContextAccessor httpContextAccessor)
             : base(service)
         {
             _service = service;

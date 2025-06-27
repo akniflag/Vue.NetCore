@@ -16,8 +16,7 @@ namespace VOL.Core.Extensions
 
         public static IApplicationBuilder UseStaticHttpContext(this IApplicationBuilder app)
         {
-            var httpContextAccessor =
-                app.ApplicationServices.GetRequiredService<IHttpContextAccessor>();
+            var httpContextAccessor = app.ApplicationServices.GetRequiredService<IHttpContextAccessor>();
             Utilities.HttpContext.Configure(httpContextAccessor);
             return app;
         }
